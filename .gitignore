@@ -1,22 +1,14 @@
-# Compiled class file
+/target/ROOT.war
+/target/ROOT
+/target/spring-boot-web-jsp-1.0
+pom.xml
+data/
+.idea
+spring-boot-web-jsp.iml
+.project
+.settings
+.classpath
+.springBeans
+.DS_Store
+
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
