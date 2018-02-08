@@ -1,7 +1,6 @@
 /target/ROOT.war
 /target/ROOT
 /target/spring-boot-web-jsp-1.0
-pom.xml
 data/
 .idea
 spring-boot-web-jsp.iml
