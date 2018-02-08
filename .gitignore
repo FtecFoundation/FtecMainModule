@@ -12,3 +12,4 @@ spring-boot-web-jsp.iml
 .DS_Store
 
 *.class
+*.iml
