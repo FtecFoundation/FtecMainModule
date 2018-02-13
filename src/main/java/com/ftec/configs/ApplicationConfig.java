@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
-@SpringBootApplication(scanBasePackages = {"com.ftec.configs", "com.ftec.resources", "com.ftec.controllers"})
+@SpringBootApplication(scanBasePackages = {"com.ftec.configs", "com.ftec.resources", "com.ftec.controllers", "com.ftec.services"})
 public class ApplicationConfig extends SpringBootServletInitializer {
     //Also added configuration for tomcat starting
     @Override

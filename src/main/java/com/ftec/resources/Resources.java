@@ -16,12 +16,39 @@ public class Resources {
     public int trialDaysDuration = 7;
     public String defaultLanguage="en";
 
-    private static class Email{
+    public static class Email{
         public String host_name;
         public int smtp_port;
         public boolean tls;
         public boolean ssl;
         public boolean authNeeded;
+        public String mailLogin;
+        public String mailPassword;
+        public String fromName;
+
+        public String getFromName() {
+            return fromName;
+        }
+
+        public void setFromName(String fromName) {
+            this.fromName = fromName;
+        }
+
+        public String getMailLogin() {
+            return mailLogin;
+        }
+
+        public void setMailLogin(String mailLogin) {
+            this.mailLogin = mailLogin;
+        }
+
+        public String getMailPassword() {
+            return mailPassword;
+        }
+
+        public void setMailPassword(String mailPassword) {
+            this.mailPassword = mailPassword;
+        }
 
         public String getHost_name() {
             return host_name;
@@ -64,7 +91,7 @@ public class Resources {
         }
     }
 
-    private static class Logger{
+    public static class Logger{
         public boolean enabled;
         public String path;
 
