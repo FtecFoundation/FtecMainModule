@@ -1,5 +1,6 @@
 package com.ftec.services;
 
+import com.ftec.logger.Logger;
 import com.ftec.resources.Resources;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +9,22 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Logger;
 
 @Service
 public class MailService {
     //For translations
     private MessageSource messageSource;
     private Resources resources;
+    private Logger logger;
 
     @Autowired
-    public MailService(MessageSource messageSource, Resources resources) {
+    public MailService(MessageSource messageSource, Resources resources, Logger logger) {
         this.messageSource = messageSource;
         this.resources = resources;
+        this.logger=logger;
     }
 
     /**
@@ -42,7 +42,7 @@ public class MailService {
             email.setHtmlMsg(text);
             email.send();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.logException("EmailSender","sendSimpleMessageWithText to user "+to, e);
         }
     }
 
@@ -71,7 +71,7 @@ public class MailService {
             email.setHtmlMsg(emailString);
             email.send();
         } catch (Exception e){
-            //TODO add logging
+            logger.logException("EmailSender", "sendHtmlMessage function, for email "+userEmail+", email type = "+emailType, e);
        }
     }
 
@@ -93,7 +93,7 @@ public class MailService {
             byte[] encoded = Files.readAllBytes(Paths.get(new ClassPathResource("static/emails/" + filename).getURI()));
             return new String(encoded, "UTF-8");
         }catch (Exception e){
-            //TODO add logging
+            logger.logException("EmailCreator", "loadFile for email "+filename+" encountered error",e);
         }
         return null;
     }

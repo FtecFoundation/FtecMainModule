@@ -94,6 +94,7 @@ public class Resources {
     public static class Logger{
         public boolean enabled;
         public String path;
+        public int exceptionHeight = 8;
 
         public boolean isEnabled() {
             return enabled;
