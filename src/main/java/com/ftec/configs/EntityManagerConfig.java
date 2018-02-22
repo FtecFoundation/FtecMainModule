@@ -21,7 +21,7 @@ public class EntityManagerConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
         emf.setDataSource(dataSource);
-        emf.setPackagesToScan(new String[] {"com.ftec.models"});
+        emf.setPackagesToScan("com.ftec.entities");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         return emf;
     }
