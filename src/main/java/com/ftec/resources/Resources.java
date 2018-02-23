@@ -11,7 +11,7 @@ public class Resources {
     public String appName = "ftec";
     public String base_url="https://ftec.io/";
     public boolean productionFeatures=false;
-    public int paginationDefault =10;
+    public int paginationRescordsPerPage =10;
 
     public int trialDaysDuration = 7;
     public String defaultLanguage="en";
@@ -111,6 +111,30 @@ public class Resources {
         public void setPath(String path) {
             this.path = path;
         }
+    }
+
+    public boolean isProductionFeatures() {
+        return productionFeatures;
+    }
+
+    public void setProductionFeatures(boolean productionFeatures) {
+        this.productionFeatures = productionFeatures;
+    }
+
+    public int getPaginationRescordsPerPage() {
+        return paginationRescordsPerPage;
+    }
+
+    public void setPaginationRescordsPerPage(int paginationRescordsPerPage) {
+        this.paginationRescordsPerPage = paginationRescordsPerPage;
+    }
+
+    public int getTrialDaysDuration() {
+        return trialDaysDuration;
+    }
+
+    public void setTrialDaysDuration(int trialDaysDuration) {
+        this.trialDaysDuration = trialDaysDuration;
     }
 
     public Email getEmail() {
