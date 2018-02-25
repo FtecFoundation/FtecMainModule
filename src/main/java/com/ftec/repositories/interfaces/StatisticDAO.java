@@ -1,4 +1,4 @@
-package com.ftec.repositories.implementations;
+package com.ftec.repositories.interfaces;
 
 import com.ftec.entities.Statistic;
 import com.ftec.entities.User;

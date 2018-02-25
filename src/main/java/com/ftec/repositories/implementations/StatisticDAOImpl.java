@@ -1,7 +1,7 @@
-package com.ftec.repositories.interfaces;
+package com.ftec.repositories.implementations;
 
 import com.ftec.entities.Statistic;
-import com.ftec.repositories.implementations.StatisticDAO;
+import com.ftec.repositories.interfaces.StatisticDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.resources.TradeTypes;
