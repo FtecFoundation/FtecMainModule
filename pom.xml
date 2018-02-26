@@ -57,6 +57,12 @@
 			<artifactId>commons-email</artifactId>
 			<version>1.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.warrenstrange</groupId>
+			<artifactId>googleauth</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

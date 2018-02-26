@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
     private String password, login, roles, secret;
-    private boolean expired, locked, enabled;
+    private boolean expired, locked, enabled, qrEnabled;
 
     public CustomUserDetails(User u) {
         this.password = u.getPassword();
@@ -66,4 +66,5 @@ public class CustomUserDetails implements UserDetails {
     public String getSecret(){
         return secret;
     }
+    public boolean isQrEnabled(){return qrEnabled;};
 }
