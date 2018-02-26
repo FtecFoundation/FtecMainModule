@@ -19,6 +19,7 @@ public class CustomUserDetails implements UserDetails {
         this.roles = u.getRoles();
         this.secret = u.getGoogleSecret();
         this.locked = u.isBanned();
+        this.qrEnabled=u.isQrEnabled();
 
         //TODO implement this features
         this.expired = false;
