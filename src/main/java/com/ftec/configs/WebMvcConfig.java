@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 @Configuration
@@ -28,7 +30,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
         return interceptor;
     }
 
-    @Bean
+    @Bean("messageSource")
     @Profile({"development","staging"})
     public MessageSource messageSourceDev(){
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
@@ -38,7 +40,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
         messageSource.setCacheSeconds(10);
         return messageSource;
     }
-    @Bean
+    @Bean("messageSource")
     @Profile("production")
     public MessageSource messageSourceProd(){
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
@@ -49,4 +51,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
         return messageSource;
     }
 
+    @Bean
+    public LocaleResolver localeResolver(){
+        return new CookieLocaleResolver();
+    }
 }
