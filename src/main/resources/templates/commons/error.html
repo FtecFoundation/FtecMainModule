@@ -1,0 +1,7 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="alertAbsolute(error)" th:if="${error ne null}" class="alert alert-danger errorAbsolute">
+    <span th:utext="#{${'errors.'+error}}"></span><a href='#' class="close" data-dismiss="alert" aria-label="close">&times;</a>
+</div>
+</body>
+</html>
