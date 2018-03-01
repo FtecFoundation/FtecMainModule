@@ -1,0 +1,35 @@
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="titleComp(title, links, metas)">
+    <!-- TITLE -->
+    <title th:replace="${title}">Not edited titile</title>
+
+    <!-- DEFAULT META -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <th:block th:if="${metas}" th:replace="${metas}"></th:block>
+
+    <!-- DEFAULT LINKS-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commons/header.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/commons/footer.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+    <th:block th:if="${links}" th:replace="${links}"></th:block>
+</head>
+<body>
+
+<header th:fragment="header">
+    <div class="header">
+        <a th:href="@{/}" th:text="#{header.nav.main}"></a>
+    </div>
+</header>
+<footer th:fragment="footer">
+    <div class="footer">
+        <a th:href="@{#}" th:text="#{footer.nav.scrollToTop}"></a>
+    </div>
+</footer>
+<th:block th:fragment="js">
+    <script th:src="@{/js/jquery.js}"></script>
+    <script th:src="@{/js/bootstrap.js}"></script>
+</th:block>
+</body>
+</html>
