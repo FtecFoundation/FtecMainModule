@@ -1,0 +1,10 @@
+/*------------------ Link -------------*/
+.no_link:focus{
+    text-decoration: none;
+}
+.no_link:visited{
+    color: inherit;
+}
+.no_link{
+    color: inherit;
+}

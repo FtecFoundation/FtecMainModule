@@ -1,0 +1,12 @@
+/*----------------- FLEXBOX -------------------*/
+.flex-center{
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-flow: row wrap;
+}
+.basis-100{
+    flex-basis: 100%;
+}

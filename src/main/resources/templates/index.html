@@ -1,8 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>First page</title>
-</head>
+<head th:replace="commons/blocks :: titleComp (~{::title}, ~{::link}, ~{::meta})"/>
 <body>
+    <th:block th:replace="commons/blocks :: header"/>
     <div th:utext="#{index.greetings}"></div>
+    <a href="/" class="no_link">Test link</a>
+    <th:block th:replace="commons/blocks :: footer"/>
+    <th:block th:replace="commons/blocks :: js"/>
 </body>
 </html>
