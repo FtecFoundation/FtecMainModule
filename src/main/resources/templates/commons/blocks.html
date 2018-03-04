@@ -6,10 +6,10 @@
     <!-- DEFAULT META -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <th:block th:if="${metas}" th:replace="${metas}"></th:block>
+    <th:block th:if="${metas}" th:replace="${metas}"/>
 
     <!-- DEFAULT LINKS-->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/libs/bootstrap.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/commons/header.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/commons/footer.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/commons/alignment.css}"/>
@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/commons/positions.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/commons/texts.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
-    <th:block th:if="${links}" th:replace="${links}"></th:block>
+    <th:block th:if="${links}" th:replace="${links}"/>
 </head>
 <body>
 
@@ -32,8 +32,9 @@
     </div>
 </footer>
 <th:block th:fragment="js">
-    <script th:src="@{/js/jquery.js}"></script>
-    <script th:src="@{/js/bootstrap.js}"></script>
+    <script th:src="@{/js/libs/jquery.js}"></script>
+    <script th:src="@{/js/libs/bootstrap.js}"></script>
+    <script th:src="@{/js/commons/request}"></script>
 </th:block>
 </body>
 </html>
