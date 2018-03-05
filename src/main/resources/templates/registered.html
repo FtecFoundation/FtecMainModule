@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="templates/blocks :: titleComp (~{::title}, ~{::link}, ~{::meta})">
+    <title th:text="#{page.title}"></title>
+    <meta/>
+    <link/>
+</head>
+<body>
+<th:block th:replace="templates/blocks :: header"/>
+
+<th:block th:replace="templates/blocks :: footer"/>
+<th:block th:replace="templates/blocks :: js"/>
+</body>
+</html>
