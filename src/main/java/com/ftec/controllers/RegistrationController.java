@@ -46,6 +46,7 @@ public class RegistrationController {
         private String password;
         private String email;
         private long referrer;
+        private boolean subscribedToEmail;
 
         public RegistrationUser() {
         }
@@ -80,6 +81,14 @@ public class RegistrationController {
 
         public void setReferrer(long referrer) {
             this.referrer = referrer;
+        }
+
+        public boolean isSubscribedToEmail() {
+            return subscribedToEmail;
+        }
+
+        public void setSubscribedToEmail(boolean subscribedToEmail) {
+            this.subscribedToEmail = subscribedToEmail;
         }
     }
 }

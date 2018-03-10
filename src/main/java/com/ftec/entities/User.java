@@ -68,7 +68,7 @@ public class User {
         this.roles="ROLE_USER";
         this.trial=true;
         this.paymentsMade=0;
-        this.subscribedToEmail=true;
+        this.subscribedToEmail=user.isSubscribedToEmail();
         this.currentStock=Stock.Poloniex;
         this.pendingPartnerBalance=0;
         this.withdrawPartnerBalance=0;
