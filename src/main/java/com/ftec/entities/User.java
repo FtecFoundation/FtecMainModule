@@ -1,15 +1,19 @@
 package com.ftec.entities;
 
+import com.ftec.controllers.RegistrationController;
+import com.ftec.resources.Resources;
 import com.ftec.resources.Stock;
 import com.ftec.resources.TutorialStep;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Random;
 
 @Entity
 public class User {
@@ -50,6 +54,24 @@ public class User {
     private Payment payment;
 
     public User() {
+    }
+
+    public User(RegistrationController.RegistrationUser user){
+        this.login = user.getUsername();
+        this.email = user.getEmail();
+        this.googleSecret = getRandomGoogleSecret();
+        this.balance= Resources.startingBalance;
+        this.tutorialStep=TutorialStep.Step1;
+        this.lang = LocaleContextHolder.getLocale().getLanguage();
+        this.passToken=Resources.disabledPassword;
+        this.qrEnabled=false;
+        this.roles="ROLE_USER";
+        this.trial=true;
+        this.paymentsMade=0;
+        this.subscribedToEmail=true;
+        this.currentStock=Stock.Poloniex;
+        this.pendingPartnerBalance=0;
+        this.withdrawPartnerBalance=0;
     }
 
     public long getId() {
@@ -218,5 +240,17 @@ public class User {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    private String getRandomGoogleSecret(){
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
     }
 }

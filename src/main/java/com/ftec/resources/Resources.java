@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ftec")
 public class Resources {
+    public static final double startingBalance=0;
+    public static final String disabledPassword="NONE";
     public Email email = new Email();
     public Logger logger = new Logger();
     public String appName = "ftec";
