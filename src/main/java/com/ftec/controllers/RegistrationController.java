@@ -23,14 +23,16 @@ public class RegistrationController {
     }
 
     @GetMapping("")
-    public String renderView(@RequestParam(value = "referrer", defaultValue = "0") long referrer, HttpServletRequest req){
+    public String renderView(@RequestParam(value = "referrer", defaultValue = "0") long referrer, HttpServletRequest req, Model m){
         if(referrer!=0) req.setAttribute(sessionReferrerAttributeName, referrer);
+        m.addAttribute("user", new RegistrationUser());
         return "registration";
     }
     @PostMapping("")
     public String registerUser(@Valid RegistrationUser user, BindingResult bindingResult, Model m, HttpServletRequest req){
         if(bindingResult.hasErrors()){
             m.addAttribute("errors",bindingResult.getAllErrors());
+            m.addAttribute("user", user);
             return "registration";
         }
         if(req.getAttribute(sessionReferrerAttributeName)!=null){

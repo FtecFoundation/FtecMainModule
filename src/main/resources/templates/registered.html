@@ -1,12 +1,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="templates/blocks :: titleComp (~{::title}, ~{::link}, ~{::meta})">
-    <title th:text="#{page.title}"></title>
+    <title th:text="#{titles.registered}"></title>
     <meta/>
     <link/>
 </head>
 <body>
 <th:block th:replace="templates/blocks :: header"/>
-
+    <div>
+        <div th:text="#{registered.title}"></div>
+        <div th:text="#{registered.descrption}"></div>
+        <a href="/cabinet" th:text="#{registered.toTutorial}"></a>
+    </div>
 <th:block th:replace="templates/blocks :: footer"/>
 <th:block th:replace="templates/blocks :: js"/>
 </body>

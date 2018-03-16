@@ -1,13 +1,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="templates/blocks :: titleComp (~{::title}, ~{::link}, ~{::meta})">
-    <title th:text="#{page.title}"></title>
+    <title th:text="#{titles.registration}"></title>
     <meta/>
     <link/>
 </head>
 <body>
 <th:block th:replace="templates/blocks :: header"/>
-
+<div>
+    <form action="/registration/" method="post" th:object="${user}">
+        <input type="text" th:name="*{username}" th:value="*{username}" th:placeholder="#{registration.page.username}" required>
+        <input type="text" th:name="*{password}" th:placeholder="#{registration.page.password}" required>
+        <input type="text" th:placeholder="#{registration.page.repeatPassword}">
+        <input type="email" th:name="*{email}" th:value="*{email}" required>
+        <input type="checkbox" id="emailSubscription" th:name="*{subscribedToEmail}" th:value="*{subscribedToEmail}"><label for="emailSubscription" th:text="#{registration.page.emailSubscription}"></label>
+        <input type="checkbox" id="terms" th:value="*{subscribedToEmail}" required><label for="terms"><span th:text="#{registration.page.terms}"></span><a href="/terms" th:text="#{registration.page.terms2}"></a></label>
+        <input type="submit" th:value="#{registration.page.submit}">
+    </form>
+</div>
 <th:block th:replace="templates/blocks :: footer"/>
 <th:block th:replace="templates/blocks :: js"/>
+<!-- TODO
+    Add js check for repeat password field
+-->
 </body>
 </html>
