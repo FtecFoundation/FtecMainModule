@@ -10,10 +10,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
+    private long id;
     private String password, login, roles, secret;
     private boolean expired, locked, enabled, qrEnabled;
 
     public CustomUserDetails(User u) {
+        this.id=u.getId();
         this.password = u.getPassword();
         this.login = u.getLogin();
         this.roles = u.getRoles();
@@ -68,4 +70,12 @@ public class CustomUserDetails implements UserDetails {
         return secret;
     }
     public boolean isQrEnabled(){return qrEnabled;};
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

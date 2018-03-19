@@ -1,7 +1,9 @@
 package com.ftec.repositories.implementations;
 
+import com.ftec.configs.security.CustomUserDetails;
 import com.ftec.entities.User;
 import com.ftec.repositories.interfaces.UserDAO;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -39,5 +41,14 @@ public class UserDAOImpl implements UserDAO{
         return entityManager.createQuery("select u from User u where u.login=:login", User.class)
                 .setParameter("login",login)
                 .getSingleResult();
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        return getById(getAuthenticatedUserId());
+    }
+
+    private long getAuthenticatedUserId(){
+        return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }
 }
