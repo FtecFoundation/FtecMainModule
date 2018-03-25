@@ -47,7 +47,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.addBasenames("classpath:locales/Messages");
         messageSource.addBasenames("classpath:locales/ValidationMessages");
-        messageSource.setCacheSeconds(100000);
+        messageSource.setCacheSeconds(0);
         return messageSource;
     }
 

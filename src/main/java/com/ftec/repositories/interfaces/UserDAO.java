@@ -9,4 +9,5 @@ public interface UserDAO {
     User getById(long id);
     User getByLogin(String login);
     User getAuthenticatedUser();
+    void updateUserLanguage(String newLang, String user);
 }

@@ -2,7 +2,7 @@ package com.ftec.entities;
 
 import com.ftec.controllers.RegistrationController;
 import com.ftec.resources.Resources;
-import com.ftec.resources.Stock;
+import com.ftec.resources.Stocks;
 import com.ftec.resources.TutorialStep;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -42,7 +42,7 @@ public class User {
     private String roles;
     private double pendingPartnerBalance;
     private double withdrawPartnerBalance;
-    private Stock currentStock;
+    private Stocks currentStock;
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
     private Date created;
@@ -69,7 +69,7 @@ public class User {
         this.trial=true;
         this.paymentsMade=0;
         this.subscribedToEmail=user.isSubscribedToEmail();
-        this.currentStock=Stock.Poloniex;
+        this.currentStock=Stocks.Poloniex;
         this.pendingPartnerBalance=0;
         this.withdrawPartnerBalance=0;
     }
@@ -186,11 +186,11 @@ public class User {
         this.withdrawPartnerBalance = withdrawPartnerBalance;
     }
 
-    public Stock getCurrentStock() {
+    public Stocks getCurrentStock() {
         return currentStock;
     }
 
-    public void setCurrentStock(Stock currentStock) {
+    public void setCurrentStock(Stocks currentStock) {
         this.currentStock = currentStock;
     }
 

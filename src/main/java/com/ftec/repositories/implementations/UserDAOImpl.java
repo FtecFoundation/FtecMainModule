@@ -48,6 +48,11 @@ public class UserDAOImpl implements UserDAO{
         return getById(getAuthenticatedUserId());
     }
 
+    @Override
+    public void updateUserLanguage(String newLang, String user) {
+        //TODO implement feature
+    }
+
     private long getAuthenticatedUserId(){
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }

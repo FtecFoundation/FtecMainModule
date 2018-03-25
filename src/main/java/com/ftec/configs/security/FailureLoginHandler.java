@@ -13,7 +13,6 @@ public class FailureLoginHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         request.setAttribute("error", exception.getMessage());
-        System.out.println("Handling");
-        getRedirectStrategy().sendRedirect(request, response, "/");
+        getRedirectStrategy().sendRedirect(request, response, "/login");
     }
 }
