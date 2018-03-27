@@ -10,4 +10,5 @@ public interface UserDAO {
     User getByLogin(String login);
     User getAuthenticatedUser();
     void updateUserLanguage(String newLang, String user);
+    boolean deleteUser(long userId);
 }

@@ -53,6 +53,17 @@ public class UserDAOImpl implements UserDAO{
         //TODO implement feature
     }
 
+    @Override
+    public boolean deleteUser(long userId) {
+        try {
+            return entityManager.createQuery("delete from User where id=:id")
+                    .setParameter("id", userId)
+                    .executeUpdate() == 1;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     private long getAuthenticatedUserId(){
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }

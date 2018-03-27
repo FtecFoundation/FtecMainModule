@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 @Service
 public class RegistrationService {
@@ -24,18 +25,28 @@ public class RegistrationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public boolean registerUser(RegistrationController.RegistrationUser user){
+    @Transactional
+    public long registerUser(RegistrationController.RegistrationUser user){
         User qualifiedUser = new User(user);
         qualifiedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         userDAO.persist(qualifiedUser);
         authUser(qualifiedUser);
         //TODO add partners support
-        return true;
+        return qualifiedUser.getId();
     }
 
     public void authUser(User u){
         CustomUserDetails user = new CustomUserDetails(u);
         Authentication token = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    @Transactional
+    public User getUser(long userId){
+        return userDAO.getById(userId);
+    }
+    @Transactional
+    public boolean deleteUser(long userId){
+        return userDAO.deleteUser(userId);
     }
 }
