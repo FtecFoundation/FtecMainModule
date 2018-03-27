@@ -53,6 +53,14 @@ public class RegistrationController {
         public RegistrationUser() {
         }
 
+        public RegistrationUser(String username, String password, String email, long referrer, boolean subscribedToEmail) {
+            this.username = username;
+            this.password = password;
+            this.email = email;
+            this.referrer = referrer;
+            this.subscribedToEmail = subscribedToEmail;
+        }
+
         public String getUsername() {
             return username;
         }
