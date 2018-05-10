@@ -1,4 +1,4 @@
-package com.ftec.configs.interceptors;
+package com.ftec.configs.middlewares;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;

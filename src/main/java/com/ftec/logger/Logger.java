@@ -1,16 +1,19 @@
 package com.ftec.logger;
 
 import com.ftec.resources.Resources;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Date;
 
 @Service
 public class Logger {
-    @Autowired
-    private Resources resources;
+    private final Resources resources;
+
+    public Logger(Resources resources) {
+        this.resources = resources;
+    }
 
     public enum Categories{
         INFO, BOTS, CHECKS, PAYMENTS, WARNING
@@ -32,11 +35,11 @@ public class Logger {
             e.printStackTrace();
             return;
         }
-        String message ="\n\n"+location + "\n"+
-                "SOE-------------------------------------------------";
+        String message ="\n\n"+new Date()+"Location is"+location +
+                "\nSOE-------------------------------------------------";
         message+="\n"+e.getMessage()+"\n";
-        for(int i=0;i<e.getStackTrace().length||i<resources.logger.exceptionHeight;i++){
-            message+=e.getStackTrace()[i].toString()+"\n";
+        for(StackTraceElement ste: e.getStackTrace()){
+            message+=ste.toString()+"\n";
         }
         message+="EOE-------------------------------------------------";
         try {

@@ -64,6 +64,24 @@ public class UserDAOImpl implements UserDAO{
         }
     }
 
+    //TODO
+    @Override
+    public User getUserByChatId(Long chatId) {
+        return null;
+    }
+
+    //TODO
+    @Override
+    public double getUserBalance(long userId) {
+        return 0;
+    }
+
+    //TODO
+    @Override
+    public String getLocale(long userId) {
+        return null;
+    }
+
     private long getAuthenticatedUserId(){
         return ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
     }

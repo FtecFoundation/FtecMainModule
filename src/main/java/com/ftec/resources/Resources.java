@@ -17,6 +17,8 @@ public class Resources {
     public boolean productionFeatures=false;
     public int paginationRescordsPerPage =10;
 
+    public boolean emulateEmail = false;
+
     public int trialDaysDuration = 7;
     public String defaultLanguage="en";
 

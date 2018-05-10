@@ -1,30 +1,339 @@
 package com.ftec.services;
 
 import com.ftec.logger.Logger;
+import com.ftec.resources.BotReasons;
 import com.ftec.resources.Resources;
+import com.ftec.resources.Stocks;
 import org.apache.commons.mail.HtmlEmail;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import javax.mail.internet.InternetAddress;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MailService {
     //For translations
-    private MessageSource messageSource;
-    private Resources resources;
-    private Logger logger;
+    private final MessageSource messageSource;
+    private final Resources resources;
 
-    @Autowired
+    private final static String loggerFile = "Emails";
+    private final Logger logger;
+
     public MailService(MessageSource messageSource, Resources resources, Logger logger) {
         this.messageSource = messageSource;
         this.resources = resources;
-        this.logger=logger;
+        this.logger = logger;
+    }
+
+    public void sendEmail(List<? extends EmailUser> users, Emails emailType){
+        if(resources.emulateEmail) return;
+        try {
+            List<Locale> uniqueLocales = new ArrayList<>();
+            users.forEach(emailUser -> {
+                if (!uniqueLocales.contains(emailUser.language)) uniqueLocales.add(emailUser.language);
+            });
+            Map<Locale, String> subjects = prepareSubjects(uniqueLocales, emailType);
+            Map<Locale, String> headers = prepareHeaders(uniqueLocales);
+            Map<Locale, String> footers = prepareFooters(uniqueLocales);
+            Map<Locale, String> templates = prepareTemplates(uniqueLocales, emailType);
+            for (EmailUser user : users) {
+                HtmlEmail email = getEmail();
+                if (!user.subscribedToEmail) continue;
+                email.addTo(user.email);
+                email.setSubject(subjects.get(user.language));
+                try {
+                    email.setHtmlMsg(headers.get(user.language)
+                            + insertValues(templates.get(user.language), user.createParams())
+                            + footers.get(user.language));
+                    email.send();
+                }catch (Exception e){
+                    logger.logException("EmailService", "While sending email "+emailType.name()+" to user "+user.email, e);
+                }
+            }
+        }catch (Exception e){
+            logger.logException("EmailService", "While creating email "+emailType.name(), e);
+        }
+    }
+
+    public void sendToMany(List<String> emails, Locale locale, String text){
+        if(resources.emulateEmail) return;
+        try {
+            String message = prepareHeaders(locale)+createInfoBody(locale, text)+prepareFooters(locale);
+            for (int i=emails.size()-1; i>=0; i-=10){
+                HtmlEmail email = getEmail();
+                email.setSubject(prepareSubjects(locale, Emails.InfoEmail));
+                email.setHtmlMsg(message);
+                ArrayList<InternetAddress> addresses = new ArrayList<>();
+                for(int j=0; j<((i>10)?10:i+1); j++){
+                    addresses.add(new InternetAddress(emails.get(i-j)));
+                }
+                email.setTo(addresses);
+                try {
+                    email.send();
+                }catch (Exception e){
+                    logger.logException("EmailService", "While sending email info email to user", e);
+                }
+            }
+        }catch (Exception e){
+            logger.logException("EmailService", "While creating info email", e);
+        }
+    }
+
+    public static abstract class EmailUser{
+        String email;
+        boolean subscribedToEmail;
+        Locale language;
+
+        private EmailUser(String email, boolean subscribedToEmail, Locale language) {
+            this.email = email;
+            this.subscribedToEmail = subscribedToEmail;
+            this.language = language;
+        }
+
+        abstract Map<String, String> createParams();
+    }
+
+    public static class Email_BotTradesUser extends EmailUser{
+        String pair;
+        String login;
+        Stocks stock;
+
+        public Email_BotTradesUser(String email, boolean subscribedToEmail, Locale language, String pair, String login, Stocks stock) {
+            super(email, subscribedToEmail, language);
+            this.pair = pair;
+            this.login = login;
+            this.stock = stock;
+        }
+        public Email_BotTradesUser(String email, boolean subscribedToEmail, String language, String pair, String login, Stocks stock) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.pair = pair;
+            this.login = login;
+            this.stock = stock;
+        }
+
+
+        @Override
+        Map<String, String> createParams(){
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            params.put("$Pair$", pair);
+            params.put("$Stock$", stock.name());
+            return params;
+        }
+
+    }
+    public static class Email_TradeMissed extends EmailUser{
+        private String login;
+        private BotReasons botReason;
+        private Stocks stock;
+
+        public Email_TradeMissed(String email, boolean subscribedToEmail, Locale language, String login, BotReasons botReason, Stocks stock) {
+            super(email, subscribedToEmail, language);
+            this.login = login;
+            this.botReason = botReason;
+            this.stock = stock;
+        }
+        public Email_TradeMissed(String email, boolean subscribedToEmail, String language, String login, BotReasons botReason, Stocks stock) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.login = login;
+            this.botReason = botReason;
+            this.stock = stock;
+        }
+
+        @Override
+        Map<String, String> createParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            params.put("$Reason$", botReason.name());
+            params.put("$Stock$", stock.name());
+            return params;
+        }
+    }
+    public static class Email_UsernameOnly extends EmailUser{
+        String login;
+
+        public Email_UsernameOnly(String email, boolean subscribedToEmail, Locale language, String login) {
+            super(email, subscribedToEmail, language);
+            this.login = login;
+        }
+        public Email_UsernameOnly(String email, boolean subscribedToEmail, String language, String login) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.login = login;
+        }
+
+        @Override
+        Map<String, String> createParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            return params;
+        }
+
+        @Override
+        public String toString() {
+            return "Email_UsernameOnly{" +
+                    "email='" + email + '\'' +
+                    ", subscribedToEmail=" + subscribedToEmail +
+                    ", language=" + language +
+                    ", login='" + login + '\'' +
+                    '}';
+        }
+    }
+    public static class Email_Balance extends EmailUser{
+        String login;
+        public double currentBalance;
+
+        public Email_Balance(String email, boolean subscribedToEmail, Locale language, String login, double currentBalance) {
+            super(email, subscribedToEmail, language);
+            this.login = login;
+            this.currentBalance = currentBalance;
+        }
+        public Email_Balance(String email, boolean subscribedToEmail, String language, String login, double currentBalance) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.login = login;
+            this.currentBalance = currentBalance;
+        }
+
+        @Override
+        Map<String, String> createParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            params.put("$CurrentBalance$", ""+currentBalance);
+            return params;
+        }
+    }
+    public static class Email_BotDisabled extends EmailUser{
+        private String login;
+        private Stocks stock;
+        private BotReasons botReason;
+
+        public Email_BotDisabled(String email, boolean subscribedToEmail, Locale language, String login, Stocks stock, BotReasons botReason) {
+            super(email, subscribedToEmail, language);
+            this.login = login;
+            this.stock = stock;
+            this.botReason = botReason;
+        }
+        public Email_BotDisabled(String email, boolean subscribedToEmail, String language, String login, Stocks stock, BotReasons botReason) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.login = login;
+            this.stock = stock;
+            this.botReason = botReason;
+        }
+
+        @Override
+        Map<String, String> createParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            params.put("$Stock$", stock.name());
+            params.put("$Reason$", botReason.name());
+            return params;
+        }
+    }
+    public static class Email_Link extends EmailUser{
+        String link;
+        String linkName;
+        String login;
+
+        public Email_Link(String email, boolean subscribedToEmail, Locale language, String link, String linkName, String login) {
+            super(email, subscribedToEmail, language);
+            this.link = link;
+            this.linkName = linkName;
+            this.login = login;
+        }
+        public Email_Link(String email, boolean subscribedToEmail, String language, String link, String linkName, String login) {
+            super(email, subscribedToEmail, new Locale(language));
+            this.link = link;
+            this.linkName = linkName;
+            this.login = login;
+        }
+
+        @Override
+        Map<String, String> createParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("$Login$", login);
+            params.put("$Link$", link);
+            params.put("$LinkName$", linkName);
+            return params;
+        }
+    }
+    String createInfoBody(Locale locale, String text) {
+        String answer = prepareTemplates(locale, Emails.InfoEmail);
+        answer = answer.replace("$Text$", text);
+        return answer;
+    }
+
+    private Map<Locale, String> prepareHeaders(List<Locale> uniqueLocales){
+        String prefixPathToHeader = "static/emails/shared/header";
+        Map<Locale, String> headers = new HashMap<>();
+        for(Locale locale:uniqueLocales){
+            headers.put(locale, loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html"));
+        }
+        return headers;
+    }
+    private String prepareHeaders(Locale locale){
+        String prefixPathToHeader = "static/emails/shared/header";
+        return loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html");
+    }
+
+    private String insertValues(String origin, Map<String, String> params){
+        String answer= origin;
+        for(String key:params.keySet()){
+            answer = answer.replace(key, params.get(key));
+        }
+        return (params.size()==0)?origin:answer;
+    }
+
+    private Map<Locale, String> prepareFooters(List<Locale> uniqueLocales){
+        String prefixPathToHeader = "static/emails/shared/footer";
+        Map<Locale, String> headers = new HashMap<>();
+        for(Locale locale:uniqueLocales){
+            headers.put(locale, loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html"));
+        }
+        return headers;
+    }
+
+    private String prepareFooters(Locale locale){
+        String prefixPathToHeader = "static/emails/shared/footer";
+        return loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html");
+    }
+
+    private Map<Locale, String> prepareTemplates(List<Locale> uniqueLocales, Emails emailType){
+        Map<Locale, String> templates = new HashMap<>();
+        for(Locale locale:uniqueLocales){
+            templates.put(locale, loadFile(emailType.getPath()+"_"+locale.getLanguage()+".html"));
+        }
+        return templates;
+    }
+    private String prepareTemplates(Locale locale, Emails emailType){
+        return loadFile(emailType.getPath()+"_"+locale.getLanguage()+".html");
+    }
+
+    private Map<Locale, String> prepareSubjects(List<Locale> uniqueLocales, Emails emailType){
+        Map<Locale, String> themes = new HashMap<>();
+        for(Locale locale:uniqueLocales){
+            themes.put(locale, messageSource.getMessage("letters."+emailType.filePrefix+".subject", new String[]{}, locale));
+        }
+        return themes;
+    }
+    private String prepareSubjects(Locale locale, Emails emailType){
+        return messageSource.getMessage("letters."+emailType.filePrefix+".subject", new String[]{}, locale);
+    }
+
+    private String loadFile(String filename){
+        String fallbackLanguage="en";
+        try {
+            ClassPathResource file = new ClassPathResource(filename);
+            if(!file.exists()) file=new ClassPathResource(filename.substring(0, filename.indexOf("_"))+"_"+fallbackLanguage+".html");
+            return Files.lines(Paths.get(file.getPath()), Charset.forName("utf8")).collect(Collectors.joining());
+        }catch (Exception e){
+            logger.logException(loggerFile, "Loading html content from file "+filename, e);
+        }
+        return null;
     }
 
     /**
@@ -36,43 +345,15 @@ public class MailService {
     public void sendSimpleMessageWithText(String to, String subject, String text) {
         try {
             HtmlEmail email = getEmail();
-            email.setFrom(resources.email.fromName);
+            email.setFrom("admin@coinbot.club");
             email.addTo(to);
             email.setSubject(subject);
+            email.setCharset("utf-8");
             email.setHtmlMsg(text);
             email.send();
         } catch (Exception e) {
-            logger.logException("EmailSender","sendSimpleMessageWithText to user "+to, e);
+            e.printStackTrace();
         }
-    }
-
-    public void sendHtmlMessage(Emails emailType, Map<String, String> texts, String userEmail, Locale letterLocale){
-        try {
-            List<File> imageFiles = new ArrayList<>();
-            List<String> images = emailType.getImages();
-            HtmlEmail email = getEmail();
-            email.setFrom(resources.email.fromName);
-            email.addTo(userEmail);
-
-            if(images!=null)
-                for(String path:images){
-                    imageFiles.add(new ClassPathResource("static/img/email/"+path).getFile());
-                }
-            String emailString = loadFile(emailType.getFilePath());
-
-            for(byte i=0; i<images.size();i++){
-                emailString = emailString.replace("%"+images.get(i)+"%", email.embed(imageFiles.get(i)));
-            }
-            if(texts!=null)
-                for(String key:texts.keySet()){
-                    emailString = emailString.replaceAll(key, messageSource.getMessage(texts.get(key), new String[]{}, letterLocale));
-                }
-
-            email.setHtmlMsg(emailString);
-            email.send();
-        } catch (Exception e){
-            logger.logException("EmailSender", "sendHtmlMessage function, for email "+userEmail+", email type = "+emailType, e);
-       }
     }
 
     private HtmlEmail getEmail(){
@@ -87,48 +368,26 @@ public class MailService {
         }
         return email;
     }
-
-    private String loadFile(String filename){
-        try {
-            byte[] encoded = Files.readAllBytes(Paths.get(new ClassPathResource("static/emails/" + filename).getURI()));
-            return new String(encoded, "UTF-8");
-        }catch (Exception e){
-            logger.logException("EmailCreator", "loadFile for email "+filename+" encountered error",e);
-        }
-        return null;
-    }
-
     public enum Emails{
-        TestEmail;
+        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
+        ManualTrades(EmailUser.class, "ManualTrades"),
+        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
+        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
+        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
+        ForgotPassword(Email_Link.class, "ForgotPassword"),
+        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
+        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
+        InfoEmail(null, "InfoTemplate"),
+        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant");
 
-        public List<String> getImages(){
-            switch (this){
-                case TestEmail:
-                return TestEmail_images;
-            }
-            return null;
+        private String filePrefix;
+
+        //Class only for convenience of which array to pass in sendEmails function
+        Emails(Class userType, String filePrefix){
+            this.filePrefix = filePrefix;
         }
-
-        public String getFilePath(){
-            switch (this){
-                case TestEmail:
-                    return "";
-            }
-            return null;
+        String getPath(){
+            return "static/emails/"+filePrefix+"/main";
         }
-    }
-
-    public final static List<String> TestEmail_images = new ArrayList<String>();
-
-    public static Map<String, String> TestEmail_texts(String login, String link){
-        return new HashMap<String, String>(){
-            {
-                put("$Greetings$","letters.commons.greetings");
-                put("$Login$",login);
-                put("$Description$","letters.ForgotPassword.description");
-                put("$Link$",link);
-                put("$Footer$","letters.commons.footer");
-            }
-        };
     }
 }

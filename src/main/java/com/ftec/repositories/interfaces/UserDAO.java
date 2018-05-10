@@ -11,4 +11,10 @@ public interface UserDAO {
     User getAuthenticatedUser();
     void updateUserLanguage(String newLang, String user);
     boolean deleteUser(long userId);
+
+    User getUserByChatId(Long chatId);
+
+    double getUserBalance(long userId);
+
+    String getLocale(long userId);
 }

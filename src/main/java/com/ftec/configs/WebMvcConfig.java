@@ -1,5 +1,7 @@
 package com.ftec.configs;
 
+import com.ftec.configs.middlewares.BanMiddleware;
+import com.ftec.configs.middlewares.TutorialMiddleware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +22,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter{
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new BanMiddleware()).addPathPatterns("/","/*","/**").excludePathPatterns("/API/**","/API/*","/error/banned");
         registry.addInterceptor(localeChangeInterceptor);
+        registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet","/cabinet/**").excludePathPatterns("/cabinet/tutorial","/cabinet/tutorial/*");
     }
 
     @Bean
