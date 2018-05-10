@@ -22,6 +22,34 @@ public class Resources {
     public int trialDaysDuration = 7;
     public String defaultLanguage="en";
 
+    public String botToken;
+    public boolean webhookUsed;
+    public String botUsername;
+
+    public String getBotToken() {
+        return botToken;
+    }
+
+    public void setBotToken(String botToken) {
+        this.botToken = botToken;
+    }
+
+    public boolean isWebhookUsed() {
+        return webhookUsed;
+    }
+
+    public void setWebhookUsed(boolean webhookUsed) {
+        this.webhookUsed = webhookUsed;
+    }
+
+    public String getBotUsername() {
+        return botUsername;
+    }
+
+    public void setBotUsername(String botUsername) {
+        this.botUsername = botUsername;
+    }
+
     public static class Email{
         public String host_name;
         public int smtp_port;
