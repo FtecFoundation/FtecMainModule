@@ -4,6 +4,7 @@ import com.ftec.controllers.RegistrationController;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.resources.TutorialStep;
+import com.ftec.utils.SessionHolder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -240,6 +241,13 @@ public class User {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public void addToBalance(double amount, boolean updateSession) {
+        this.balance += amount;
+        if (updateSession) {
+            SessionHolder.getSession().setAttribute("balance", balance);
+        }
     }
 
     private String getRandomGoogleSecret(){

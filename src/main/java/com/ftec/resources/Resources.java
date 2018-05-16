@@ -12,6 +12,7 @@ public class Resources {
     public static final String disabledPassword="NONE";
     public Email email = new Email();
     public Logger logger = new Logger();
+    public Endpoints endpoints = new Endpoints();
     public String appName = "ftec";
     public String base_url="https://ftec.io/";
     public boolean productionFeatures=false;
@@ -25,6 +26,10 @@ public class Resources {
     public String botToken;
     public boolean webhookUsed;
     public String botUsername;
+
+
+    public String botsModuleParamName;
+    public String botsModuleAPISecret;
 
     public String getBotToken() {
         return botToken;
@@ -48,6 +53,28 @@ public class Resources {
 
     public void setBotUsername(String botUsername) {
         this.botUsername = botUsername;
+    }
+
+
+    public static class Endpoints{
+        private String botsModule = "";
+        private String socialModule = "";
+
+        public String getSocialModule() {
+            return socialModule;
+        }
+
+        public void setSocialModule(String socialModule) {
+            this.socialModule = socialModule;
+        }
+
+        public String getBotsModule() {
+            return botsModule;
+        }
+
+        public void setBotsModule(String botsModule) {
+            this.botsModule = botsModule;
+        }
     }
 
     public static class Email{
