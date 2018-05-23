@@ -1,6 +1,6 @@
 package com.ftec.configs;
 
-import com.ftec.repositories.interfaces.UserDAO;
+import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;

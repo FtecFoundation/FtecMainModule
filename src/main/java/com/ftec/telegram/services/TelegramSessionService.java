@@ -1,6 +1,6 @@
 package com.ftec.telegram.services;
 
-import com.ftec.repositories.interfaces.UserDAO;
+import com.ftec.repositories.UserDAO;
 import com.ftec.telegram.exceptions.WrongStageException;
 import com.ftec.telegram.resources.Stages;
 import com.ftec.utils.FileUtils;

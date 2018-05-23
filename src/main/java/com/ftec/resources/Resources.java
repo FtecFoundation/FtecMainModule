@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "ftec")
 public class Resources {
     public static final String[] availableLanguages=new String[]{"en", "fr", "de"};
+    public static boolean loggerEnabled;
 
     public static final double startingBalance=0;
     public static final String disabledPassword="NONE";
@@ -162,6 +163,7 @@ public class Resources {
         }
 
         public void setEnabled(boolean enabled) {
+            Resources.loggerEnabled=enabled;
             this.enabled = enabled;
         }
 

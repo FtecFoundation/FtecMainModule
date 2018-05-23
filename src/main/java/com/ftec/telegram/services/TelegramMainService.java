@@ -1,6 +1,6 @@
 package com.ftec.telegram.services;
 
-import com.ftec.repositories.interfaces.UserDAO;
+import com.ftec.repositories.UserDAO;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

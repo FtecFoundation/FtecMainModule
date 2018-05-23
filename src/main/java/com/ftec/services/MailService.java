@@ -18,17 +18,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class MailService {
+
     //For translations
     private final MessageSource messageSource;
     private final Resources resources;
 
     private final static String loggerFile = "Emails";
-    private final Logger logger;
 
-    public MailService(MessageSource messageSource, Resources resources, Logger logger) {
+    public MailService(MessageSource messageSource, Resources resources) {
         this.messageSource = messageSource;
         this.resources = resources;
-        this.logger = logger;
     }
 
     public void sendEmail(List<? extends EmailUser> users, Emails emailType){
@@ -53,11 +52,11 @@ public class MailService {
                             + footers.get(user.language));
                     email.send();
                 }catch (Exception e){
-                    logger.logException("EmailService", "While sending email "+emailType.name()+" to user "+user.email, e);
+                    Logger.logException("While sending email "+emailType.name()+" to user "+user.email, e, true);
                 }
             }
         }catch (Exception e){
-            logger.logException("EmailService", "While creating email "+emailType.name(), e);
+            Logger.logException("While creating email "+emailType.name(), e, true);
         }
     }
 
@@ -77,11 +76,11 @@ public class MailService {
                 try {
                     email.send();
                 }catch (Exception e){
-                    logger.logException("EmailService", "While sending email info email to user", e);
+                    Logger.logException("While sending email info email to user", e, true);
                 }
             }
         }catch (Exception e){
-            logger.logException("EmailService", "While creating info email", e);
+            Logger.logException("While creating info email", e, true);
         }
     }
 
@@ -331,7 +330,7 @@ public class MailService {
             if(!file.exists()) file=new ClassPathResource(filename.substring(0, filename.indexOf("_"))+"_"+fallbackLanguage+".html");
             return Files.lines(Paths.get(file.getPath()), Charset.forName("utf8")).collect(Collectors.joining());
         }catch (Exception e){
-            logger.logException(loggerFile, "Loading html content from file "+filename, e);
+            Logger.logException("Loading html content from file "+filename, e, true);
         }
         return null;
     }

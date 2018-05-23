@@ -3,7 +3,7 @@ package com.ftec.configs;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication(scanBasePackages = {"com.ftec.configs", "com.ftec.resources", "com.ftec.controllers", "com.ftec.services", "com.ftec.logger", "com.ftec.entities", "com.ftec.repositories.implementations"})
 public class ApplicationConfig extends SpringBootServletInitializer {

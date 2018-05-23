@@ -1,66 +1,54 @@
 package com.ftec.logger;
 
 import com.ftec.resources.Resources;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 
-@Service
 public class Logger {
-    private final Resources resources;
 
-    public Logger(Resources resources) {
-        this.resources = resources;
-    }
-
-    public enum Categories{
-        INFO, BOTS, CHECKS, PAYMENTS, WARNING
-    }
-    private String[] categories = {"info", "bots", "checks", "payments", "warnings"};
-    public void log(String filename, Categories category, String message){
-        if(!resources.getLogger().isEnabled()){
-            System.out.println(message);
+    public static void log(String message){
+        String callerName = Thread.currentThread().getStackTrace()[1].getClassName();
+        String messageCompleted = new Date()+"["+callerName+"]"+message;
+        if(!Resources.loggerEnabled){
+            System.out.println(messageCompleted);
             return;
         }
         try {
-            logToFile(resources.getLogger().getPath()+categories[category.ordinal()]+"/"+filename, message+"\n");
+            logToFile("/Logs/"+callerName+".txt", messageCompleted);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void logException(String filename, String location, Exception e){
-        if(!resources.getLogger().isEnabled()){
+    public static void logException(String location, Exception e, boolean printStackTrace){
+        if(!Resources.loggerEnabled){
             e.printStackTrace();
             return;
         }
-        String message ="\n\n"+new Date()+"Location is"+location +
-                "\nSOE-------------------------------------------------";
-        message+="\n"+e.getMessage()+"\n";
-        for(StackTraceElement ste: e.getStackTrace()){
-            message+=ste.toString()+"\n";
-        }
-        message+="EOE-------------------------------------------------";
+        StringBuilder message = new StringBuilder("\n\n").append(location);
+        if(printStackTrace) message.append("\nSOE-------------------------------------------------");
+        message.append("\n").append(e.getClass()).append(", message: ").append(e.getMessage());
+        if(printStackTrace)
+            for(StackTraceElement ste: e.getStackTrace()){
+                message.append(ste.toString()).append("\n");
+            }
+        if(printStackTrace) message.append("EOE-------------------------------------------------");
         try {
-            logToFile(resources.getLogger().getPath()+"exceptions/"+filename+".txt", message);
+            String callerName = Thread.currentThread().getStackTrace()[1].getClassName();
+            logToFile("/exceptions/"+callerName+".txt", message.toString());
         } catch (Exception e2) {
             e2.printStackTrace();
         }
     }
 
-    private void logToFile(String path, String message) throws Exception{
-        FileWriter fw = null;
-        try{
-            File f = new File(path);
-            f.getParentFile().mkdirs();
-            f.createNewFile();
-            fw = new FileWriter(f, true);
-            fw.write(message);
-        } catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            fw.close();
-        }
+    private static void logToFile(String path, String message) throws Exception{
+        File f = new File(path);
+        if(f.getParentFile().mkdirs() && f.createNewFile())
+            try (FileWriter fw = new FileWriter(f, true)) {
+                fw.write(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }

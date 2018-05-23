@@ -1,13 +1,11 @@
 package com.ftec.telegram;
 
 import com.ftec.entities.TelegramSettings;
-import com.ftec.repositories.interfaces.TelegramSettingsDAO;
+import com.ftec.repositories.TelegramSettingsDAO;
 import com.ftec.resources.TelegramNotifications;
 import com.ftec.telegram.exceptions.WrongCodeException;
-import com.ftec.utils.SessionHolder;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -32,11 +30,6 @@ public class TelegramService {
     }
 
     @Transactional
-    public void createCode(){
-        createCode(SessionHolder.getCurrentUserId());
-    }
-
-    @Transactional
     public String createCode(long userId){
         String code = createTelegramCode(userId);
         telegramSettings.saveCode(userId, code);
@@ -44,22 +37,14 @@ public class TelegramService {
     }
     @Transactional
     public void disableTelegram(){
-        TelegramSettings settings = telegramSettings.get(SessionHolder.getCurrentUserId());
-        SendMessage message = new SendMessage();
-        message.setText("Telegram account was successfully unlinked");
-        message.setChatId(settings.getLinkedUserChatId());
-        telegramSettings.deleteCode(SessionHolder.getCurrentUserId());
-        try {
-            if(settings.getLinkedUserChatId()!=0L)
-                SendMessageBot.SendMessage(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+        //TODO implement
+        throw new NotImplementedException();
     }
 
     @Transactional
     public TelegramSettings getSettings(){
-        return getSettings(SessionHolder.getCurrentUserId());
+        //TODO implement
+        throw new NotImplementedException();
     }
     @Transactional
     public TelegramSettings getSettings(long userId){
@@ -67,8 +52,8 @@ public class TelegramService {
     }
     @Transactional
     public void updateSettings(List<TelegramNotifications> telegramSettings){
-        this.telegramSettings.updateNotifications(SessionHolder.getCurrentUserId(), TelegramSettings.convertNotifications(telegramSettings));
-    }
+        //TODO implement
+        throw new NotImplementedException();    }
 
     private String createTelegramCode(long userId){
         return userId+"_"+(int)(new Random().nextDouble()*10000);

@@ -4,7 +4,6 @@ import com.ftec.controllers.RegistrationController;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.resources.TutorialStep;
-import com.ftec.utils.SessionHolder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -18,6 +17,7 @@ import java.util.Random;
 
 @Entity
 public class User {
+    //TODO check constraints; Change to NoSQL document
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
@@ -243,11 +243,8 @@ public class User {
         this.payment = payment;
     }
 
-    public void addToBalance(double amount, boolean updateSession) {
+    public void addToBalance(double amount) {
         this.balance += amount;
-        if (updateSession) {
-            SessionHolder.getSession().setAttribute("balance", balance);
-        }
     }
 
     private String getRandomGoogleSecret(){

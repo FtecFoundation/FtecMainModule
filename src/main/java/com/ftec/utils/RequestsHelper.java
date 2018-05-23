@@ -48,7 +48,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("Requests", "Making url_encoded post request to url "+url, e);
+            logger.logException("Making url_encoded post request to url "+url, e, true);
         }
         return null;
     }
@@ -82,7 +82,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("Requests", "Making raw string request to url "+url, e);
+            logger.logException("Making raw string request to url "+url, e, true);
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("RequestErrors","getHttpRequest: "+url,e);
+            logger.logException("While sending Get httpRequest: "+url,e, true);
         }
         return null;
     }

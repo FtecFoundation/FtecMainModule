@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.entities.User;
 import com.ftec.exceptions.NotEnoughCreditsException;
 import com.ftec.logger.Logger;
-import com.ftec.repositories.interfaces.HistoryDao;
-import com.ftec.repositories.interfaces.UserDAO;
+import com.ftec.repositories.HistoryDao;
+import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.utils.RequestsHelper;
-import com.ftec.utils.SessionHolder;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +24,15 @@ import java.util.Objects;
 public class ArbitrageModule {
     private final RequestsHelper requestsHelper;
     private final UserDAO userDAO;
-    private final Logger logger;
     private final Resources resources;
     private final HistoryDao historyDao;
-    private final String getWindows = "/API/arbitrage/getWindows";
 
-    public final double serviceFee = 0.25;
+    private final double serviceFee = 0.25;
 
     @Autowired
-    public ArbitrageModule(RequestsHelper requestsHelper, UserDAO userDAO, Logger logger, Resources resources, HistoryDao historyDao) {
+    public ArbitrageModule(RequestsHelper requestsHelper, UserDAO userDAO, Resources resources, HistoryDao historyDao) {
         this.requestsHelper = requestsHelper;
         this.userDAO = userDAO;
-        this.logger = logger;
         this.resources = resources;
         this.historyDao = historyDao;
     }
@@ -45,14 +41,14 @@ public class ArbitrageModule {
     public List<ArbitrageWindow> processRequest(double minVolume, double minPercent, Stocks[] stocks, double orderVolume, boolean isOrderVolume, long userId, boolean updateSession) throws NotEnoughCreditsException, Exception {
         User user = getUser(userId);
         if (!user.isTrial() && user.getBalance()<serviceFee){
-            logger.log("ArbitrageController", Logger.Categories.INFO, "User("+user.getLogin()+") tried to use arbitrage module while having not enough credits("+user.getBalance()+")");
+            Logger.log("User("+user.getLogin()+") tried to use arbitrage module while having not enough credits("+user.getBalance()+")");
             throw new NotEnoughCreditsException("Not enough credits");
         }
         List<ArbitrageWindow> windows = getWindows(minVolume, minPercent, stocks, orderVolume, isOrderVolume);
         if(windows==null) throw  new Exception("Module encountered error");
         windows.removeIf(arbitrageWindow -> arbitrageWindow.getProfitPercent() < minPercent || (isOrderVolume && arbitrageWindow.getVolumeOnBuy()<orderVolume) || (isOrderVolume && arbitrageWindow.getVolumeOnSell()<orderVolume));
         if(windows.size()>0 && !user.isTrial() && windows.stream().anyMatch(arbitrageWindow -> !arbitrageWindow.isLockedOnSell()&&!arbitrageWindow.isLockedOnBuy())) {
-            user.addToBalance(-1*serviceFee, updateSession);
+            user.addToBalance(-1*serviceFee);
             processResults(user);
         }
         return windows;
@@ -66,10 +62,6 @@ public class ArbitrageModule {
         userDAO.update(user);
     }
 
-    public List<ArbitrageWindow> processRequest(double minVolume, double minPercent, Stocks[] stocks, double orderVolume, boolean isOrderVolume) throws NotEnoughCreditsException, Exception {
-        return processRequest(minVolume, minPercent, stocks, orderVolume, isOrderVolume, SessionHolder.getCurrentUserId(), true);
-    }
-
     private List<ArbitrageWindow> getWindows(double minVolume, double minPercent, Stocks[] stocks, double orderVolume, boolean isOrderVolume){
         ObjectMapper om = new ObjectMapper();
         StringBuilder stocksString = new StringBuilder();
@@ -77,7 +69,8 @@ public class ArbitrageModule {
             stocksString.append("stocks=").append(stock).append("&");
         }
         stocksString.deleteCharAt(stocksString.length()-1);
-        String answer = makeArbitrageRequest(resources.endpoints.getBotsModule()+getWindows, new ArrayList<NameValuePair>(){
+        String getWindows = "/API/arbitrage/getWindows";
+        String answer = makeArbitrageRequest(resources.endpoints.getBotsModule()+ getWindows, new ArrayList<NameValuePair>(){
             {
                 add(new BasicNameValuePair("minVolume",""+minVolume));
                 add(new BasicNameValuePair("minPercent", ""+minPercent));
@@ -89,7 +82,7 @@ public class ArbitrageModule {
             return om.readValue(answer, new TypeReference<List<ArbitrageWindow>>(){});
         } catch (Exception e) {
             e.printStackTrace();
-            logger.logException("ArbitrageModule", "While mapping values:"+answer, e);
+            Logger.logException("While mapping values:"+answer, e, true);
         }
         return null;
     }
@@ -109,7 +102,7 @@ public class ArbitrageModule {
             };
             return requestsHelper.getHttp(url + "?" + urlParams.toString(), headers);
         }catch (Exception e){
-            logger.logException("ArbitrageModule", "While sending request to arbitrage server module server", e);
+            Logger.logException("While sending request to arbitrage server module server", e, true);
         }
         return null;
     }
