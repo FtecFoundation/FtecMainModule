@@ -1,6 +1,5 @@
 package com.ftec.repositories;
 
-import com.ftec.entities.Statistic;
 import com.ftec.resources.Stocks;
 import com.ftec.resources.TradeTypes;
 

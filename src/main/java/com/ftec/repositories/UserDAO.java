@@ -1,7 +1,5 @@
 package com.ftec.repositories;
 
-import com.ftec.entities.User;
-
 public interface UserDAO {
     void persist(User u);
     void update(User u);
