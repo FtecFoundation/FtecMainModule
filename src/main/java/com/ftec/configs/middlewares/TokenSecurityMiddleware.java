@@ -16,8 +16,7 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		String token = tokenService.getToken(request.getCookies());
-		return tokenService.isValidToken(token);
+		return tokenService.isValidRequest(request);
 	}
 
 }
