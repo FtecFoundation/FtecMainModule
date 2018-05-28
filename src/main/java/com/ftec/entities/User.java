@@ -1,5 +1,7 @@
 package com.ftec.entities;
 
+import com.ftec.configs.enums.TutorialSteps;
+
 public class User {
 
     private long id;
@@ -9,7 +11,9 @@ public class User {
     private String password;
 
     private String email;
-
+    
+    private TutorialSteps step;
+    
     private boolean subscribeForNews;
 
     public User() {
@@ -54,4 +58,12 @@ public class User {
     public void setSubscribeForNews(boolean subscribeForNews) {
         this.subscribeForNews = subscribeForNews;
     }
+
+	public TutorialSteps getStep() {
+		return step;
+	}
+
+	public void setStep(TutorialSteps step) {
+		this.step = step;
+	}
 }

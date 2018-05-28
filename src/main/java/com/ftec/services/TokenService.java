@@ -3,9 +3,7 @@ package com.ftec.services;
 import java.util.Date;
 import java.util.Random;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class TokenService {
 		return getUserIdFromToken(getToken(request));
 	}
 	
-	public static Long getUserIdFromToken(String token) throws InvalidTokenException{//throws Exception
+	private static Long getUserIdFromToken(String token) throws InvalidTokenException{//throws Exception
 		checkTokenFormat(token);
 		return Long.valueOf(token.substring(0, token.indexOf("_")));
 	}
