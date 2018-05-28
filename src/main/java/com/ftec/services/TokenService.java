@@ -26,7 +26,7 @@ public class TokenService {
 		return getUserIdFromToken(getToken(request));
 	}
 	
-	private static Long getUserIdFromToken(String token) throws InvalidTokenException{//throws Exception
+	public static Long getUserIdFromToken(String token) throws InvalidTokenException{ //public vision for testing purposes
 		checkTokenFormat(token);
 		return Long.valueOf(token.substring(0, token.indexOf("_")));
 	}
