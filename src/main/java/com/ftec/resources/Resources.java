@@ -25,7 +25,7 @@ public class Resources {
     public String defaultLanguage="en";
 
     public String botToken;
-    public boolean webhookUsed;
+    public boolean webhookUsed = true;
     public String botUsername;
 
 

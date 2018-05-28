@@ -1,7 +1,11 @@
 package com.ftec.entities;
 
-public class User {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 
+@Document(indexName = "users")
+public class User {
+    @Id
     private long id;
 
     private String username;

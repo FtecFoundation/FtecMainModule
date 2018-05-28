@@ -1,9 +1,9 @@
 package com.ftec.services;
 
-import com.ftec.entities.IdManagement;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
+import com.ftec.services.interfaces.IdManager;
 import com.ftec.services.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private IdManagement idManagement;
+    private final IdManager idManagement;
     private final UserDAO userDAO;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO) {
+    public UserServiceImpl(IdManager idManagement, UserDAO userDAO) {
+        this.idManagement = idManagement;
         this.userDAO = userDAO;
     }
 

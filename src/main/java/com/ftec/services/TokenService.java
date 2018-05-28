@@ -1,18 +1,14 @@
 package com.ftec.services;
 
-import java.util.Date;
-import java.util.Random;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.repositories.UserTokenDAO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Random;
 
 @Service
 public class TokenService {
@@ -69,7 +65,7 @@ public class TokenService {
 	}
 	
 	public boolean isValidRequest(HttpServletRequest request) {
-		UserToken tokenEntity = tokenManager.getTokenEntity(getToken(request));
+		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
 		Date expirationTime = tokenEntity.getExpirationTime();
 		
 		return expirationTime.after(new Date());
