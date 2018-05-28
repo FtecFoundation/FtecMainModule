@@ -1,23 +1,15 @@
 package com.ftec.entities;
 
-import javax.persistence.*;
-
-@Entity
 public class User {
 
-    @Column
     private long id;
 
-    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private boolean subscribeForNews;
 
     public User() {

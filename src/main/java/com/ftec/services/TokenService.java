@@ -17,7 +17,6 @@ import com.ftec.repositories.UserTokenDAO;
 @Service
 public class TokenService {
 	private static final String TOKEN_NAME = "TOKEN-X-AUTH";
-	private static final int EXPIRATION_TIME = 1800;
 	private final UserTokenDAO tokenManager;
 	
 	@Autowired
@@ -47,22 +46,13 @@ public class TokenService {
 		
 	}
 
-	public static String getToken(HttpServletRequest request) {
+	private static String getToken(HttpServletRequest request) {
 		return request.getHeader(TOKEN_NAME);
 	}
-	
-	public static void addTokenAfterSuccessfullLog(Long id, HttpServletResponse response) {
-		String token = generateToken(id);
-		Cookie cookie = new Cookie(TokenService.TOKEN_NAME, token);
-        cookie.setMaxAge(EXPIRATION_TIME); 
-        cookie.setPath("/");
-        response.addCookie(cookie);
-	}
-	
 	public static String generateToken(Long id) {
 		return id.toString() + generateRandomString();
 	}
-	public static String generateRandomString() {
+	private static String generateRandomString() {
 		int leftLimit = 97; 
 	    int rightLimit = 122; 
 	    int targetStringLength = 18;

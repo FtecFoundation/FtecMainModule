@@ -1,6 +1,5 @@
 package com.ftec.services;
 
-import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ public class RegistrationService {
         this.userDAO = userDAO;
     }
 
-    public long registerUser(RegistrationController.RegistrationUser user){
+    public long registerUser(){
         return 0;
     }
 

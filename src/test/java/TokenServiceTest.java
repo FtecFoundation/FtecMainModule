@@ -1,13 +1,12 @@
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+import com.ftec.exceptions.InvalidTokenException;
+import com.ftec.services.TokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ftec.exceptions.InvalidTokenException;
-import com.ftec.services.TokenService;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 public class TokenServiceTest {
@@ -24,7 +23,7 @@ public class TokenServiceTest {
 		Long testId = 199L;
 		String generatedToken = TokenService.generateToken(testId);
 		
-		assertTrue(generatedToken.contains("199_"));
+		assertTrue(generatedToken.startsWith("199_"));
 		
 		String userId = generatedToken.substring(0, generatedToken.indexOf("_"));
 		

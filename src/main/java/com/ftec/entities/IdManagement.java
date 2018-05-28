@@ -1,15 +1,9 @@
 package com.ftec.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
-@Entity
 public class IdManagement {
 
-    @Column
     private static long lastUserId = 0;
 
-    @Column
     private static long lastPaymentId = 0;
 
     public IdManagement() {
