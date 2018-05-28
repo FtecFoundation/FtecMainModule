@@ -1,6 +1,5 @@
 package com.ftec.services;
 
-import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
