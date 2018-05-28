@@ -3,8 +3,6 @@ package com.ftec.telegram.services;
 import com.ftec.repositories.UserDAO;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-
 @Service
 public class TelegramMainService {
     public final UserDAO userDAO;
@@ -13,13 +11,15 @@ public class TelegramMainService {
         this.userDAO = userDAO;
     }
 
-    @Transactional
     public double getCurrentUserBalance(long userId){
-        return userDAO.getUserBalance(userId);
+        // TODO: 5/28/18 Migrate to elasticsearch
+        return 0;
+//        return userDAO.getUserBalance(userId);
     }
 
-    @Transactional
     public String getCurrentLocale(long userId){
-        return userDAO.getLocale(userId);
+        // TODO: 5/28/18 Migrate to elasticsearch 
+        return "";
+//        return userDAO.getLocale(userId);
     }
 }

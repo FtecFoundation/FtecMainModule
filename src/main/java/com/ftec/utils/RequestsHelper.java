@@ -12,16 +12,10 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class RequestsHelper {
-    @Autowired
-    Logger logger;
-
     /**
      *  Method sends a post request to the indicated url with data in url_encoded form
      * @param url url to send post request
@@ -29,7 +23,7 @@ public class RequestsHelper {
      * @param headers additional headers that should be used for request
      * @return server response in string form
      */
-    public String postHttp(String url, List<NameValuePair> params, List<NameValuePair> headers)
+    public static String postHttp(String url, List<NameValuePair> params, List<NameValuePair> headers)
     {
         try {
             HttpPost post = new HttpPost(url);
@@ -48,7 +42,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("Making url_encoded post request to url "+url, e, true);
+            Logger.logException("Making url_encoded post request to url "+url, e, true);
         }
         return null;
     }
@@ -60,7 +54,7 @@ public class RequestsHelper {
      * @param headers additional headers that should be used for request
      * @return server response in string form
      */
-    public String postHttp(String url, String params, List<NameValuePair> headers)
+    public static String postHttp(String url, String params, List<NameValuePair> headers)
     {
         try {
             HttpPost post = new HttpPost(url);
@@ -82,7 +76,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("Making raw string request to url "+url, e, true);
+            Logger.logException("Making raw string request to url "+url, e, true);
         }
         return null;
     }
@@ -93,7 +87,7 @@ public class RequestsHelper {
      * @param headers additional headers should be used for request
      * @return raw string response from requested resource
      */
-    public String getHttp(String url, List<NameValuePair> headers)
+    public static String getHttp(String url, List<NameValuePair> headers)
     {
         try {
             HttpRequestBase request = new HttpGet(url);
@@ -113,7 +107,7 @@ public class RequestsHelper {
 
             }
         } catch (Exception e){
-            logger.logException("While sending Get httpRequest: "+url,e, true);
+            Logger.logException("While sending Get httpRequest: "+url,e, true);
         }
         return null;
     }

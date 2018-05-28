@@ -13,4 +13,5 @@ hibernate*
 *.class
 *.iml
 
-**/application-credentials.*
+*.properties
+*.yml

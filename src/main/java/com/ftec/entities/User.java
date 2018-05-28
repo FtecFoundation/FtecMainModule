@@ -1,23 +1,22 @@
 package com.ftec.entities;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import com.ftec.configs.enums.TutorialSteps;
 
-@Entity
+@Document(indexName = "users")
 public class User {
-
-    @Column
+    @Id
     private long id;
 
-    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String email;
-
-    @Column(nullable = false)
+    
+    private TutorialSteps step;
+    
     private boolean subscribeForNews;
 
     public User() {
@@ -62,4 +61,12 @@ public class User {
     public void setSubscribeForNews(boolean subscribeForNews) {
         this.subscribeForNews = subscribeForNews;
     }
+
+	public TutorialSteps getStep() {
+		return step;
+	}
+
+	public void setStep(TutorialSteps step) {
+		this.step = step;
+	}
 }

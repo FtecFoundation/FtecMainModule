@@ -1,13 +1,8 @@
 package com.ftec.repositories;
 
 import com.ftec.entities.User;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@Repository
-public interface UserDAO {
-
+public interface UserDAO extends ElasticsearchRepository<User, Long> {
     User findById(long id);
-
-    User save(User newUser);
-
 }

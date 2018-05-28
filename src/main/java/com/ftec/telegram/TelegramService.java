@@ -7,7 +7,6 @@ import com.ftec.telegram.exceptions.WrongCodeException;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Random;
 
@@ -19,38 +18,34 @@ public class TelegramService {
         this.telegramSettings = telegramSettings;
     }
 
-    @Transactional
     public void linkChatWithUser(long userId, long chatId, String username, String code) throws WrongCodeException {
-        TelegramSettings settings = telegramSettings.get(userId);
+        TelegramSettings settings = telegramSettings.getByUserId(userId);
         if(!settings.getAccessCode().equals(code)) throw new WrongCodeException("Code you've provided doesn't match with an account you want to link");
         settings.setLinkedUserChatId(chatId);
         settings.setLinkedUsername(username);
         settings.setEnabled(true);
-        telegramSettings.update(settings);
+        telegramSettings.save(settings);
     }
 
-    @Transactional
     public String createCode(long userId){
         String code = createTelegramCode(userId);
-        telegramSettings.saveCode(userId, code);
+        TelegramSettings settings = telegramSettings.getByUserId(userId);
+        settings.setAccessCode(code);
+        telegramSettings.save(settings);
         return code;
     }
-    @Transactional
     public void disableTelegram(){
         //TODO implement
         throw new NotImplementedException();
     }
 
-    @Transactional
     public TelegramSettings getSettings(){
         //TODO implement
         throw new NotImplementedException();
     }
-    @Transactional
     public TelegramSettings getSettings(long userId){
-        return telegramSettings.get(userId);
+        return telegramSettings.getByUserId(userId);
     }
-    @Transactional
     public void updateSettings(List<TelegramNotifications> telegramSettings){
         //TODO implement
         throw new NotImplementedException();    }

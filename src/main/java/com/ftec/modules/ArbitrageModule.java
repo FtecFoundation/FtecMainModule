@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.exceptions.NotEnoughCreditsException;
 import com.ftec.logger.Logger;
-import com.ftec.repositories.HistoryDao;
-import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.utils.RequestsHelper;
@@ -14,51 +12,34 @@ import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 public class ArbitrageModule {
-    private final RequestsHelper requestsHelper;
-    private final UserDAO userDAO;
     private final Resources resources;
-    private final HistoryDao historyDao;
 
     private final double serviceFee = 0.25;
 
     @Autowired
-    public ArbitrageModule(RequestsHelper requestsHelper, UserDAO userDAO, Resources resources, HistoryDao historyDao) {
-        this.requestsHelper = requestsHelper;
-        this.userDAO = userDAO;
+    public ArbitrageModule(Resources resources) {
         this.resources = resources;
-        this.historyDao = historyDao;
     }
 
-    @Transactional
     public List<ArbitrageWindow> processRequest(double minVolume, double minPercent, Stocks[] stocks, double orderVolume, boolean isOrderVolume, long userId, boolean updateSession) throws NotEnoughCreditsException, Exception {
-        User user = getUser(userId);
-        if (!user.isTrial() && user.getBalance()<serviceFee){
-            Logger.log("User("+user.getLogin()+") tried to use arbitrage module while having not enough credits("+user.getBalance()+")");
-            throw new NotEnoughCreditsException("Not enough credits");
-        }
+//        if (!user.isTrial() && user.getBalance()<serviceFee){
+//            Logger.log("User("+user.getLogin()+") tried to use arbitrage module while having not enough credits("+user.getBalance()+")");
+//            throw new NotEnoughCreditsException("Not enough credits");
+//        }
         List<ArbitrageWindow> windows = getWindows(minVolume, minPercent, stocks, orderVolume, isOrderVolume);
         if(windows==null) throw  new Exception("Module encountered error");
         windows.removeIf(arbitrageWindow -> arbitrageWindow.getProfitPercent() < minPercent || (isOrderVolume && arbitrageWindow.getVolumeOnBuy()<orderVolume) || (isOrderVolume && arbitrageWindow.getVolumeOnSell()<orderVolume));
-        if(windows.size()>0 && !user.isTrial() && windows.stream().anyMatch(arbitrageWindow -> !arbitrageWindow.isLockedOnSell()&&!arbitrageWindow.isLockedOnBuy())) {
-            user.addToBalance(-1*serviceFee);
-            processResults(user);
-        }
+//        if(windows.size()>0 && !user.isTrial() && windows.stream().anyMatch(arbitrageWindow -> !arbitrageWindow.isLockedOnSell()&&!arbitrageWindow.isLockedOnBuy())) {
+//            user.addToBalance(-1*serviceFee);
+//            processResults(user);
+//        }
         return windows;
-    }
-
-    public User getUser(long userId){
-        return userDAO.getById(userId);
-    }
-    public void processResults(User user){
-        historyDao.addHistoryToUser(user,-1*serviceFee, "historyDao.arbitrageFee");
-        userDAO.update(user);
     }
 
     private List<ArbitrageWindow> getWindows(double minVolume, double minPercent, Stocks[] stocks, double orderVolume, boolean isOrderVolume){
@@ -99,7 +80,7 @@ public class ArbitrageModule {
                     add(new BasicNameValuePair(resources.botsModuleParamName, resources.botsModuleAPISecret));
                 }
             };
-            return requestsHelper.getHttp(url + "?" + urlParams.toString(), headers);
+            return RequestsHelper.getHttp(url + "?" + urlParams.toString(), headers);
         }catch (Exception e){
             Logger.logException("While sending request to arbitrage server module server", e, true);
         }
