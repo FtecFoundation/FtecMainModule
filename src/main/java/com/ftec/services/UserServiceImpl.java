@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private IdManagement idManagement;
     private final UserDAO userDAO;
 
     @Autowired
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public User registerNewUserAccount(User user) throws UserExistException {
         try {
             User newUser = new User();
-            newUser.setId(IdManagement.getLastUserId()+1);
+            newUser.setId(IdManagement.getLastUserId() + 1);
             newUser.setUsername(user.getUsername());
             newUser.setPassword(user.getPassword());
             newUser.setEmail(user.getEmail());
