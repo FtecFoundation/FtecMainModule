@@ -7,15 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.repositories.UserTokenDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Random;
 
 @Service
 public class TokenService {
@@ -52,9 +47,11 @@ public class TokenService {
 	private static String getToken(HttpServletRequest request) {
 		return request.getHeader(TOKEN_NAME);
 	}
+	
 	public static String generateToken(Long id) {
 		return id.toString() + generateRandomString();
 	}
+	
 	private static String generateRandomString() {
 		int leftLimit = 97; 
 	    int rightLimit = 122; 
