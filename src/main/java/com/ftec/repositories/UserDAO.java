@@ -8,4 +8,6 @@ public interface UserDAO {
 
     User findById(long id);
 
+    User save(User newUser);
+
 }
