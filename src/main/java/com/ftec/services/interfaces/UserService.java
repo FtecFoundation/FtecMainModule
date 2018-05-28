@@ -7,6 +7,6 @@ public interface UserService {
 
     User getById(long id);
 
-    User registerNewUserAccount(User newUser) throws UserExistException;
+    User registerNewUserAccount(User user) throws UserExistException;
 
 }

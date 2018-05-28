@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class User {
 
     @Column
-    private IdManagement id;
+    private long id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -23,11 +23,11 @@ public class User {
     public User() {
     }
 
-    public IdManagement getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(IdManagement id) {
+    public void setId(long id) {
         this.id = id;
     }
 
