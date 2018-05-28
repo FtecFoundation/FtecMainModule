@@ -11,15 +11,22 @@ import com.ftec.entities.User;
 public class EnumTest {
 
 	@Test
-	public void testNextEnum() {
+	public void setNextStepTest() {
 		User u = new User();
 		u.setStep(TutorialSteps.FIRST); //should be by default
 		TutorialSteps.setNextStep(u);
 
 		assertTrue(TutorialSteps.SECOND.equals(u.getStep()));
-		}
+	}
 	@Test
 	public void getNextStepTest() {
 		assertTrue(TutorialSteps.getNextStep(TutorialSteps.FIRST).equals(TutorialSteps.SECOND));
 	}
+	
+	@Test
+	public void returnsNullTest() {		
+		assertTrue(TutorialSteps.getNextStep(TutorialSteps.THIRD) == null);
+
+	}
+	
 }
