@@ -59,6 +59,7 @@
 			<artifactId>telegrambots</artifactId>
 			<version>3.6</version>
 		</dependency>
+		
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
