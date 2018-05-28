@@ -6,7 +6,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-@SpringBootApplication(scanBasePackages = {"com.ftec.configs", "com.ftec.resources", "com.ftec.controllers", "com.ftec.services", "com.ftec.logger", "com.ftec.entities", "com.ftec.repositories.implementations"})
+@SpringBootApplication(scanBasePackages = {"com.ftec.*"})
 @EnableElasticsearchRepositories("com.ftec.repositories")
 public class ApplicationConfig extends SpringBootServletInitializer {
     //Also added configuration for tomcat starting

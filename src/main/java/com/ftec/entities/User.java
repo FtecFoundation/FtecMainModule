@@ -1,9 +1,12 @@
 package com.ftec.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import com.ftec.configs.enums.TutorialSteps;
 
+@Document(indexName = "users")
 public class User {
-
+    @Id
     private long id;
 
     private String username;
