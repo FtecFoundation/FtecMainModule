@@ -30,12 +30,4 @@ public class IdManagement {
     public static void setLastPaymentId(long lastPaymentId) {
         IdManagement.lastPaymentId = lastPaymentId;
     }
-
-    public static long incrementLastUserId() {
-        return lastUserId++;
-    }
-
-    public static long incrementLastPaymentId() {
-        return lastPaymentId++;
-    }
 }

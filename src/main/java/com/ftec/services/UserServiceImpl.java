@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public User registerNewUserAccount(User user) throws UserExistException {
         try {
             User newUser = new User();
-//            newUser.setId();
+            newUser.setId(IdManagement.getLastUserId()+1);
             newUser.setUsername(user.getUsername());
             newUser.setPassword(user.getPassword());
             newUser.setEmail(user.getEmail());
