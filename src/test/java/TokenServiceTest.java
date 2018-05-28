@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.services.TokenService;
 
 @RunWith(SpringRunner.class)
@@ -30,16 +31,16 @@ public class TokenServiceTest {
 		assertThat(Long.valueOf(userId), is(testId));
 	}
 	
-//	@Test(expected = IndexOutOfBoundsException.class)
-//	public void firstTestExceptionWhileInvalidTokenFormat() {
-//		TokenService.checkTokenFormat("23a_NDKJAWNWKAJDNAkWKDNAW");
-//		
-//		
-//	}
-//	@Test(expected = IndexOutOfBoundsException.class)
-//	public void secondTestExceptionWhileInvalidTokenFormat() {
-//		TokenService.checkTokenFormat("23aNDKJAWNWKAJDNAkWKDNAW");
-//		
-//		
-//	}
+	@Test(expected = InvalidTokenException.class)
+	public void firstTestExceptionWhileInvalidTokenFormat() {
+		TokenService.checkTokenFormat("23a_NDKJAWNWKAJDNAkWKDNAW");
+		
+		
+	}
+	@Test(expected = InvalidTokenException.class)
+	public void secondTestExceptionWhileInvalidTokenFormat() {
+		TokenService.checkTokenFormat("23aNDKJAWNWKAJDNAkWKDNAW");
+		
+		
+	}
 }
