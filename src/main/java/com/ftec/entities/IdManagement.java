@@ -7,27 +7,20 @@ import javax.persistence.Entity;
 public class IdManagement {
 
     @Column
-    private static long lastUserId = 0;
-
-    @Column
-    private static long lastPaymentId = 0;
+    private static long lastId = 0;
 
     public IdManagement() {
     }
 
-    public static long getLastUserId() {
-        return lastUserId;
+    public static long getLastId(Class<User> userClass) {
+        return lastId;
     }
 
-    public static void setLastUserId(long lastUserId) {
-        IdManagement.lastUserId = lastUserId;
+    public static void setLastId(long lastId) {
+        IdManagement.lastId = lastId;
     }
 
-    public static long getLastPaymentId() {
-        return lastPaymentId;
-    }
-
-    public static void setLastPaymentId(long lastPaymentId) {
-        IdManagement.lastPaymentId = lastPaymentId;
+    public static long incrementLastId() {
+        return lastId++;
     }
 }
