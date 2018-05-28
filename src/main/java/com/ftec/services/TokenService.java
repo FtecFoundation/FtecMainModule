@@ -1,5 +1,12 @@
 package com.ftec.services;
 
+import java.util.Date;
+import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.repositories.UserTokenDAO;
@@ -24,7 +31,7 @@ public class TokenService {
 		return getUserIdFromToken(getToken(request));
 	}
 	
-	public static Long getUserIdFromToken(String token) throws InvalidTokenException{//throws Exception
+	private static Long getUserIdFromToken(String token) throws InvalidTokenException{//throws Exception
 		checkTokenFormat(token);
 		return Long.valueOf(token.substring(0, token.indexOf("_")));
 	}

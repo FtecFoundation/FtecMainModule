@@ -2,6 +2,7 @@ package com.ftec.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import com.ftec.configs.enums.TutorialSteps;
 
 @Document(indexName = "users")
 public class User {
@@ -13,7 +14,9 @@ public class User {
     private String password;
 
     private String email;
-
+    
+    private TutorialSteps step;
+    
     private boolean subscribeForNews;
 
     public User() {
@@ -58,4 +61,12 @@ public class User {
     public void setSubscribeForNews(boolean subscribeForNews) {
         this.subscribeForNews = subscribeForNews;
     }
+
+	public TutorialSteps getStep() {
+		return step;
+	}
+
+	public void setStep(TutorialSteps step) {
+		this.step = step;
+	}
 }
