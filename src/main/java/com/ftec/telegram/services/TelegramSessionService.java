@@ -49,10 +49,14 @@ public class TelegramSessionService {
     }
 
     private long getUserIdByChatId(Update update){
-        return userDAO.getUserByChatId(update.getMessage().getChatId()).getId();
+        //TODO migrate to elasticsearch
+        return 0;
+//        return userDAO.getUserByChatId(update.getMessage().getChatId()).getId();
     }
     private long getUserIdByChatId(long chatId){
-        return userDAO.getUserByChatId(chatId).getId();
+        //TODO migrate to elasticsearch
+        return 0;
+//        return userDAO.getUserByChatId(chatId).getId();
     }
     public void setCurrentLocale(Update update, String locale){
         setCurrentLocale(getKey(update), locale);

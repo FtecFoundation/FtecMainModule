@@ -1,13 +1,11 @@
 package com.ftec.repositories;
 
-
 import com.ftec.entities.TelegramSettings;
+import org.springframework.data.elasticsearch.annotations.Query;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-public interface TelegramSettingsDAO {
-    void persist(TelegramSettings settings);
-    void update(TelegramSettings settings);
-    void updateNotifications(long userId, String notifications);
-    TelegramSettings get(long id);
-    void deleteCode(long userId);
-    void saveCode(long userId, String newCode);
+public interface TelegramSettingsDAO extends ElasticsearchRepository<TelegramSettings, String> {
+    TelegramSettings getByUserId(long userId);
+    @Query
+    void updateCode();
 }

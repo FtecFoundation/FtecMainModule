@@ -1,7 +1,6 @@
 package com.ftec.services;
 
 import com.ftec.logger.Logger;
-import com.ftec.resources.BotReasons;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import org.apache.commons.mail.HtmlEmail;
@@ -22,8 +21,6 @@ public class MailService {
     //For translations
     private final MessageSource messageSource;
     private final Resources resources;
-
-    private final static String loggerFile = "Emails";
 
     public MailService(MessageSource messageSource, Resources resources) {
         this.messageSource = messageSource;
@@ -129,19 +126,16 @@ public class MailService {
     }
     public static class Email_TradeMissed extends EmailUser{
         private String login;
-        private BotReasons botReason;
         private Stocks stock;
 
-        public Email_TradeMissed(String email, boolean subscribedToEmail, Locale language, String login, BotReasons botReason, Stocks stock) {
+        public Email_TradeMissed(String email, boolean subscribedToEmail, Locale language, String login, Stocks stock) {
             super(email, subscribedToEmail, language);
             this.login = login;
-            this.botReason = botReason;
             this.stock = stock;
         }
-        public Email_TradeMissed(String email, boolean subscribedToEmail, String language, String login, BotReasons botReason, Stocks stock) {
+        public Email_TradeMissed(String email, boolean subscribedToEmail, String language, String login, Stocks stock) {
             super(email, subscribedToEmail, new Locale(language));
             this.login = login;
-            this.botReason = botReason;
             this.stock = stock;
         }
 
@@ -149,7 +143,6 @@ public class MailService {
         Map<String, String> createParams() {
             Map<String, String> params = new HashMap<>();
             params.put("$Login$", login);
-            params.put("$Reason$", botReason.name());
             params.put("$Stock$", stock.name());
             return params;
         }
@@ -209,19 +202,16 @@ public class MailService {
     public static class Email_BotDisabled extends EmailUser{
         private String login;
         private Stocks stock;
-        private BotReasons botReason;
 
-        public Email_BotDisabled(String email, boolean subscribedToEmail, Locale language, String login, Stocks stock, BotReasons botReason) {
+        public Email_BotDisabled(String email, boolean subscribedToEmail, Locale language, String login, Stocks stock) {
             super(email, subscribedToEmail, language);
             this.login = login;
             this.stock = stock;
-            this.botReason = botReason;
         }
-        public Email_BotDisabled(String email, boolean subscribedToEmail, String language, String login, Stocks stock, BotReasons botReason) {
+        public Email_BotDisabled(String email, boolean subscribedToEmail, String language, String login, Stocks stock) {
             super(email, subscribedToEmail, new Locale(language));
             this.login = login;
             this.stock = stock;
-            this.botReason = botReason;
         }
 
         @Override
@@ -229,7 +219,6 @@ public class MailService {
             Map<String, String> params = new HashMap<>();
             params.put("$Login$", login);
             params.put("$Stock$", stock.name());
-            params.put("$Reason$", botReason.name());
             return params;
         }
     }
@@ -260,7 +249,7 @@ public class MailService {
             return params;
         }
     }
-    String createInfoBody(Locale locale, String text) {
+    private String createInfoBody(Locale locale, String text) {
         String answer = prepareTemplates(locale, Emails.InfoEmail);
         answer = answer.replace("$Text$", text);
         return answer;
@@ -344,7 +333,7 @@ public class MailService {
     public void sendSimpleMessageWithText(String to, String subject, String text) {
         try {
             HtmlEmail email = getEmail();
-            email.setFrom("admin@coinbot.club");
+            email.setFrom("example@example.com");
             email.addTo(to);
             email.setSubject(subject);
             email.setCharset("utf-8");
@@ -367,17 +356,18 @@ public class MailService {
         }
         return email;
     }
+    //Temporary disable unused messages
     public enum Emails{
-        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
-        ManualTrades(EmailUser.class, "ManualTrades"),
-        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
-        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
-        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
-        ForgotPassword(Email_Link.class, "ForgotPassword"),
-        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
-        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
-        InfoEmail(null, "InfoTemplate"),
-        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant");
+//        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
+//        ManualTrades(EmailUser.class, "ManualTrades"),
+//        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
+//        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
+//        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
+//        ForgotPassword(Email_Link.class, "ForgotPassword"),
+//        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
+//        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
+//        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant"),
+        InfoEmail(null, "InfoTemplate");
 
         private String filePrefix;
 
