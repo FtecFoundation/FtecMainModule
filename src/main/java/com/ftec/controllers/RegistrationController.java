@@ -22,11 +22,13 @@ public class RegistrationController {
 
     private final UserService userService;
     private final IdManagerImpl idManager;
+    private final TokenService tokenService;
     
     @Autowired
-    public RegistrationController(UserService userService, IdManagerImpl idManager) {
+    public RegistrationController(UserService userService, IdManagerImpl idManager, TokenService tokenService) {
         this.userService = userService;
         this.idManager = idManager;
+        this.tokenService = tokenService;
     }
 
     @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
@@ -41,8 +43,8 @@ public class RegistrationController {
         }
     }
     
-    //TODO fix argument 
+    //TODO fix argument, its always returns token like "1_bla-bla-bla", increments does not works
 	public void sendToken(HttpServletResponse respone) {
-		respone.addHeader(TokenService.TOKEN_NAME, TokenService.generateToken(idManager.getLastId("ids")));
+		respone.addHeader(TokenService.TOKEN_NAME, tokenService.createAndGetToken(idManager.getLastId("ids")));
 	}
 }

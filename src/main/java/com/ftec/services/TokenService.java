@@ -48,6 +48,15 @@ public class TokenService {
 		return request.getHeader(TOKEN_NAME);
 	}
 	
+	public String createAndGetToken(Long id) {
+		String token = generateToken(id);
+		Date expiration = new Date();
+		expiration.setTime(expiration.getTime() + 1800000); //test it later
+		tokenManager.save(new UserToken(token, expiration));
+		
+		return token;
+	}
+
 	public static String generateToken(Long id) {
 		return id.toString() + generateRandomString();
 	}
@@ -71,7 +80,7 @@ public class TokenService {
 	public boolean isValidRequest(HttpServletRequest request) {
 		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
 		Date expirationTime = tokenEntity.getExpirationTime();
-		
+
 		return expirationTime.after(new Date());
 	}
 
