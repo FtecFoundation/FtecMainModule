@@ -11,4 +11,6 @@ public interface UserDAO extends ElasticsearchRepository<User, Long> {
     Optional<User> findById(Long id);
 
     List<User> findAll();
+
+    Optional<User> findByName(String name);
 }
