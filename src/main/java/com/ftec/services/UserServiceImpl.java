@@ -8,6 +8,9 @@ import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.UserService;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -24,11 +27,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerNewUserAccount(User user) throws UserExistException {
+    public void registerNewUserAccount(User user) throws UserExistException {
         try {
-            return userDAO.save(user);
+            userDAO.save(user);
         } catch (Exception e) {
-            throw new UserExistException();
+            List<User> allUsers = userDAO.findAll();
+            for (User allUser : allUsers) {
+                if (allUser.equals(user)) {
+                    throw new UserExistException();
+                }
+            }
         }
     }
 }
