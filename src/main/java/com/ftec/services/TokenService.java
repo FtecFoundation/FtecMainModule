@@ -14,7 +14,7 @@ import com.ftec.repositories.UserTokenDAO;
 
 @Service
 public class TokenService {
-	private static final String TOKEN_NAME = "TOKEN-X-AUTH";
+	public static final String TOKEN_NAME = "TOKEN-X-AUTH";
 	private final UserTokenDAO tokenManager;
 	
 	@Autowired
