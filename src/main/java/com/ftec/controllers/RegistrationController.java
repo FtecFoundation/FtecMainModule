@@ -36,7 +36,7 @@ public class RegistrationController {
     public ResponseEntity<User> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
     	try {
             userService.registerNewUserAccount(user);
-            sendToken(respone); 
+            sendToken(user, respone); //user should have own id after invoke registerNewUserAccount()
             
             return new ResponseEntity<User>(HttpStatus.CREATED);
         } catch (UserExistException e) {
@@ -44,9 +44,8 @@ public class RegistrationController {
         }
     }
     
-    //TODO fix argument, its always returns token like "1_bla-bla-bla", increment does not works
-	public void sendToken(HttpServletResponse respone) {
-		String token = tokenService.saveAndGetNewToken(idManager.getLastId(ID_TABLE));
+	public void sendToken(User user, HttpServletResponse respone) {
+		String token = tokenService.saveAndGetNewToken(user.getId());
 		respone.addHeader(TokenService.TOKEN_NAME, token);
 	}
 }

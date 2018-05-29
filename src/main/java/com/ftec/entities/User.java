@@ -71,4 +71,9 @@ public class User {
 	public void setCurrentStep(TutorialSteps step) {
 		this.currentStep = step;
 	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
+	}
 }

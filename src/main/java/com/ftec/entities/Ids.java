@@ -33,4 +33,9 @@ public class Ids {
     public void setLastId(long lastId) {
         this.lastId = lastId;
     }
+
+	@Override
+	public String toString() {
+		return "Ids [tableName=" + tableName + ", lastId=" + lastId + "]";
+	}
 }
