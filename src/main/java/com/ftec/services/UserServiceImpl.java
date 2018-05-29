@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
      * @param username - users name
      * @return {@code true} if there is a User present, otherwise {@code false}.
      */
-    private boolean checkForUniqueUsername(String username) {
+    public boolean checkForUniqueUsername(String username) {
         boolean valueToReturn = false;
         Optional<User> userInDb = userDAO.findByUsername(username);
 
