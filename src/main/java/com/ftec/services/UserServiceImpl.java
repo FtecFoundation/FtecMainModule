@@ -1,11 +1,12 @@
 package com.ftec.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,7 +20,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getById(long id) {
-        return userDAO.findById(id);
+        return userDAO.findById(id).get();
     }
 
     @Override

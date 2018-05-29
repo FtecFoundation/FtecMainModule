@@ -24,15 +24,15 @@ public class EnumController {
 	@PostMapping("/nextStep")
 	public TutorialSteps nextStep(HttpServletRequest request) {
 		Long userId = TokenService.getUserIdFromToken(request);
-		User user = userDao.findById(userId);
+		User user = userDao.findById(userId).get();
 		TutorialSteps.setNextStep(user);
 		return user.getStep();
 	}
-	
+	//add verification on null
 	@GetMapping("/getCurrentStep")
 	public TutorialSteps getCurrentStep(HttpServletRequest request) {
 		Long userId = TokenService.getUserIdFromToken(request);
-		User user = userDao.findById(userId);
+		User user = userDao.findById(userId).get();
 		return user.getStep();		
 	}
 
