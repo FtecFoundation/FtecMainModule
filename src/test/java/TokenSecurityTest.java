@@ -45,7 +45,7 @@ public class TokenSecurityTest {
 	//failed test, getByToken from UserTokenDAO can't convert json-data with Date field into UserToken
 	@Test
 	public void securityAccess() throws Exception {
-		String token = tokenService.createAndGetToken(255L);
+		String token = tokenService.saveAndGetNewToken(255L);
 		System.out.println("generate token = " + token);
 		
 		mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")

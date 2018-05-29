@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Document(indexName = "usertokens")
 public class UserToken {
+	
 	@Id
 	private String token;
 	

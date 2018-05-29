@@ -7,6 +7,7 @@ import com.ftec.configs.enums.TutorialSteps;
 
 @Document(indexName = "users")
 public class User {
+	
     @Id
     private long id;
 
@@ -16,7 +17,7 @@ public class User {
 
     private String email;
     
-    private TutorialSteps step;
+    private TutorialSteps currentStep;
     
     private boolean subscribeForNews;
 
@@ -64,10 +65,10 @@ public class User {
     }
 
 	public TutorialSteps getStep() {
-		return step;
+		return currentStep;
 	}
 
-	public void setStep(TutorialSteps step) {
-		this.step = step;
+	public void setCurrentStep(TutorialSteps step) {
+		this.currentStep = step;
 	}
 }

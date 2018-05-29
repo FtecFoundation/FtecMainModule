@@ -5,6 +5,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Document(indexName = "ids")
 public class Ids {
+	
     @Id
     private String tableName = "";
     private long lastId = 0;

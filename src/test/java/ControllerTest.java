@@ -72,7 +72,7 @@ public class ControllerTest {
 	public void dublicateUsername() throws Exception {
 		String userName = "tester2";
 		User u = newUser(userName);
-		u.setId(234L);
+		u.setId(235L);
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
@@ -86,7 +86,7 @@ public class ControllerTest {
 		
 		assertTrue(userService.isDuplicateUserName(userName));
 		
-		dao.deleteById(234L);
+		dao.deleteById(235L);
 	}
 	/* test increment id
 	 assertTrue( idManager.getLastId("ids") == 2);

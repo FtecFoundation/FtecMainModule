@@ -8,6 +8,6 @@ import com.ftec.entities.User;
 
 public interface UserDAO extends ElasticsearchRepository<User, Long> {
 	 
-	 Optional<User> findById(Long id);
+	 Optional<User> findById(long id);
 	 Optional<User> findByUsername(String Username);
 }

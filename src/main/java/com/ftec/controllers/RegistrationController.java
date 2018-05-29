@@ -23,6 +23,7 @@ public class RegistrationController {
     private final UserService userService;
     private final IdManagerImpl idManager;
     private final TokenService tokenService;
+    private final String ID_TABLE = "ids";
     
     @Autowired
     public RegistrationController(UserService userService, IdManagerImpl idManager, TokenService tokenService) {
@@ -43,8 +44,9 @@ public class RegistrationController {
         }
     }
     
-    //TODO fix argument, its always returns token like "1_bla-bla-bla", increments does not works
+    //TODO fix argument, its always returns token like "1_bla-bla-bla", increment does not works
 	public void sendToken(HttpServletResponse respone) {
-		respone.addHeader(TokenService.TOKEN_NAME, tokenService.createAndGetToken(idManager.getLastId("ids")));
+		String token = tokenService.saveAndGetNewToken(idManager.getLastId(ID_TABLE));
+		respone.addHeader(TokenService.TOKEN_NAME, token);
 	}
 }
