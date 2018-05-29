@@ -23,6 +23,7 @@ public class RegistrationController {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User user) throws UserExistException {
         try {
+            //implement return token
             userService.registerNewUserAccount(user);
             return new ResponseEntity<User>(HttpStatus.CREATED);
         } catch (UserExistException e) {

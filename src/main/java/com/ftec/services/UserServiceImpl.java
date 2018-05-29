@@ -30,6 +30,4 @@ public class UserServiceImpl implements UserService {
             throw new UserExistException();
         }
     }
-
-
 }
