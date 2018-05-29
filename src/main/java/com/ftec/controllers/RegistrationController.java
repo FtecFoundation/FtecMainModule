@@ -29,15 +29,20 @@ public class RegistrationController {
         this.idManager = idManager;
     }
 
-    @RequestMapping(path = "", method = RequestMethod.POST)
+    @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
-        try {
+    	try {
             userService.registerNewUserAccount(user);
-            respone.addHeader(TokenService.TOKEN_NAME, TokenService.generateToken(idManager.getLastId(table))); //TODO fix argument
+            sendToken(respone); 
             
             return new ResponseEntity<User>(HttpStatus.CREATED);
         } catch (UserExistException e) {
             return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
         }
     }
+    
+    //TODO fix argument 
+	public void sendToken(HttpServletResponse respone) {
+		respone.addHeader(TokenService.TOKEN_NAME, TokenService.generateToken(idManager.getLastId("ids")));
+	}
 }
