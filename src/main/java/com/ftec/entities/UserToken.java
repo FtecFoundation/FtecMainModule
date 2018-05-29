@@ -9,9 +9,12 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class UserToken {
 	@Id
 	private String token;
-//	@Field(type = FieldType.Date, store = true, format = DateFormat.custom, pattern="yyyy-MM-dd HH:mm:ss +SSSS")
+	
 	private Date expirationTime;
 	
+	public UserToken() {
+		
+	}
 	public UserToken(String token, Date expirationTime) {
 		this.token = token;
 		this.expirationTime = expirationTime;

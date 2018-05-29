@@ -24,6 +24,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
+import com.ftec.services.UserServiceImpl;
 import com.ftec.services.Implementations.IdManagerImpl;
 
 @RunWith(SpringRunner.class)
@@ -40,19 +41,23 @@ public class ControllerTest {
 	@Autowired
     private IdManagerImpl idManager;
 	
+	@Autowired
+	UserServiceImpl userService;
+	
 	public static User newUser(String login) {
 		User u = new User();
 		u.setUsername(login);
 		u.setPassword("pass_user1");
 		u.setEmail("emaill");
+		
 		return u;
 	}
 	
 	@Test
 	public void createValidUser() throws Exception {
-		String username = "u25";
+		String username = "tester1";
 		User u = newUser(username);
-		
+		u.setId(123L);
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
@@ -60,13 +65,14 @@ public class ControllerTest {
 		
 		assertTrue(dao.findByUsername(username).isPresent());
 
-
+		dao.deleteById(123L);
 	}
 	
 	@Test
 	public void dublicateUsername() throws Exception {
-		User u = newUser("dublicateUserName");
-		
+		String userName = "tester2";
+		User u = newUser(userName);
+		u.setId(234L);
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
@@ -77,6 +83,10 @@ public class ControllerTest {
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
 		.andDo(print()).andExpect(status().isBadRequest());
+		
+		assertTrue(userService.isDuplicateUserName(userName));
+		
+		dao.deleteById(234L);
 	}
 	/* test increment id
 	 assertTrue( idManager.getLastId("ids") == 2);
@@ -95,13 +105,13 @@ public class ControllerTest {
 	
 	@Test
 	public void checkReturnedToken() throws Exception {
-		User u = newUser("u1");
-		
+		User u = newUser("tester3_v2");
+		u.setId(322L);
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
 		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
-		
+		dao.deleteById(322L);
 	}
 	
 	

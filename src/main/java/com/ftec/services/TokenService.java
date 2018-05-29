@@ -79,8 +79,10 @@ public class TokenService {
 	
 	public boolean isValidRequest(HttpServletRequest request) {
 		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
+		
+		if(tokenEntity == null) return false;
+		
 		Date expirationTime = tokenEntity.getExpirationTime();
-
 		return expirationTime.after(new Date());
 	}
 
