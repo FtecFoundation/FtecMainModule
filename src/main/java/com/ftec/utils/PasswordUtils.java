@@ -56,7 +56,7 @@ public class PasswordUtils {
         // Generate New secure password with the same salt
         String newSecuredPassword = generateSecurePassword(rawPassword, salt);
 
-        // Check if two passwords are equal
+        // Check if two passwords are equals
         returnValue = newSecuredPassword.equalsIgnoreCase(savedHash);
 
         return returnValue;
