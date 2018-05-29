@@ -2,6 +2,7 @@ package com.ftec.configs;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.regex.Matcher;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.services.TokenService;
 import com.ftec.services.Implementations.IdManagerImpl;
 
 @RunWith(SpringRunner.class)
@@ -36,19 +38,22 @@ public class UserRegTest {
 	
 	@Autowired
     private IdManagerImpl idManager;
-
-	@Test
-	public void createValidUser() throws Exception {
-		System.out.println("last id before = " + idManager.getLastId("ids"));
+	public static User newUser() {
 		User u = new User();
 		u.setUsername("user1");
 		u.setPassword("pass_user1");
 		u.setEmail("emaill");
+		return u;
+	}
+	@Test
+	public void createValidUser() throws Exception {
+		System.out.println("last id before = " + idManager.getLastId("ids"));
+		User u = newUser();
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isCreated());
+		.andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 		
 		assertTrue(dao.findByUsername("user1").isPresent());
 		System.out.println("last id after = " + idManager.getLastId("ids"));
@@ -73,7 +78,16 @@ public class UserRegTest {
 	    }
 	}
 	
-	
+	@Test
+	public void checkReturnedToken() throws Exception {
+		User u = newUser();
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		
+	}
 	
 	
 	
