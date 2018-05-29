@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
-        Optional<User> userInDb = userDAO.findByName(user.getUsername());
+        Optional<User> userInDb = userDAO.findByUsername(user.getUsername());
         if (!(userInDb.isPresent())) {
             String userPassword = user.getPassword();
             String salt = PasswordUtils.getSalt(30);
