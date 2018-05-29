@@ -11,8 +11,13 @@ import com.ftec.services.TokenService;
 
 @Service
 public class TokenSecurityMiddleware implements HandlerInterceptor{
+	
+	private final TokenService tokenService;
+
 	@Autowired
-	TokenService tokenService;
+	public TokenSecurityMiddleware(TokenService tokenService) {
+		this.tokenService = tokenService;
+	}
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

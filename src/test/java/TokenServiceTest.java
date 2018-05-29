@@ -1,12 +1,9 @@
-import com.ftec.exceptions.InvalidTokenException;
-import com.ftec.services.TokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import com.ftec.exceptions.InvalidTokenException;
+import com.ftec.services.TokenService;
 
 @RunWith(SpringRunner.class)
 public class TokenServiceTest {
@@ -33,13 +30,10 @@ public class TokenServiceTest {
 	@Test(expected = InvalidTokenException.class)
 	public void firstTestExceptionWhileInvalidTokenFormat() {
 		TokenService.checkTokenFormat("23a_NDKJAWNWKAJDNAkWKDNAW");
-		
-		
 	}
+	
 	@Test(expected = InvalidTokenException.class)
 	public void secondTestExceptionWhileInvalidTokenFormat() {
 		TokenService.checkTokenFormat("23aNDKJAWNWKAJDNAkWKDNAW");
-		
-		
 	}
 }

@@ -14,12 +14,10 @@ import com.ftec.services.TokenService;
 
 @RestController
 public class EnumController {
-	private final TokenService tokenService; //remove
 	private final UserDAO userDao;
 	
 	@Autowired
-	public EnumController(TokenService tokenService, UserDAO userDao) {
-		this.tokenService = tokenService;
+	public EnumController(UserDAO userDao) {
 		this.userDao = userDao;
 	}
 	

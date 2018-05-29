@@ -18,6 +18,7 @@ public class EnumTest {
 
 		assertTrue(TutorialSteps.SECOND.equals(u.getStep()));
 	}
+	
 	@Test
 	public void getNextStepTest() {
 		assertTrue(TutorialSteps.getNextStep(TutorialSteps.FIRST).equals(TutorialSteps.SECOND));
@@ -26,7 +27,6 @@ public class EnumTest {
 	@Test
 	public void returnsNullTest() {		
 		assertTrue(TutorialSteps.getNextStep(TutorialSteps.THIRD) == null);
-
 	}
 	
 }
