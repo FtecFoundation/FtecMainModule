@@ -35,6 +35,11 @@ public class EnumController {
 		User user = userDao.findById(userId).get();
 		return user.getStep();		
 	}
-
+	
+	@GetMapping("/securedTest")
+	public String testSecuredPage() {
+		System.out.println("ok token");
+		return "1";
+	}
 }
 

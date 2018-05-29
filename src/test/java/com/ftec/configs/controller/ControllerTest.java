@@ -1,4 +1,4 @@
-package com.ftec.configs;
+package com.ftec.configs.controller;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
@@ -28,7 +29,7 @@ import com.ftec.services.Implementations.IdManagerImpl;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class UserRegTest {
+public class ControllerTest {
 	
 	@Autowired
 	UserDAO dao;
@@ -38,35 +39,49 @@ public class UserRegTest {
 	
 	@Autowired
     private IdManagerImpl idManager;
-	public static User newUser() {
+	
+	public static User newUser(String login) {
 		User u = new User();
-		u.setUsername("user1");
+		u.setUsername(login);
 		u.setPassword("pass_user1");
 		u.setEmail("emaill");
 		return u;
 	}
+	
 	@Test
 	public void createValidUser() throws Exception {
-		System.out.println("last id before = " + idManager.getLastId("ids"));
-		User u = newUser();
+		String username = "u25";
+		User u = newUser(username);
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		.andDo(print()).andExpect(status().isCreated());
 		
-		assertTrue(dao.findByUsername("user1").isPresent());
-		System.out.println("last id after = " + idManager.getLastId("ids"));
+		assertTrue(dao.findByUsername(username).isPresent());
 
-// test increment id
-// assertTrue( idManager.getLastId("ids") == 2);
-		
-//test create request with duplicate username
-//		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-//				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
-//				accept(MediaType.APPLICATION_JSON))
-//		.andDo(print()).andExpect(status().isBadRequest());
+
 	}
+	
+	@Test
+	public void dublicateUsername() throws Exception {
+		User u = newUser("dublicateUserName");
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andDo(print()).andExpect(status().isCreated());
+		
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andDo(print()).andExpect(status().isBadRequest());
+	}
+	/* test increment id
+	 assertTrue( idManager.getLastId("ids") == 2);
+			 */
+	
 	
 	public static String asJsonString(final Object obj) {
 	    try {
@@ -80,7 +95,7 @@ public class UserRegTest {
 	
 	@Test
 	public void checkReturnedToken() throws Exception {
-		User u = newUser();
+		User u = newUser("u1");
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
@@ -88,11 +103,6 @@ public class UserRegTest {
 		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 		
 	}
-	
-	
-	
-	
-	
 	
 	
 	
@@ -108,7 +118,7 @@ public class UserRegTest {
 	}
 	
 	@Test
-	public void emailTestt() {
+	public void regExpEmailTestt() {
 		String validEmails[] = new String[] {
                  "alex@yandex.ru",
                  "alex-27@yandex.com",
