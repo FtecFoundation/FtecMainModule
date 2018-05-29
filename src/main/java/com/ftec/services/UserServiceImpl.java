@@ -1,15 +1,13 @@
 package com.ftec.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
