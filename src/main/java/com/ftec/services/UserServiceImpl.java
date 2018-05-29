@@ -39,9 +39,4 @@ public class UserServiceImpl implements UserService {
             throw new UserExistException();
         }
     }
-
-    /*public String encodeAndSetPassword(String userPassword) {
-        String salt = PasswordUtils.getSalt(30);
-        return PasswordUtils.generateSecurePassword(userPassword, salt);12
-    }*/
 }
