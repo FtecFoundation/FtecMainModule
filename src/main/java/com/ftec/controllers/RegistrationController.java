@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
+import com.ftec.services.TokenService;
 import com.ftec.services.Implementations.IdManagerImpl;
 import com.ftec.services.interfaces.UserService;
 
@@ -30,7 +31,6 @@ public class RegistrationController {
 
     @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
-      System.out.println("reg controller " + user);
     	try {
             userService.registerNewUserAccount(user);
             sendToken(respone); 
@@ -43,6 +43,6 @@ public class RegistrationController {
     
     //TODO fix argument 
 	public void sendToken(HttpServletResponse respone) {
-		//respone.addHeader(TokenService.TOKEN_NAME, TokenService.generateToken(idManager.getLastId(table)));
+		respone.addHeader(TokenService.TOKEN_NAME, TokenService.generateToken(idManager.getLastId("ids")));
 	}
 }

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.services.Implementations.IdManagerImpl;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
@@ -33,8 +34,12 @@ public class UserRegTest {
 	@Autowired
 	MockMvc mvc;
 	
+	@Autowired
+    private IdManagerImpl idManager;
+
 	@Test
 	public void createValidUser() throws Exception {
+		System.out.println("last id before = " + idManager.getLastId("ids"));
 		User u = new User();
 		u.setUsername("user1");
 		u.setPassword("pass_user1");
@@ -43,8 +48,19 @@ public class UserRegTest {
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-
 		.andDo(print()).andExpect(status().isCreated());
+		
+		assertTrue(dao.findByUsername("user1").isPresent());
+		System.out.println("last id after = " + idManager.getLastId("ids"));
+
+// test increment id
+// assertTrue( idManager.getLastId("ids") == 2);
+		
+//test create request with duplicate username
+//		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+//				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+//				accept(MediaType.APPLICATION_JSON))
+//		.andDo(print()).andExpect(status().isBadRequest());
 	}
 	
 	public static String asJsonString(final Object obj) {
