@@ -16,7 +16,7 @@ public class PasswordEncodeTest {
         String salt = "EqdmPh53c9x33EygXpTpcoJvc4VXLK";
 
         assertEquals(securePassword, PasswordUtils.generateSecurePassword(rawPassword, salt));
-
+        //1111
 
     }
 }
