@@ -28,10 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
         if (checkForUniqueUsername(user.getUsername())) {
-            String userPassword = user.getPassword();
-            String salt = PasswordUtils.getSalt(30);
-            String securedPassword = PasswordUtils.generateSecurePassword(userPassword, salt);
-
+            String securedPassword = encodeUserPassword(user.getPassword());
             user.setPassword(securedPassword);
             userDAO.save(user);
         } else {
@@ -40,8 +37,19 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Takes the users password and encodes it into secured
+     *
+     * @param userPassword - raw Password
+     * @return secured password
+     */
+    private String encodeUserPassword(String userPassword) {
+        String salt = PasswordUtils.getSalt(30);
+        return PasswordUtils.generateSecurePassword(userPassword, salt);
+    }
+
+    /**
      * @param username - users name
-     * Return {@code true} if there is a User present, otherwise {@code false}.
+     * @return {@code true} if there is a User present, otherwise {@code false}.
      */
     private boolean checkForUniqueUsername(String username) {
         boolean valueToReturn = false;
