@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
-        if (checkForUniqueUsername(user.getUsername())) {
+        if (!isDuplicateUserName(user.getUsername())) {
             String securedPassword = encodeUserPassword(user.getPassword());
             user.setPassword(securedPassword);
             userDAO.save(user);
@@ -51,14 +51,9 @@ public class UserServiceImpl implements UserService {
      * @param username - users name
      * @return {@code true} if there is a User present, otherwise {@code false}.
      */
-    public boolean isUniqueUsername(String username) {
-        boolean valueToReturn = false;
+    public boolean isDuplicateUserName(String username) {
         Optional<User> userInDb = userDAO.findByUsername(username);
 
-        if (!(userInDb.isPresent())) {
-            valueToReturn = true;
-        }
-
-        return valueToReturn;
+        return userInDb.isPresent();
     }
 }
