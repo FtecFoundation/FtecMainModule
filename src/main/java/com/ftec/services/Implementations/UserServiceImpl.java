@@ -1,25 +1,25 @@
 package com.ftec.services.Implementations;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
+import com.ftec.repositories.IdsDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.IdManager;
 import com.ftec.services.interfaces.UserService;
 import com.ftec.utils.PasswordUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     private final IdManager idManager;
-    
+
     public static final String com_ftec_entities_User = "com.ftec.entities.User";
-    
+
     @Autowired
     public UserServiceImpl(UserDAO userDAO, IdManager idManager) {
         this.userDAO = userDAO;

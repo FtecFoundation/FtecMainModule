@@ -1,13 +1,14 @@
 package com.ftec.repositories;
 
-import java.util.Optional;
-
+import com.ftec.entities.User;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import com.ftec.entities.User;
+import java.util.Optional;
 
 public interface UserDAO extends ElasticsearchRepository<User, Long> {
-	 
-	 Optional<User> findById(long id);
-	 Optional<User> findByUsername(String Username);
+
+    @Override
+    Optional<User> findById(Long id);
+
+    Optional<User> findByUsername(String Username);
 }
