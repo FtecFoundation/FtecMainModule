@@ -25,13 +25,13 @@ public class IncrementIdTest {
 
 	@Autowired
 	UserDAO userDAO;
-	
-	@Autowired 
+
+	@Autowired
 	IdsDAO idsDAO;
-	
+
 	@Autowired
 	IdManager idManager;
-	
+
 	private void printUser() {
 		Iterable<User> allIteration = userDAO.findAll();
 		Iterator<User> iterator = allIteration.iterator();
@@ -39,7 +39,7 @@ public class IncrementIdTest {
 			System.out.println(user);
 		}
 	}
-	
+
 	private void printIds() {
 		Iterable<Ids> allIteration = idManager.findAll();
 		Iterator<Ids> iterator = allIteration.iterator();
@@ -47,7 +47,7 @@ public class IncrementIdTest {
 			System.out.println(user);
 		}
 	}
-	
+
 	@Test
 	public void tryIncrement() {
 		printIds();
@@ -56,7 +56,8 @@ public class IncrementIdTest {
 		assertTrue(idsDAO.findByTableName(UserServiceImpl.com_ftec_entities_User).getLastId() == 1 + cur_id);
 		//do not forgot decrement id 1 time
 	}
-	
+
+
 	@Test
 	public void tryIncrementManyTimes() {
 		printIds();
@@ -67,6 +68,4 @@ public class IncrementIdTest {
 		assertTrue(idsDAO.findByTableName(UserServiceImpl.com_ftec_entities_User).getLastId() == 3 + cur_id);
 		//do not forgot decrement id 3 times
 	}
-	
-	
 }

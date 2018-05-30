@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     private final IdManager idManager;
-    
+
     public static final String com_ftec_entities_User = "com.ftec.entities.User";
 
     @Autowired
