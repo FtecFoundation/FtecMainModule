@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ftec.entities.User;
+import com.ftec.exceptions.TokenException;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.services.TokenService;
-import com.ftec.services.Implementations.IdManagerImpl;
 import com.ftec.services.interfaces.UserService;
 
 @RestController
@@ -21,31 +21,33 @@ import com.ftec.services.interfaces.UserService;
 public class RegistrationController {
 
     private final UserService userService;
-    private final IdManagerImpl idManager;
     private final TokenService tokenService;
-    private final String ID_TABLE = "ids";
     
     @Autowired
-    public RegistrationController(UserService userService, IdManagerImpl idManager, TokenService tokenService) {
+    public RegistrationController(UserService userService, TokenService tokenService) {
         this.userService = userService;
-        this.idManager = idManager;
         this.tokenService = tokenService;
     }
 
     @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
-    public ResponseEntity<User> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
+    public ResponseEntity<String> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
     	try {
             userService.registerNewUserAccount(user);
-            sendToken(user, respone); //user should have own id after invoke of registerNewUserAccount() method
+            sendToken(user, respone);
             
-            return new ResponseEntity<User>(HttpStatus.CREATED);
-        } catch (UserExistException e) {
-            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(HttpStatus.CREATED);
+        } catch (TokenException e) {
+        	
+          return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
     
-	public void sendToken(User user, HttpServletResponse respone) {
-		String token = tokenService.saveAndGetNewToken(user.getId());
+	public void sendToken(User user, HttpServletResponse respone) throws TokenException {
+		
+		long id = user.getId();
+		if(id == 0) throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
+		
+		String token = tokenService.saveAndGetNewToken(id);
 		respone.addHeader(TokenService.TOKEN_NAME, token);
 	}
 }

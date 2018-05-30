@@ -44,6 +44,9 @@ public class EnumController {
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 	
+	/*
+	 * TODO test
+	 */
 	@GetMapping("/testMvcResponse")
 	public MvcResponse<User> testResponse() {
 		User u = new User();

@@ -21,11 +21,16 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		if(!tokenService.isValidRequest(request)) {
-			response.setStatus(400);
+		
+		try {		
+			
+			tokenService.verifyRequest(request);		
+		
+		} catch(RuntimeException ex) {
+			response.setStatus(403);
 			return false;
 		}
-		return tokenService.isValidRequest(request);
+		return true;
 	}
 	
 

@@ -44,8 +44,6 @@ public class MvcResponseTest {
 		 JSONObject jsonObject = o.getJSONObject("response");
 		 JSONObject ob = (JSONObject) jsonObject.get("user");
 
-
-		 String pass = (String) ob.get("password");		 
 		 String email = (String) ob.get("email");		 
 
 		 assertTrue(email.equals("emailTest"));
