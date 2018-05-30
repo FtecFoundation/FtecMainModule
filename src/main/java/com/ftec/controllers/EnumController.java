@@ -46,7 +46,15 @@ public class EnumController {
 	
 	@GetMapping("/testMvcResponse")
 	public MvcResponse testResponse() {
-		return null;
+		User u = new User();
+		u.setCurrentStep(TutorialSteps.SECOND);
+		u.setEmail("email");
+		u.setId(25L);
+		MvcResponse<User> response = new MvcResponse<>();
+		response.setResponse(u);
+		response.setStatus(HttpStatus.OK);
+		response.setError("some error");
+		return response;
 	}
 }
 

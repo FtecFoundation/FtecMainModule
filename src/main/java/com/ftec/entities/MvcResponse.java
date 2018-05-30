@@ -1,17 +1,16 @@
 package com.ftec.entities;
 
-import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
-public abstract class MvcResponse {
+public class MvcResponse<T> {
     private HttpStatus status;
-    private HttpResponse response;
+    private T response;
     private String error;
 
     public MvcResponse() {
     }
 
-    public MvcResponse(HttpStatus status, HttpResponse response, String error) {
+    public MvcResponse(HttpStatus status, T response, String error) {
         this.status = status;
         this.response = response;
         this.error = error;
@@ -25,11 +24,11 @@ public abstract class MvcResponse {
         this.status = status;
     }
 
-    public HttpResponse getResponse() {
+    public T getResponse() {
         return response;
     }
 
-    public void setResponse(HttpResponse response) {
+    public void setResponse(T response) {
         this.response = response;
     }
 
