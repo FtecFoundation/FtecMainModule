@@ -59,7 +59,7 @@ public class TokenService {
 		return token;
 	}
 	
-	public String saveAndGetNewToken(Long id) {
+	public String createSaveAndGetNewToken(Long id) {
 		String token = generateToken(id);
 		Date expiration = new Date();
 		

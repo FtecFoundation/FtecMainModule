@@ -47,7 +47,7 @@ public class RegistrationController {
 		long id = user.getId();
 		if(id == 0) throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
 		
-		String token = tokenService.saveAndGetNewToken(id);
+		String token = tokenService.createSaveAndGetNewToken(id);
 		respone.addHeader(TokenService.TOKEN_NAME, token);
 	}
 }

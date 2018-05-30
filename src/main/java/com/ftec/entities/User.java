@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.ftec.configs.enums.TutorialSteps;
 
-@Document(indexName = "users")
+@Document(indexName = "#{@users}")
 public class User {
 	
     @Id
