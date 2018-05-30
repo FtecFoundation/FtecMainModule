@@ -1,3 +1,5 @@
+package com.ftec.services;
+
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ids;
 import com.ftec.entities.TelegramSettings;

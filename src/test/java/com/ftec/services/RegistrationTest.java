@@ -1,3 +1,5 @@
+package com.ftec.services;
+
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.services.RegistrationService;
 import org.junit.Test;
