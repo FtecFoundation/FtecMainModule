@@ -1,3 +1,4 @@
+package com.ftec.repositories;
 
 
 import static org.junit.Assert.assertTrue;

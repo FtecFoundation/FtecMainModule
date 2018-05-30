@@ -1,3 +1,4 @@
+package com.ftec.middlewares;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,7 +43,7 @@ public class TokenSecurityTest {
 		u.setEmail("emaildl");
 		return u;
 	}
-	//failed test, getByToken from UserTokenDAO can't convert json-data with Date field into UserToken
+
 	@Test
 	public void securityAccess() throws Exception {
 		String token = tokenService.saveAndGetNewToken(255L);

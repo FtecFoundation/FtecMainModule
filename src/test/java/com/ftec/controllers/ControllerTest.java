@@ -1,3 +1,4 @@
+package com.ftec.controllers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
