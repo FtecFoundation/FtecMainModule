@@ -5,20 +5,29 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.ftec.configs.enums.TutorialSteps;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Document(indexName = "users")
 public class User {
 	
     @Id
     private long id;
 
+    @NotNull
+    @Size(min = 3)
     private String username;
 
+    @NotNull
+    @Size(min = 4)
     private String password;
 
+    @NotNull
     private String email;
     
     private TutorialSteps currentStep;
-    
+
+    @NotNull
     private boolean subscribeForNews;
 
     public User() {
