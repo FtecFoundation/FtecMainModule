@@ -13,7 +13,7 @@ public class EnumTest {
 	@Test
 	public void setNextStepTest() {
 		User u = new User();
-		u.setStep(TutorialSteps.FIRST); //should be by default
+		u.setCurrentStep(TutorialSteps.FIRST); //should be by default
 		TutorialSteps.setNextStep(u);
 
 		assertTrue(TutorialSteps.SECOND.equals(u.getStep()));

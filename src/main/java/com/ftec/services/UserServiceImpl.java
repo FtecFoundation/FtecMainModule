@@ -2,6 +2,7 @@ package com.ftec.services;
 
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
+import com.ftec.repositories.IdsDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.UserService;
 import com.ftec.utils.PasswordUtils;
@@ -14,10 +15,14 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
+    private final IdsDAO idsDAO;
+
+    public static final String com_ftec_entities_User = "com.ftec.entities.User";
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO) {
+    public UserServiceImpl(UserDAO userDAO, IdsDAO idsDAO) {
         this.userDAO = userDAO;
+        this.idsDAO = idsDAO;
     }
 
     @Override
@@ -30,10 +35,16 @@ public class UserServiceImpl implements UserService {
         if (!isDuplicateUserName(user.getUsername())) {
             String securedPassword = encodeUserPassword(user.getPassword());
             user.setPassword(securedPassword);
+            //TODO inrementAndGetLastId(user);  uncomment after fix idsDAO.incrementLastId(...) method
             userDAO.save(user);
         } else {
             throw new UserExistException();
         }
+    }
+
+    public void inrementAndGetLastId(User user) {
+        idsDAO.incrementLastId(com_ftec_entities_User);
+        user.setId(idsDAO.findByTableName(com_ftec_entities_User).getLastId());
     }
 
     /**
@@ -57,3 +68,4 @@ public class UserServiceImpl implements UserService {
         return userInDb.isPresent();
     }
 }
+

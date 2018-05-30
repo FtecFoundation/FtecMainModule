@@ -14,6 +14,7 @@ import com.ftec.repositories.UserTokenDAO;
 
 @Service
 public class TokenService {
+	
 	public static final String TOKEN_NAME = "TOKEN-X-AUTH";
 	private final UserTokenDAO tokenManager;
 	
@@ -25,16 +26,16 @@ public class TokenService {
 	public static Long getUserIdFromToken(HttpServletRequest request) {
 		return getUserIdFromToken(getToken(request));
 	}
-	
-	public static Long getUserIdFromToken(String token) throws InvalidTokenException{ //public vision for testing purposes
+	//public mod for testing purposes
+	public static Long getUserIdFromToken(String token) throws InvalidTokenException {
 		checkTokenFormat(token);
-		return Long.valueOf(token.substring(0, token.indexOf("_")));
+		return Long.valueOf(extractUserID(token));
 	}
 	
 	public static void checkTokenFormat(String token) {
-		if(!token.contains("_")) throw new InvalidTokenException("Invalid token format! UserID_hash expected.");
+		if(!token.contains("_")) throw new InvalidTokenException("Invalid token format! {UserID}_{Hash} expected.");
 		
-		String userId = token.substring(0, token.indexOf("_"));
+		String userId = extractUserID(token);
 		
 		try {
 			Integer.valueOf(userId);
@@ -44,10 +45,28 @@ public class TokenService {
 		
 	}
 
+	public static String extractUserID(String token) {
+		return token.substring(0, token.indexOf("_"));
+	}
+
 	private static String getToken(HttpServletRequest request) {
 		return request.getHeader(TOKEN_NAME);
 	}
 	
+	public String saveAndGetNewToken(Long id) {
+		String token = generateToken(id);
+		Date expiration = new Date();
+		
+		setExpirationTime(expiration); 
+		tokenManager.save(new UserToken(token, expiration));
+		
+		return token;
+	}
+
+	public void setExpirationTime(Date expiration) {
+		expiration.setTime(expiration.getTime() + 1800000);
+	}
+
 	public static String generateToken(Long id) {
 		return id.toString() + generateRandomString();
 	}
@@ -70,8 +89,10 @@ public class TokenService {
 	
 	public boolean isValidRequest(HttpServletRequest request) {
 		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
-		Date expirationTime = tokenEntity.getExpirationTime();
 		
+		if(tokenEntity == null) return false;
+		
+		Date expirationTime = tokenEntity.getExpirationTime();
 		return expirationTime.after(new Date());
 	}
 

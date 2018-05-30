@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Random;
 
+
 public class PasswordUtils {
 
     private static final Random RANDOM = new SecureRandom();
@@ -61,5 +62,4 @@ public class PasswordUtils {
 
         return returnValue;
     }
-
 }
