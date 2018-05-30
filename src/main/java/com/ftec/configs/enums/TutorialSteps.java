@@ -9,7 +9,7 @@ public enum TutorialSteps {
     private static TutorialSteps[] vals = values();
 
 	public static void setNextStep(User u) {
-		u.setCurrentStep(vals[(u.getStep().ordinal()+1) % vals.length]);
+		u.setCurrentStep(vals[(u.getCurrentStep().ordinal()+1) % vals.length]);
 	}
 	
 	public static TutorialSteps getNextStep(TutorialSteps currentStep) {
