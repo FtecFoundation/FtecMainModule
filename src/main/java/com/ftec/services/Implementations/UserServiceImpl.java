@@ -1,4 +1,4 @@
-package com.ftec.services;
+package com.ftec.services.Implementations;
 
 import java.util.Optional;
 
@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
-import com.ftec.repositories.IdsDAO;
 import com.ftec.repositories.UserDAO;
+import com.ftec.services.interfaces.IdManager;
 import com.ftec.services.interfaces.UserService;
 import com.ftec.utils.PasswordUtils;
 
@@ -16,14 +16,14 @@ import com.ftec.utils.PasswordUtils;
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
-    private final IdsDAO idsDAO;
+    private final IdManager idManager;
     
     public static final String com_ftec_entities_User = "com.ftec.entities.User";
     
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, IdsDAO idsDAO) {
+    public UserServiceImpl(UserDAO userDAO, IdManager idManager) {
         this.userDAO = userDAO;
-        this.idsDAO = idsDAO;
+        this.idManager = idManager;
     }
 
     @Override
@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
     }
 
 	public void inrementAndGetLastId(User user) {
-		idsDAO.incrementLastId(com_ftec_entities_User);
-		user.setId(idsDAO.findByTableName(com_ftec_entities_User).getLastId());
+		idManager.incrementLastId(User.class);
+		user.setId(idManager.findByTableName(User.class).getLastId());
 	}
 
     /**

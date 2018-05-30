@@ -25,8 +25,8 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
-import com.ftec.services.UserServiceImpl;
 import com.ftec.services.Implementations.IdManagerImpl;
+import com.ftec.services.Implementations.UserServiceImpl;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
@@ -70,7 +70,7 @@ public class ControllerTest {
 	}
 	
 	@Test
-	public void dublicateUsername() throws Exception {
+	public void trySaveDublicateUsername() throws Exception {
 		String userName = "tester2";
 		User u = newUser(userName);
 		u.setId(235L);
@@ -79,7 +79,7 @@ public class ControllerTest {
 				accept(MediaType.APPLICATION_JSON))
 		.andDo(print()).andExpect(status().isCreated());
 		
-		
+		//should be status BadRequest
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
@@ -115,6 +115,27 @@ public class ControllerTest {
 		dao.deleteById(322L);
 	}
 	
+	@Test
+	public void registrateTwoValidUsers() throws Exception {
+		User u1 = newUser("tester4_1");
+		User u2 = newUser("tester4_2");
+		u1.setId(456L);
+		u2.setId(457L);
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( asJsonString(u1)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( asJsonString(u2)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		
+		dao.deleteById(456L);
+		dao.deleteById(457L);
+
+	}
 	
 	
 	
