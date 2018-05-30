@@ -26,8 +26,8 @@ public class TokenService {
 	public static Long getUserIdFromToken(HttpServletRequest request) {
 		return getUserIdFromToken(getToken(request));
 	}
-	//public mod for testing purposes
-	public static Long getUserIdFromToken(String token) throws InvalidTokenException {
+
+	private static Long getUserIdFromToken(String token) throws InvalidTokenException {
 		checkTokenFormat(token);
 		return Long.valueOf(extractUserID(token));
 	}

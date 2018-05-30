@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-
+//choose development profile for start
 @SpringBootApplication(scanBasePackages = {"com.ftec.*"})
 @EnableElasticsearchRepositories("com.ftec.repositories")
 public class ApplicationConfig extends SpringBootServletInitializer {
