@@ -1,16 +1,15 @@
 package com.ftec.entities;
 
-import java.util.Date;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+
+import java.util.Date;
 
 @Document(indexName = "usertokens")
 public class UserToken {
 	
 	@Id
 	private String token;
-	
 	private Date expirationTime;
 	
 	public UserToken() {
@@ -20,6 +19,7 @@ public class UserToken {
 		this.token = token;
 		this.expirationTime = expirationTime;
 	}
+
 	public Date getExpirationTime() {
 		return expirationTime;
 	}
