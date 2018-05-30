@@ -11,20 +11,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-<<<<<<< HEAD
-import org.springframework.context.annotation.Profile;
-=======
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.ActiveProfiles;
->>>>>>> a7c08944fb9d0ec724a6a88b56e31e118e7bf294
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ids;
 import com.ftec.entities.User;
 import com.ftec.services.interfaces.IdManager;
-<<<<<<< HEAD
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
