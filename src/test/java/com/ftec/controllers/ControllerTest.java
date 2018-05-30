@@ -89,9 +89,6 @@ public class ControllerTest {
 		
 		dao.deleteById(235L);
 	}
-	/* test increment id
-	 assertTrue( idManager.getLastId("ids") == 2);
-			 */
 	
 	
 	public static String asJsonString(final Object obj) {

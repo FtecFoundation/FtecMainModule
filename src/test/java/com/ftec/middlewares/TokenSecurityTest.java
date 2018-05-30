@@ -47,7 +47,6 @@ public class TokenSecurityTest {
 	@Test
 	public void securityAccess() throws Exception {
 		String token = tokenService.saveAndGetNewToken(255L);
-		System.out.println("generate token = " + token);
 		
 		mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")
 				.header(TokenService.TOKEN_NAME, token)
