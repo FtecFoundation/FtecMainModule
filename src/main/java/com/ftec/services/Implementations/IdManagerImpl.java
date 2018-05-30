@@ -1,9 +1,10 @@
 package com.ftec.services.Implementations;
 
+import org.springframework.stereotype.Service;
+
 import com.ftec.entities.Ids;
 import com.ftec.repositories.IdsDAO;
 import com.ftec.services.interfaces.IdManager;
-import org.springframework.stereotype.Service;
 
 @Service
 public class IdManagerImpl implements IdManager {
@@ -37,4 +38,21 @@ public class IdManagerImpl implements IdManager {
     public void incrementLastId(String tableName) {
         idsDAO.incrementLastId(tableName);
     }
+
+	@Override
+	public Iterable<Ids> findAll() {
+		
+		return idsDAO.findAll();
+	}
+
+	@Override
+	public Ids findByTableName(Class table) {
+		return idsDAO.findByTableName(table.getName());
+	}
+
+	@Override
+	public Ids findByTableName(String table) {
+		return idsDAO.findByTableName(table);
+
+	}
 }
