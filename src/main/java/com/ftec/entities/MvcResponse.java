@@ -5,16 +5,16 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 
-public class MvcResponse {
+public class MvcResponse <T> {
     private HttpStatus status;
-    private Map<String,User> response;
+    private HashMap<String,T> response;
     private String error;
 
     public MvcResponse() {
-    	response = new HashMap<String,User>();
+    	response = new HashMap<String,T>();
     }
 
-    public MvcResponse(HttpStatus status, Map<String,User> response, String error) {
+    public MvcResponse(HttpStatus status, HashMap<String,T> response, String error) {
         this.status = status;
         this.response = response;
         this.error = error;
@@ -41,11 +41,11 @@ public class MvcResponse {
 		return "MvcResponse [status=" + status + ", response=" + response + ", error=" + error + "]";
 	}
 
-	public Map<String, User> getResponse() {
+	public Map<String, T> getResponse() {
 		return response;
 	}
 
-	public void setResponse(Map<String, User> response) {
+	public void setResponse(HashMap<String, T> response) {
 		this.response = response;
 	}
 }

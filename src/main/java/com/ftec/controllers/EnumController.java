@@ -45,7 +45,7 @@ public class EnumController {
 	}
 	
 	@GetMapping("/testMvcResponse")
-	public MvcResponse testResponse() {
+	public MvcResponse<User> testResponse() {
 		User u = new User();
 		u.setCurrentStep(TutorialSteps.SECOND);
 		u.setEmail("emailTest");
@@ -53,7 +53,7 @@ public class EnumController {
 		u.setPassword("dwa");
 		u.setSubscribeForNews(true);
 		u.setUsername("username");
-		MvcResponse response = new MvcResponse();
+		MvcResponse<User> response = new MvcResponse<>();
 		response.getResponse().put("user", u);
 		response.setStatus(HttpStatus.OK);
 		response.setError("some error");
