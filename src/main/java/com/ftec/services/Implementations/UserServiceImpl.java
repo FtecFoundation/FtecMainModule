@@ -43,12 +43,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-	public void inrementAndGetLastId(User user) {
-		idManager.incrementLastId(User.class);
-		user.setId(idManager.findByTableName(User.class).getLastId());
-	}
-
-    /**
+	/**
      * Takes the users password and encodes it into secured
      *
      * @param userPassword - raw Password
