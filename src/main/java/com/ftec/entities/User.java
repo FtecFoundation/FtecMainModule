@@ -2,21 +2,32 @@ package com.ftec.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+
 import com.ftec.configs.enums.TutorialSteps;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Document(indexName = "users")
 public class User {
+	
     @Id
     private long id;
 
+    @NotNull
+    @Size(min = 3)
     private String username;
 
+    @NotNull
+    @Size(min = 4)
     private String password;
 
+    @NotNull
     private String email;
     
-    private TutorialSteps step;
-    
+    private TutorialSteps currentStep;
+
+    @NotNull
     private boolean subscribeForNews;
 
     public User() {
@@ -63,10 +74,15 @@ public class User {
     }
 
 	public TutorialSteps getStep() {
-		return step;
+		return currentStep;
 	}
 
-	public void setStep(TutorialSteps step) {
-		this.step = step;
+	public void setCurrentStep(TutorialSteps step) {
+		this.currentStep = step;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
 	}
 }

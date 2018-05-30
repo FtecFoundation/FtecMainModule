@@ -7,16 +7,17 @@ import java.util.Date;
 
 @Document(indexName = "usertokens")
 public class UserToken {
+	
 	@Id
 	private String token;
 	private Date expirationTime;
 	
+	public UserToken() {
+		
+	}
 	public UserToken(String token, Date expirationTime) {
 		this.token = token;
 		this.expirationTime = expirationTime;
-	}
-
-	public UserToken() {
 	}
 
 	public Date getExpirationTime() {

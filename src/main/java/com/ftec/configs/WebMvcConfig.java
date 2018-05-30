@@ -19,6 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	public WebMvcConfig(TokenService tokenService) {
 		this.tokenService = tokenService;
 	}
+	
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
     	registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/securedTest")

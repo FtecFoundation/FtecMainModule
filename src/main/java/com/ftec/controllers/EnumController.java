@@ -24,15 +24,15 @@ public class EnumController {
 	}
 	
 	@PostMapping("/nextStep")
-	public TutorialSteps nextStep(HttpServletRequest request) {
+	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException {
 		Long userId = TokenService.getUserIdFromToken(request);
 		User user = userDao.findById(userId).get();
 		TutorialSteps.setNextStep(user);
 		return user.getStep();
 	}
-	//add verification on null
+	
 	@GetMapping("/getCurrentStep")
-	public TutorialSteps getCurrentStep(HttpServletRequest request) {
+	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
 		Long userId = TokenService.getUserIdFromToken(request);
 		User user = userDao.findById(userId).get();
 		return user.getStep();		
@@ -40,8 +40,7 @@ public class EnumController {
 	
 	@GetMapping("/securedTest")
 	public ResponseEntity<?> testSecuredPage() {
-		System.out.println("ok token");
-		return new ResponseEntity(HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 }
 
