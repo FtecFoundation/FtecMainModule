@@ -36,7 +36,7 @@ public class RegistrationController {
     public ResponseEntity<User> createUser(@RequestBody User user, HttpServletResponse respone) throws UserExistException {
     	try {
             userService.registerNewUserAccount(user);
-            sendToken(user, respone); //user should have own id after invoke registerNewUserAccount()
+            sendToken(user, respone); //user should have own id after invoke of registerNewUserAccount() method
             
             return new ResponseEntity<User>(HttpStatus.CREATED);
         } catch (UserExistException e) {

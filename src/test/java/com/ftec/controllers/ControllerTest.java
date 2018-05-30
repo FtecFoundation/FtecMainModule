@@ -32,28 +32,28 @@ import com.ftec.services.Implementations.UserServiceImpl;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
 public class ControllerTest {
-
+	
 	@Autowired
 	UserDAO dao;
 
 	@Autowired
 	MockMvc mvc;
-
+	
 	@Autowired
-	private IdManagerImpl idManager;
-
+    private IdManagerImpl idManager;
+	
 	@Autowired
 	UserServiceImpl userService;
-
+	
 	public static User newUser(String login) {
 		User u = new User();
 		u.setUsername(login);
 		u.setPassword("pass_user1");
 		u.setEmail("emaill");
-
+		
 		return u;
 	}
-
+	
 	@Test
 	public void createValidUser() throws Exception {
 		String username = "tester1";
@@ -62,13 +62,13 @@ public class ControllerTest {
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isCreated());
-
+		.andDo(print()).andExpect(status().isCreated());
+		
 		assertTrue(dao.findByUsername(username).isPresent());
 
 		dao.deleteById(123L);
 	}
-
+	
 	@Test
 	public void trySaveDublicateUsername() throws Exception {
 		String userName = "tester2";
@@ -77,33 +77,30 @@ public class ControllerTest {
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isCreated());
-
+		.andDo(print()).andExpect(status().isCreated());
+		
 		//should be status BadRequest
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isBadRequest());
-
+		.andDo(print()).andExpect(status().isBadRequest());
+		
 		assertTrue(userService.isDuplicateUserName(userName));
-
+		
 		dao.deleteById(235L);
 	}
-	/* test increment id
-	 assertTrue( idManager.getLastId("ids") == 2);
-			 */
-
-
+	
+	
 	public static String asJsonString(final Object obj) {
-		try {
-			final ObjectMapper mapper = new ObjectMapper();
-			final String jsonContent = mapper.writeValueAsString(obj);
-			return jsonContent;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	    try {
+	        final ObjectMapper mapper = new ObjectMapper();
+	        final String jsonContent = mapper.writeValueAsString(obj);
+	        return jsonContent;
+	    } catch (Exception e) {
+	        throw new RuntimeException(e);
+	    }
 	}
-
+	
 	@Test
 	public void checkReturnedToken() throws Exception {
 		User u = newUser("tester3_v2");
@@ -111,78 +108,78 @@ public class ControllerTest {
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 		dao.deleteById(322L);
 	}
-
+	
 	@Test
 	public void registrateTwoValidUsers() throws Exception {
 		User u1 = newUser("tester4_1");
 		User u2 = newUser("tester4_2");
 		u1.setId(456L);
 		u2.setId(457L);
-
+		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u1)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
-
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
 				content( asJsonString(u2)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
-
+		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+		
 		dao.deleteById(456L);
 		dao.deleteById(457L);
 
 	}
-
-
-
+	
+	
+	
 	public static final String regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-			"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
+            "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile(regexp);
 
 	public static boolean validate(String emailStr) {
-		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-		return matcher.find();
+		        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+		        return matcher.find();
 	}
-
+	
 	@Test
 	public void regExpEmailTestt() {
 		String validEmails[] = new String[] {
-				"alex@yandex.ru",
-				"alex-27@yandex.com",
-				"alex.27@yandex.com",
-				"alex111@test.com",
-				"alex.100@test.com.ua",
-				"alex@1.com",
-				"alex@gmail.com.com",
-				"alex+27@gmail.com",
-				"alex-27@yandex-test.com"
-		};
-
-		for (String email : validEmails) {
+                 "alex@yandex.ru",
+                 "alex-27@yandex.com",
+                 "alex.27@yandex.com",
+                 "alex111@test.com",
+                 "alex.100@test.com.ua",
+                 "alex@1.com",
+                 "alex@gmail.com.com",
+                 "alex+27@gmail.com",
+                 "alex-27@yandex-test.com"
+         };
+		
+		 for (String email : validEmails) {
 			assertTrue(validate(email));
-		}
-
-		String unvalidEmails[] = new String[] {
-				"devcolibri",
-				"alex@.com.ua",
-				"alex123@gmail.a",
-				"alex123@.com",
-				"alex123@.com.com",
-				".alex@devcolibri.com",
-				"alex()*@gmail.com",
-				"alex@%*.com",
-				"alex..2013@gmail.com",
-				"alex.@gmail.com",
-				"alex@devcolibri@gmail.com",
-				"alex@gmail.com.1ua"
-		};
-		for (String email : unvalidEmails) {
-			assertFalse(validate(email));
-		}
+		 }
+		 
+		 String unvalidEmails[] = new String[] {
+                 "devcolibri",
+                 "alex@.com.ua",
+                 "alex123@gmail.a",
+                 "alex123@.com",
+                 "alex123@.com.com",
+                 ".alex@devcolibri.com",
+                 "alex()*@gmail.com",
+                 "alex@%*.com",
+                 "alex..2013@gmail.com",
+                 "alex.@gmail.com",
+                 "alex@devcolibri@gmail.com",
+                 "alex@gmail.com.1ua"
+         };
+		 for (String email : unvalidEmails) {
+				assertFalse(validate(email));
+			}
 	}
 }
