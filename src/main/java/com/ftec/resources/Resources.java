@@ -56,7 +56,6 @@ public class Resources {
         this.botUsername = botUsername;
     }
 
-
     public static class Endpoints{
         private String botsModule = "";
         private String socialModule = "";

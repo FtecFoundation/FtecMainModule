@@ -3,7 +3,7 @@ package com.ftec.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-@Document(indexName = "ids")
+@Document(indexName = "#{@idsIndex}")
 public class Ids {
 	
     @Id
@@ -32,6 +32,10 @@ public class Ids {
 
     public void setLastId(long lastId) {
         this.lastId = lastId;
+    }
+
+    public void incrementIndex(){
+        lastId++;
     }
 
 	@Override
