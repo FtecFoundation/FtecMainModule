@@ -9,7 +9,7 @@ import com.ftec.services.interfaces.IdManager;
 @Service
 public class IdManagerImpl implements IdManager {
     private final IdsDAO idsDAO;
-
+    
     public IdManagerImpl(IdsDAO idsDAO) {
         this.idsDAO = idsDAO;
     }
