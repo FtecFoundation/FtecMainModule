@@ -9,6 +9,5 @@ public interface IdManager {
     void incrementLastId(String tableName);
 	Iterable<Ids> findAll();
 	Ids findByTableName(Class table);
-	Ids findByTableName(String table);
 
 }
