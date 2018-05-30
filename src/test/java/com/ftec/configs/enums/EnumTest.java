@@ -10,24 +10,22 @@ import com.ftec.entities.User;
 
 @RunWith(SpringRunner.class)
 public class EnumTest {
+    @Test
+    public void setNextStepTest() {
+        User u = new User();
+        u.setCurrentStep(TutorialSteps.FIRST); //should be by default
+        TutorialSteps.setNextStep(u);
 
-	@Test
-	public void setNextStepTest() {
-		User u = new User();
-		u.setCurrentStep(TutorialSteps.FIRST); //should be by default
-		TutorialSteps.setNextStep(u);
+        assertTrue(TutorialSteps.SECOND.equals(u.getStep()));
+    }
 
-		assertTrue(TutorialSteps.SECOND.equals(u.getStep()));
-	}
-	
-	@Test
-	public void getNextStepTest() {
-		assertTrue(TutorialSteps.getNextStep(TutorialSteps.FIRST).equals(TutorialSteps.SECOND));
-	}
-	
-	@Test
-	public void returnsNullTest() {		
-		assertTrue(TutorialSteps.getNextStep(TutorialSteps.THIRD) == null);
-	}
-	
+    @Test
+    public void getNextStepTest() {
+        assertTrue(TutorialSteps.getNextStep(TutorialSteps.FIRST).equals(TutorialSteps.SECOND));
+    }
+
+    @Test
+    public void returnsNullTest() {
+        assertTrue(TutorialSteps.getNextStep(TutorialSteps.THIRD) == null);
+    }
 }
