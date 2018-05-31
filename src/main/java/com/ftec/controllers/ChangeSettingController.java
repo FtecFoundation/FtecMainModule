@@ -1,39 +1,53 @@
 package com.ftec.controllers;
 
-import com.ftec.constratints.UniqueEmail;
-import com.ftec.entities.User;
-import com.ftec.exceptions.InvalidUpdateDataException;
-import com.ftec.repositories.UserDAO;
-import com.ftec.resources.models.MvcResponse;
-import com.ftec.utils.EmailRegexp;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ftec.constratints.UniqueEmail;
+import com.ftec.entities.User;
+import com.ftec.exceptions.InvalidUpdateDataException;
+import com.ftec.repositories.UserDAO;
+import com.ftec.services.TokenService;
+import com.ftec.utils.EmailRegexp;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @RestController
 public class ChangeSettingController {
-	private final UserDAO userDao;
+	private final UserDAO userDAO;
 
 	@Autowired
 	public ChangeSettingController(UserDAO userDao) {
-		this.userDao = userDao;
+		this.userDAO = userDao;
 	}
 	
 	@PostMapping("/changeUserSetting")
-	public MvcResponse changeUserSetting(@Valid UserUpdate userUpdate, BindingResult br) {
+	public ResponseEntity<String> changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request) {
 		if(br.hasErrors()){
+			return null;
 			//TODO change mvc response to shortened version
-			return new MvcResponse(400, br.getAllErrors());
+			//return new MvcResponse(400, br.getAllErrors());
 		}
-		return null;
+		User userFromDB = userDAO.findById(TokenService.getUserIdFromToken(request)).get();
+		
+		changeEmailIfRequired(userFromDB, userUpdate.getEmail());
+		changePasswordIfRequired(userFromDB, userUpdate.getPassword());
+		changeTwoFactorIfRequired(userFromDB, userUpdate.getIsTwoFactorEnabled());
+		changeSubscribeForNewsIfRequired(userFromDB, userUpdate.getIsSubscribeForNews());
+		
+		userDAO.save(userFromDB);
+		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
 
@@ -76,7 +90,7 @@ public class ChangeSettingController {
 	}
 
 	public boolean isDublicateEmail(String new_email) {
-		return userDao.findByEmail(new_email).isPresent();
+		return userDAO.findByEmail(new_email).isPresent();
 	}
 
 	public boolean isTheSameEmail(User user, String new_email) {

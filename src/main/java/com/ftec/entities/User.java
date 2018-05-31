@@ -3,11 +3,12 @@ package com.ftec.entities;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.ftec.controllers.RegistrationController;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.controllers.ChangeSettingController.UserUpdate;
+import com.ftec.controllers.RegistrationController;
 
 @Document(indexName = "#{@users}")
 public class User {
@@ -45,7 +46,29 @@ public class User {
         this.subscribeForNews = userRegistration.isSubscribeForNews();
     }
 
+    public void apllyChangeSettings(UserUpdate userUpdate) {
+    	changeEmailIfRequired(userUpdate.getEmail());
+		changePasswordIfRequired(userUpdate.getPassword());
+		changeTwoFactorIfRequired(userUpdate.getIsTwoFactorEnabled());
+		changeSubscribeForNewsIfRequired(userUpdate.getIsSubscribeForNews());
+    }
+    
+    private void changeTwoFactorIfRequired(Boolean twoStepVerification) {
+		if(twoStepVerification != null) this.twoStepVerification = twoStepVerification;
+	}
 
+	private void changePasswordIfRequired(String password) {
+    	if(password != null) this.password = password;
+	}
+
+	private void changeEmailIfRequired(String email) {
+		if(email != null) this.email = email;
+	}
+    
+	private void changeSubscribtonIfRequired(Boolean subscribeForNews) {
+		if(subscribeForNews != null) this.subscribeForNews = subscribeForNews;
+	}
+	
     public void fillEmptyFields() {
         //todo add another fields
         this.currentStep = TutorialSteps.FIRST;
