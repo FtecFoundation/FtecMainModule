@@ -25,7 +25,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ControllerTest;
 import com.ftec.entities.User;
 import com.ftec.entities.UserToken;
-import com.ftec.exceptions.InvalidTokenException;
+import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 
