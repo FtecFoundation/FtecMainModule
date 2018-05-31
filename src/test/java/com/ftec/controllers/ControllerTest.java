@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
@@ -28,6 +31,7 @@ import com.ftec.services.TokenService;
 import com.ftec.services.Implementations.IdManagerImpl;
 import com.ftec.services.Implementations.UserServiceImpl;
 
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
@@ -45,6 +49,10 @@ public class ControllerTest {
 	@Autowired
 	UserServiceImpl userService;
 	
+	@Before
+	public void setUp() {
+		dao.deleteAll();
+	}
 	public static User newUser(String login) {
 		User u = new User();
 		u.setUsername(login);
@@ -65,11 +73,9 @@ public class ControllerTest {
 		.andDo(print()).andExpect(status().isCreated());
 		
 		assertTrue(dao.findByUsername(username).isPresent());
-
-		dao.deleteById(123L);
 	}
-	
-	@Test
+
+	@Test(expected = NestedServletException.class)
 	public void trySaveDublicateUsername() throws Exception {
 		String userName = "tester2";
 		User u = newUser(userName);
@@ -86,8 +92,6 @@ public class ControllerTest {
 		.andDo(print()).andExpect(status().isBadRequest());
 		
 		assertTrue(userService.isDuplicateUserName(userName));
-		
-		dao.deleteById(235L);
 	}
 	
 	
@@ -109,7 +113,6 @@ public class ControllerTest {
 				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
 		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
-		dao.deleteById(322L);
 	}
 	
 	@Test
@@ -129,9 +132,6 @@ public class ControllerTest {
 				accept(MediaType.APPLICATION_JSON))
 		.andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 		
-		dao.deleteById(456L);
-		dao.deleteById(457L);
-
 	}
 	
 	

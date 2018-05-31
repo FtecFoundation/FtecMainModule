@@ -1,16 +1,17 @@
 package com.ftec.services;
 
-import java.util.Date;
-import java.util.Random;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.ftec.entities.UserToken;
+import com.ftec.exceptions.token.InvalidTokenException;
+import com.ftec.exceptions.token.NullTokenException;
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.exceptions.token.TokenExpiredException;
+import com.ftec.repositories.UserTokenDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ftec.entities.UserToken;
-import com.ftec.exceptions.InvalidTokenException;
-import com.ftec.repositories.UserTokenDAO;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.Random;
 
 @Service
 public class TokenService {
@@ -26,34 +27,38 @@ public class TokenService {
 	public static Long getUserIdFromToken(HttpServletRequest request) {
 		return getUserIdFromToken(getToken(request));
 	}
-	//public mod for testing purposes
-	public static Long getUserIdFromToken(String token) throws InvalidTokenException {
+
+	private static Long getUserIdFromToken(String token) throws InvalidTokenException {
 		checkTokenFormat(token);
 		return Long.valueOf(extractUserID(token));
 	}
 	
-	public static void checkTokenFormat(String token) {
+	static void checkTokenFormat(String token) {
 		if(!token.contains("_")) throw new InvalidTokenException("Invalid token format! {UserID}_{Hash} expected.");
 		
 		String userId = extractUserID(token);
 		
 		try {
-			Integer.valueOf(userId);
-		}catch(Exception e) {
+			Long.valueOf(userId);
+		} catch(Exception e) {
 			throw new InvalidTokenException("Invalid token format! Exception while convert userID to Long.");
 		}
 		
 	}
 
-	public static String extractUserID(String token) {
+	static String extractUserID(String token) {
 		return token.substring(0, token.indexOf("_"));
 	}
 
-	private static String getToken(HttpServletRequest request) {
-		return request.getHeader(TOKEN_NAME);
+	private static String getToken(HttpServletRequest request) throws NullTokenException{
+		String token = request.getHeader(TOKEN_NAME);
+		
+		if(token == null) throw new NullTokenException("No token in the header!");
+		
+		return token;
 	}
 	
-	public String saveAndGetNewToken(Long id) {
+	public String createSaveAndGetNewToken(Long id) {
 		String token = generateToken(id);
 		Date expiration = new Date();
 		
@@ -63,12 +68,12 @@ public class TokenService {
 		return token;
 	}
 
-	public void setExpirationTime(Date expiration) {
+	private void setExpirationTime(Date expiration) {
 		expiration.setTime(expiration.getTime() + 1800000);
 	}
 
-	public static String generateToken(Long id) {
-		return id.toString() + generateRandomString();
+	static String generateToken(Long id) {
+		return id.toString() + "_" + generateRandomString();
 	}
 	
 	private static String generateRandomString() {
@@ -82,18 +87,26 @@ public class TokenService {
 	          (random.nextFloat() * (rightLimit - leftLimit + 1));
 	        buffer.append((char) randomLimitedInt);
 	    }
-	    String generatedString = buffer.toString();
-	 
-	    return "_" + generatedString;
+		return buffer.toString();
 	}
 	
-	public boolean isValidRequest(HttpServletRequest request) {
-		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
-		
-		if(tokenEntity == null) return false;
+	public void verifyRequest(HttpServletRequest request) throws TokenException{
+		UserToken tokenEntity = getUserTokenFromRequest(request);
 		
 		Date expirationTime = tokenEntity.getExpirationTime();
-		return expirationTime.after(new Date());
+		
+		checkIfTokenExpired(expirationTime);	
 	}
 
+	private void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException{
+		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
+	}
+	
+	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
+		String token = getToken(request);
+		UserToken userToken = tokenManager.getByToken(token);
+		
+		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
+		return userToken;
+	}
 }

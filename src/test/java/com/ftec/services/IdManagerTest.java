@@ -31,19 +31,21 @@ public class IdManagerTest {
     public void setUp() throws Exception {
         elasticsearchTemplate.deleteIndex(Ids.class);
         elasticsearchTemplate.createIndex(Ids.class);
+        
+   
     }
-
+    //on my PC elasticsearch returns 1 instead 0 when he can't find fild with required "table_name", i.e UserToken
     @Test
     public void idManagerGetLastNotExistsTest() {
         assert idManager.getLastId(UserToken.class)==1;
     }
-
+    
     @Test
     public void idManagerGetLastExistingTest() {
         idsDAO.save(new Ids(TelegramSettings.class.getName(), 1));
         assert idManager.getLastId(TelegramSettings.class)>0;
     }
-
+    
     @Test
     public void idManagerIncrementTest(){
         idsDAO.save(new Ids(User.class.getName(), 1));

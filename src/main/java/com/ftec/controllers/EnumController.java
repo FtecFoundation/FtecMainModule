@@ -29,14 +29,14 @@ public class EnumController {
 		Long userId = TokenService.getUserIdFromToken(request);
 		User user = userDao.findById(userId).get();
 		TutorialSteps.setNextStep(user);
-		return user.getStep();
+		return user.getCurrentStep();
 	}
 	
 	@GetMapping("/getCurrentStep")
 	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
 		Long userId = TokenService.getUserIdFromToken(request);
 		User user = userDao.findById(userId).get();
-		return user.getStep();		
+		return user.getCurrentStep();		
 	}
 	
 	@GetMapping("/securedTest")
@@ -44,14 +44,20 @@ public class EnumController {
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 	
+	/*
+	 * TODO test
+	 */
 	@GetMapping("/testMvcResponse")
-	public MvcResponse testResponse() {
+	public MvcResponse<User> testResponse() {
 		User u = new User();
 		u.setCurrentStep(TutorialSteps.SECOND);
-		u.setEmail("email");
+		u.setEmail("emailTest");
 		u.setId(25L);
+		u.setPassword("dwa");
+		u.setSubscribeForNews(true);
+		u.setUsername("username");
 		MvcResponse<User> response = new MvcResponse<>();
-		response.setResponse(u);
+		response.getResponse().put("user", u);
 		response.setStatus(HttpStatus.OK);
 		response.setError("some error");
 		return response;

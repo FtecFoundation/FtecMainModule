@@ -1,13 +1,13 @@
 package com.ftec.configs.middlewares;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.ftec.services.TokenService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class TokenSecurityMiddleware implements HandlerInterceptor{
@@ -21,11 +21,13 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		if(!tokenService.isValidRequest(request)) {
-			response.setStatus(400);
+		try {
+			tokenService.verifyRequest(request);
+		} catch(TokenException ex) {
+			response.setStatus(403);
 			return false;
 		}
-		return tokenService.isValidRequest(request);
+		return true;
 	}
 	
 
