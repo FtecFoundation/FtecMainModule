@@ -33,7 +33,16 @@ public class User {
     @NotNull
     private Boolean twoStepVerification;
 
+    private UserConstraint userConstraint;
+
     public User() {
+    }
+
+    public User(UserConstraint userConstraint) {
+        this.username = userConstraint.getUsername();
+        this.password = userConstraint.getPassword();
+        this.email = userConstraint.getEmail();
+        this.subscribeForNews = userConstraint.isSubscribeForNews();
     }
 
     public void fillEmptyFields() {
@@ -89,16 +98,24 @@ public class User {
         this.currentStep = currentStep;
     }
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
-    }
-
     public Boolean isTwoStepVerification() {
         return twoStepVerification;
     }
 
     public void setTwoStepVerification(Boolean twoStepVerification) {
         this.twoStepVerification = twoStepVerification;
+    }
+
+    public UserConstraint getUserConstraint() {
+        return userConstraint;
+    }
+
+    public void setUserConstraint(UserConstraint userConstraint) {
+        this.userConstraint = userConstraint;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
     }
 }
