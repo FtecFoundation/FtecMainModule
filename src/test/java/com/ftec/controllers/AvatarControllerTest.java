@@ -1,6 +1,8 @@
 package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
+import com.google.common.io.Files;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ActiveProfiles("test")
@@ -25,13 +30,23 @@ public class AvatarControllerTest {
     MockMvc mvc;
 
     @Test
-    public void AvatarByteCodeTest() throws Exception {
+    public void getFileTest() throws Exception {
+        File file = new File("C:/image.jpg");
+        byte[] byteObject = Files.toByteArray(file);
+//        String mockedFile = new BASE64Encoder().encode(byteObject);
+
         MvcResult result = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/image")
                 .contentType(MediaType.ALL_VALUE)
                 .accept(MediaType.ALL_VALUE))
                 .andDo(print()).andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
-//        System.out.println(jsonResponse);
+        JSONObject o = new JSONObject(jsonResponse);
+        JSONObject jsonResp = o.getJSONObject("response");
+        byte[] jsonImageString = jsonResp.getString("image").getBytes();
+
+
+        assertEquals(jsonImageString, byteObject);
+
     }
 }
