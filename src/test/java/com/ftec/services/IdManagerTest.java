@@ -16,6 +16,8 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.Assert.assertEquals;
+
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationConfig.class)
@@ -28,13 +30,11 @@ public class IdManagerTest {
     ElasticsearchTemplate elasticsearchTemplate;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp(){
         elasticsearchTemplate.deleteIndex(Ids.class);
         elasticsearchTemplate.createIndex(Ids.class);
-        
-   
     }
-    //on my PC elasticsearch returns 1 instead 0 when he can't find fild with required "table_name", i.e UserToken
+
     @Test
     public void idManagerGetLastNotExistsTest() {
         assert idManager.getLastId(UserToken.class)==1;
@@ -51,6 +51,15 @@ public class IdManagerTest {
         idsDAO.save(new Ids(User.class.getName(), 1));
         idManager.incrementLastId(User.class);
         assert idsDAO.findByTableName(User.class.getName()).getLastId()==2;
+    }
+
+    @Test
+    public void tryIncrementManyTimes() {
+        Long cur_id = idManager.getLastId(User.class);
+        idManager.incrementLastId(User.class);
+        idManager.incrementLastId(User.class);
+        idManager.incrementLastId(User.class);
+        assertEquals(idManager.getLastId(User.class), 3 + cur_id);
     }
 
 }
