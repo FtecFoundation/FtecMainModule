@@ -1,6 +1,6 @@
-package com.ftec.telegram;
+package com.ftec.modules.telegram;
 
-import com.ftec.telegram.resources.Stages;
+import com.ftec.modules.telegram.resources.Stages;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.bots.AbsSender;

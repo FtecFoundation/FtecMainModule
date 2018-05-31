@@ -1,4 +1,4 @@
-package com.ftec.telegram.services;
+package com.ftec.modules.telegram.services;
 
 import org.springframework.stereotype.Service;
 

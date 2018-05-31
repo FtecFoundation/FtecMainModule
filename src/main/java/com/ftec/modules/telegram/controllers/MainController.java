@@ -1,8 +1,8 @@
-package com.ftec.telegram.controllers;
+package com.ftec.modules.telegram.controllers;
 
 import org.springframework.stereotype.Component;
 
-import com.ftec.telegram.decorators.TelegramController;
+import com.ftec.modules.telegram.decorators.TelegramController;
 
 @TelegramController
 @Component

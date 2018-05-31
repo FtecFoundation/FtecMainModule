@@ -1,6 +1,6 @@
 package com.ftec.controllers;
 
-import com.ftec.entities.MvcResponse;
+import com.ftec.constratints.UniqueEmail;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUpdateDataException;
 import com.ftec.repositories.UserDAO;
@@ -29,9 +29,9 @@ public class ChangeSettingController {
 	public ResponseEntity<String> changeUserSetting(@Valid UserUpdate userUpdate, BindingResult br) {
 		if(br.hasErrors()){
 			//TODO change mvc response to shortened version
-			return new MvcResponse(400, br.getAllErrors());
+//			return new MvcResponse(400, br.getAllErrors());
 		}
-
+		return null;
 	}
 
 
@@ -86,7 +86,7 @@ public class ChangeSettingController {
 		return EmailRegexp.validate(new_email);
 	}
 
-	static class UserUpdate{
+	public static class UserUpdate{
 		@Null
 		@Min(0)
 		private long userId;
@@ -95,10 +95,45 @@ public class ChangeSettingController {
 		private String password;
 		@Null
 		@Pattern(regexp = "")
+		@UniqueEmail
 		private String email;
 		@Null
 		private boolean isTwoFactorEnabled;
 
+		public UserUpdate() {
+		}
+
+		public long getUserId() {
+			return userId;
+		}
+
+		public void setUserId(long userId) {
+			this.userId = userId;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+		public void setPassword(String password) {
+			this.password = password;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
+
+		public boolean isTwoFactorEnabled() {
+			return isTwoFactorEnabled;
+		}
+
+		public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+			isTwoFactorEnabled = twoFactorEnabled;
+		}
 	}
 	
 }

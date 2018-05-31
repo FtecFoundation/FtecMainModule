@@ -1,4 +1,4 @@
-package com.ftec.telegram.decorators;
+package com.ftec.modules.telegram.decorators;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

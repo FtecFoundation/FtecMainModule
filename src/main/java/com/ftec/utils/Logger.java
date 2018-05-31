@@ -1,4 +1,4 @@
-package com.ftec.logger;
+package com.ftec.utils;
 
 import com.ftec.resources.Resources;
 

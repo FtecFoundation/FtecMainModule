@@ -1,4 +1,4 @@
-package com.ftec.telegram.resources;
+package com.ftec.modules.telegram.resources;
 
 public class Commands {
     public static final String balanceKeyboard = "\uD83D\uDCB8Balance";

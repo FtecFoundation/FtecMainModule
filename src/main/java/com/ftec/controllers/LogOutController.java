@@ -18,7 +18,6 @@ public class LogOutController {
 	
 	@Autowired
 	public LogOutController(UserTokenDAO tokenDAO) {
-		super();
 		this.tokenDAO = tokenDAO;
 	}
 	

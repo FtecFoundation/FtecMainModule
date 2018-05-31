@@ -1,4 +1,4 @@
-package com.ftec.telegram.exceptions;
+package com.ftec.modules.telegram.exceptions;
 
 public class BotNotRegisteredException extends Exception {
     public BotNotRegisteredException() {

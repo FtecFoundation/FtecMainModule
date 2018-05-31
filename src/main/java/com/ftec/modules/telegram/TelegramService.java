@@ -1,9 +1,9 @@
-package com.ftec.telegram;
+package com.ftec.modules.telegram;
 
 import com.ftec.entities.TelegramSettings;
 import com.ftec.repositories.TelegramSettingsDAO;
 import com.ftec.resources.TelegramNotifications;
-import com.ftec.telegram.exceptions.WrongCodeException;
+import com.ftec.modules.telegram.exceptions.WrongCodeException;
 import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 

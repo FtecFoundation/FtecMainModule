@@ -1,4 +1,4 @@
-package com.ftec.telegram.resources;
+package com.ftec.modules.telegram.resources;
 
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -6,7 +6,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ftec.telegram.resources.Commands.*;
+import static com.ftec.modules.telegram.resources.Commands.*;
 
 public enum Stages {
     MAIN(null, "telegram.main.welcomeStage");
