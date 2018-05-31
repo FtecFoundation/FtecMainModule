@@ -31,7 +31,7 @@ public class ChangeSettingController {
 			//TODO change mvc response to shortened version
 			return new MvcResponse(400, br.getAllErrors());
 		}
-		
+
 	}
 
 
