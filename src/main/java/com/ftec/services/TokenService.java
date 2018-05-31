@@ -1,17 +1,19 @@
 package com.ftec.services;
 
+import java.util.Date;
+import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.NullTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.UserTokenDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Random;
 
 @Service
 public class TokenService {
@@ -90,8 +92,8 @@ public class TokenService {
 		return buffer.toString();
 	}
 	
-	public void verifyRequest(HttpServletRequest request) throws TokenException{
-		UserToken tokenEntity = getUserTokenFromRequest(request);
+	public void verifyToken(String token) throws TokenException{
+		UserToken tokenEntity = getUserTokenFromRequest(token);
 		
 		Date expirationTime = tokenEntity.getExpirationTime();
 		
@@ -102,8 +104,7 @@ public class TokenService {
 		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
 	}
 	
-	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
-		String token = getToken(request);
+	private UserToken getUserTokenFromRequest(String token) throws TokenException{
 		UserToken userToken = tokenManager.findByToken(token);
 		
 		if(userToken == null)	throw new TokenException("Can't find token in the DB!");

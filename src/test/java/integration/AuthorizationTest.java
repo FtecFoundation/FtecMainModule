@@ -47,6 +47,9 @@ public class AuthorizationTest {
 	@Autowired
 	UserTokenDAO tokenDAO;
 	
+	@Autowired
+	TokenService tokenService;
+	
 	@Before
 	public void setUp() {
 		userDAO.deleteAll();
@@ -152,7 +155,7 @@ public class AuthorizationTest {
 		
 		assertTrue(tokenDAO.findByToken(token) != null);
 		
-		TokenService.checkTokenFormat(token); //should not throw exception
+		tokenService.verifyToken(token); //should not throw exception
 		
 	}
 }
