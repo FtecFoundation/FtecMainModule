@@ -49,8 +49,8 @@ public class User {
     public void apllyChangeSettings(UserUpdate userUpdate) {
     	changeEmailIfRequired(userUpdate.getEmail());
 		changePasswordIfRequired(userUpdate.getPassword());
-		changeTwoFactorIfRequired(userUpdate.getIsTwoFactorEnabled());
-		changeSubscribeForNewsIfRequired(userUpdate.getIsSubscribeForNews());
+		changeTwoFactorIfRequired(userUpdate.isTwoFactorEnabled());
+		changeSubscribeForNewsIfRequired(userUpdate.isTwoFactorEnabled());
     }
     
     private void changeTwoFactorIfRequired(Boolean twoStepVerification) {
@@ -65,7 +65,7 @@ public class User {
 		if(email != null) this.email = email;
 	}
     
-	private void changeSubscribtonIfRequired(Boolean subscribeForNews) {
+	private void changeSubscribeForNewsIfRequired(Boolean subscribeForNews) {
 		if(subscribeForNews != null) this.subscribeForNews = subscribeForNews;
 	}
 	
