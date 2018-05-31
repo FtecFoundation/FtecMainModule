@@ -10,7 +10,7 @@ import com.ftec.configs.enums.TutorialSteps;
 
 @Document(indexName = "#{@users}")
 public class User {
-	
+
     @Id
     private long id;
 
@@ -24,16 +24,21 @@ public class User {
 
     @NotNull
     private String email;
-    
+
     private TutorialSteps currentStep;
 
     @NotNull
     private boolean subscribeForNews;
-    
+
     @NotNull
     private Boolean twoStepVerification;
-    
+
     public User() {
+    }
+
+    public void fillEmptyFields() {
+        //todo add another fields
+        currentStep = TutorialSteps.FIRST;
     }
 
     public long getId() {
@@ -76,24 +81,24 @@ public class User {
         this.subscribeForNews = subscribeForNews;
     }
 
-	public TutorialSteps getCurrentStep() {
-		return currentStep;
-	}
+    public TutorialSteps getCurrentStep() {
+        return currentStep;
+    }
 
-	public void setCurrentStep(TutorialSteps currentStep) {
-		this.currentStep = currentStep;
-	}
+    public void setCurrentStep(TutorialSteps currentStep) {
+        this.currentStep = currentStep;
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
-	}
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
+    }
 
-	public Boolean isTwoStepVerification() {
-		return twoStepVerification;
-	}
+    public Boolean isTwoStepVerification() {
+        return twoStepVerification;
+    }
 
-	public void setTwoStepVerification(Boolean twoStepVerification) {
-		this.twoStepVerification = twoStepVerification;
-	}
+    public void setTwoStepVerification(Boolean twoStepVerification) {
+        this.twoStepVerification = twoStepVerification;
+    }
 }
