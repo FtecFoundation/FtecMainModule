@@ -1,6 +1,5 @@
 package com.ftec.controllers;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -10,21 +9,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ftec.entities.MvcResponse;
-import io.netty.handler.codec.http.HttpResponseStatus;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
@@ -36,7 +33,7 @@ import com.ftec.services.Implementations.UserServiceImpl;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
 public class ControllerTest {
 
@@ -52,6 +49,10 @@ public class ControllerTest {
     @Autowired
     UserServiceImpl userService;
 
+    @Before
+    public void setUp() {
+        dao.deleteAll();
+    }
     public static User newUser(String login) {
         User u = new User();
         u.setUsername(login);
@@ -67,37 +68,34 @@ public class ControllerTest {
         User u = newUser(username);
         u.setId(123L);
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isCreated());
 
         assertTrue(dao.findByUsername(username).isPresent());
-
-        dao.deleteById(123L);
     }
 
-    @Test
+    @Test(expected = NestedServletException.class)
     public void trySaveDublicateUsername() throws Exception {
         String userName = "tester2";
         User u = newUser(userName);
         u.setId(235L);
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isCreated());
 
         //should be status BadRequest
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
 
         assertTrue(userService.isDuplicateUserName(userName));
-
-        dao.deleteById(235L);
     }
 
-        public static String asJsonString(final Object obj) {
+
+    public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
             final String jsonContent = mapper.writeValueAsString(obj);
@@ -112,10 +110,9 @@ public class ControllerTest {
         User u = newUser("tester3_v2");
         u.setId(322L);
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
-        dao.deleteById(322L);
     }
 
     @Test
@@ -126,19 +123,17 @@ public class ControllerTest {
         u2.setId(457L);
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u1)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u1)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content(asJsonString(u2)).contentType(MediaType.APPLICATION_JSON).
+                content( asJsonString(u2)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 
-        dao.deleteById(456L);
-        dao.deleteById(457L);
-
     }
+
 
 
     public static final String regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
@@ -153,7 +148,7 @@ public class ControllerTest {
 
     @Test
     public void regExpEmailTestt() {
-        String validEmails[] = new String[]{
+        String validEmails[] = new String[] {
                 "alex@yandex.ru",
                 "alex-27@yandex.com",
                 "alex.27@yandex.com",
@@ -169,7 +164,7 @@ public class ControllerTest {
             assertTrue(validate(email));
         }
 
-        String unvalidEmails[] = new String[]{
+        String unvalidEmails[] = new String[] {
                 "devcolibri",
                 "alex@.com.ua",
                 "alex123@gmail.a",

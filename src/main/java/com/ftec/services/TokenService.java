@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
+import com.ftec.exceptions.NullTokenException;
+import com.ftec.exceptions.TokenException;
+import com.ftec.exceptions.TokenExpiredException;
 import com.ftec.repositories.UserTokenDAO;
 
 @Service
@@ -38,8 +41,8 @@ public class TokenService {
 		String userId = extractUserID(token);
 		
 		try {
-			Integer.valueOf(userId);
-		}catch(Exception e) {
+			Long.valueOf(userId);
+		} catch(Exception e) {
 			throw new InvalidTokenException("Invalid token format! Exception while convert userID to Long.");
 		}
 		
@@ -49,11 +52,15 @@ public class TokenService {
 		return token.substring(0, token.indexOf("_"));
 	}
 
-	private static String getToken(HttpServletRequest request) {
-		return request.getHeader(TOKEN_NAME);
+	private static String getToken(HttpServletRequest request) throws NullTokenException{
+		String token = request.getHeader(TOKEN_NAME);
+		
+		if(token == null) throw new NullTokenException("No token in the header!");
+		
+		return token;
 	}
 	
-	public String saveAndGetNewToken(Long id) {
+	public String createSaveAndGetNewToken(Long id) {
 		String token = generateToken(id);
 		Date expiration = new Date();
 		
@@ -68,7 +75,7 @@ public class TokenService {
 	}
 
 	public static String generateToken(Long id) {
-		return id.toString() + generateRandomString();
+		return id.toString() + "_" + generateRandomString();
 	}
 	
 	private static String generateRandomString() {
@@ -84,16 +91,26 @@ public class TokenService {
 	    }
 	    String generatedString = buffer.toString();
 	 
-	    return "_" + generatedString;
+	    return generatedString;
 	}
 	
-	public boolean isValidRequest(HttpServletRequest request) {
-		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
-		
-		if(tokenEntity == null) return false;
+	public void verifyRequest(HttpServletRequest request) throws TokenException{
+		UserToken tokenEntity = getUserTokenFromRequest(request);
 		
 		Date expirationTime = tokenEntity.getExpirationTime();
-		return expirationTime.after(new Date());
+		
+		checkIfTokenExpired(expirationTime);	
 	}
 
+	public void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException{
+		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
+	}
+	
+	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
+		String token = getToken(request);
+		UserToken userToken = tokenManager.getByToken(token);
+		
+		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
+		return userToken;
+	}
 }

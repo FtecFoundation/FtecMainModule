@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Date;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ControllerTest;
 import com.ftec.entities.User;
+import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
@@ -70,8 +73,8 @@ public class TokenServiceTest {
         TokenService.checkTokenFormat("23aNDKJAWNWKAJDNAkWKDNAW");
     }
     
-    @Test
-    public void testSaveTokenIntoDB() throws Exception {
+    @Test //integration test
+    public void testSaveTokenIntoDBthroughRegistrationController() throws Exception {
     	String userName = "tester2";
 		User u = ControllerTest.newUser(userName);
 		Long id = 565L;
@@ -87,5 +90,17 @@ public class TokenServiceTest {
 		
 		dao.deleteById(id);
 		
+    }
+    
+    @Test
+    public void saveTokenIntoDB() {
+    	String token = TokenService.generateToken(998L);
+    	Date current = new Date();
+    	UserToken uToken = new UserToken(token, current);
+    	
+    	tokenDAO.save(uToken);
+    	
+    	assertTrue(tokenDAO.getByToken(token) != null);
+    	assertTrue(tokenDAO.getByToken(token).getExpirationTime().equals(current));
     }
 }

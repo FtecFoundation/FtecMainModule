@@ -8,7 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 import com.ftec.configs.enums.TutorialSteps;
 
-@Document(indexName = "users")
+@Document(indexName = "#{@users}")
 public class User {
 	
     @Id
@@ -29,7 +29,10 @@ public class User {
 
     @NotNull
     private boolean subscribeForNews;
-
+    
+    @NotNull
+    private Boolean twoStepVerification;
+    
     public User() {
     }
 
@@ -84,5 +87,13 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
+	}
+
+	public Boolean isTwoStepVerification() {
+		return twoStepVerification;
+	}
+
+	public void setTwoStepVerification(Boolean twoStepVerification) {
+		this.twoStepVerification = twoStepVerification;
 	}
 }
