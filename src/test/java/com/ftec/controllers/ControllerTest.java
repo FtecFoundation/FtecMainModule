@@ -1,14 +1,11 @@
 package com.ftec.controllers;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftec.configs.ApplicationConfig;
+import com.ftec.entities.User;
+import com.ftec.repositories.UserDAO;
+import com.ftec.services.Implementations.UserServiceImpl;
+import com.ftec.services.TokenService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,17 +20,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.util.NestedServletException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ftec.configs.ApplicationConfig;
-import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
-import com.ftec.services.TokenService;
-import com.ftec.services.Implementations.IdManagerImpl;
-import com.ftec.services.Implementations.UserServiceImpl;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
 public class ControllerTest {
 
@@ -44,15 +42,13 @@ public class ControllerTest {
     MockMvc mvc;
 
     @Autowired
-    private IdManagerImpl idManager;
-
-    @Autowired
     UserServiceImpl userService;
 
     @Before
     public void setUp() {
         dao.deleteAll();
     }
+
     public static User newUser(String login) {
         User u = new User();
         u.setUsername(login);
@@ -64,30 +60,37 @@ public class ControllerTest {
 
     @Test
     public void createValidUser() throws Exception {
-        String username = "tester1";
-        User u = newUser(username);
-        u.setId(123L);
+        RegistrationController.UserRegistration userRegistration = new RegistrationController.UserRegistration();
+        userRegistration.setUsername("tester1");
+        userRegistration.setPassword("pass_user1");
+        userRegistration.setEmail("emaill@mail.com");
+        userRegistration.setSubscribeForNews(true);
+
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isCreated());
 
-        assertTrue(dao.findByUsername(username).isPresent());
+        assertTrue(dao.findByUsername("tester1").isPresent());
     }
 
     @Test(expected = NestedServletException.class)
-    public void trySaveDublicateUsername() throws Exception {
+    public void trySaveDuplicateUsername() throws Exception {
         String userName = "tester2";
-        User u = newUser(userName);
-        u.setId(235L);
+        RegistrationController.UserRegistration userRegistration = new RegistrationController.UserRegistration();
+        userRegistration.setUsername(userName);
+        userRegistration.setPassword("pass_user1");
+        userRegistration.setEmail("emaill@mail.com");
+        userRegistration.setSubscribeForNews(true);
+
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isCreated());
 
         //should be status BadRequest
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
 
@@ -107,33 +110,44 @@ public class ControllerTest {
 
     @Test
     public void checkReturnedToken() throws Exception {
-        User u = newUser("tester3_v2");
-        u.setId(322L);
+        RegistrationController.UserRegistration userRegistration = new RegistrationController.UserRegistration();
+        userRegistration.setUsername("tester3_v2");
+        userRegistration.setPassword("pass_user1");
+        userRegistration.setEmail("emaill@mail.com");
+        userRegistration.setSubscribeForNews(true);
+
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
     }
 
     @Test
-    public void registrateTwoValidUsers() throws Exception {
-        User u1 = newUser("tester4_1");
-        User u2 = newUser("tester4_2");
-        u1.setId(456L);
-        u2.setId(457L);
+    public void registerTwoValidUsers() throws Exception {
+
+        RegistrationController.UserRegistration userRegistration1 = new RegistrationController.UserRegistration();
+        userRegistration1.setUsername("tester4_1");
+        userRegistration1.setPassword("pass_user1");
+        userRegistration1.setEmail("email1@mail.com");
+        userRegistration1.setSubscribeForNews(true);
+
+        RegistrationController.UserRegistration userRegistration2 = new RegistrationController.UserRegistration();
+        userRegistration2.setUsername("tester4_2");
+        userRegistration2.setPassword("pass_user2");
+        userRegistration2.setEmail("email2@mail.com");
+        userRegistration2.setSubscribeForNews(true);
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u1)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration1)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( asJsonString(u2)).contentType(MediaType.APPLICATION_JSON).
+                content(asJsonString(userRegistration2)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
 
     }
-
 
 
     public static final String regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
@@ -148,7 +162,7 @@ public class ControllerTest {
 
     @Test
     public void regExpEmailTestt() {
-        String validEmails[] = new String[] {
+        String validEmails[] = new String[]{
                 "alex@yandex.ru",
                 "alex-27@yandex.com",
                 "alex.27@yandex.com",
@@ -164,7 +178,7 @@ public class ControllerTest {
             assertTrue(validate(email));
         }
 
-        String unvalidEmails[] = new String[] {
+        String unvalidEmails[] = new String[]{
                 "devcolibri",
                 "alex@.com.ua",
                 "alex123@gmail.a",
