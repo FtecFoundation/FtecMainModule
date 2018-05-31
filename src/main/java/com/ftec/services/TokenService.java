@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.InvalidTokenException;
 import com.ftec.exceptions.NullTokenException;
+import com.ftec.exceptions.TokenException;
 import com.ftec.exceptions.TokenExpiredException;
 import com.ftec.repositories.UserTokenDAO;
 
@@ -40,7 +41,7 @@ public class TokenService {
 		String userId = extractUserID(token);
 		
 		try {
-			Integer.valueOf(userId);
+			Long.valueOf(userId);
 		} catch(Exception e) {
 			throw new InvalidTokenException("Invalid token format! Exception while convert userID to Long.");
 		}
@@ -93,12 +94,23 @@ public class TokenService {
 	    return generatedString;
 	}
 	
-	public void verifyRequest(HttpServletRequest request) throws NullTokenException, TokenExpiredException{
-		UserToken tokenEntity = tokenManager.getByToken(getToken(request));
-				
+	public void verifyRequest(HttpServletRequest request) throws TokenException{
+		UserToken tokenEntity = getUserTokenFromRequest(request);
+		
 		Date expirationTime = tokenEntity.getExpirationTime();
 		
-		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");	
+		checkIfTokenExpired(expirationTime);	
 	}
 
+	public void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException{
+		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
+	}
+	
+	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
+		String token = getToken(request);
+		UserToken userToken = tokenManager.getByToken(token);
+		
+		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
+		return userToken;
+	}
 }
