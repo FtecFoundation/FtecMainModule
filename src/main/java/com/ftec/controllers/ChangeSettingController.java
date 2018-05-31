@@ -4,9 +4,11 @@ import com.ftec.constratints.UniqueEmail;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUpdateDataException;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.models.MvcResponse;
 import com.ftec.utils.EmailRegexp;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +28,10 @@ public class ChangeSettingController {
 	}
 	
 	@PostMapping("/changeUserSetting")
-	public ResponseEntity<String> changeUserSetting(@Valid UserUpdate userUpdate, BindingResult br) {
+	public MvcResponse changeUserSetting(@Valid UserUpdate userUpdate, BindingResult br) {
 		if(br.hasErrors()){
 			//TODO change mvc response to shortened version
-//			return new MvcResponse(400, br.getAllErrors());
+			return new MvcResponse(400, br.getAllErrors());
 		}
 		return null;
 	}
@@ -50,7 +52,6 @@ public class ChangeSettingController {
 	}
 
 	public boolean checkAndUpdateEmail(User user, User newUserSettings) throws InvalidUpdateDataException {
-
 		String new_email = newUserSettings.getEmail();
 		if(isEmailNull(new_email) || isTheSameEmail(user, new_email)) return false;
 
@@ -86,6 +87,8 @@ public class ChangeSettingController {
 		return EmailRegexp.validate(new_email);
 	}
 
+	@Data
+	@NoArgsConstructor
 	public static class UserUpdate{
 		@Null
 		@Min(0)
@@ -99,41 +102,6 @@ public class ChangeSettingController {
 		private String email;
 		@Null
 		private boolean isTwoFactorEnabled;
-
-		public UserUpdate() {
-		}
-
-		public long getUserId() {
-			return userId;
-		}
-
-		public void setUserId(long userId) {
-			this.userId = userId;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-
-		public String getEmail() {
-			return email;
-		}
-
-		public void setEmail(String email) {
-			this.email = email;
-		}
-
-		public boolean isTwoFactorEnabled() {
-			return isTwoFactorEnabled;
-		}
-
-		public void setTwoFactorEnabled(boolean twoFactorEnabled) {
-			isTwoFactorEnabled = twoFactorEnabled;
-		}
 	}
 	
 }
