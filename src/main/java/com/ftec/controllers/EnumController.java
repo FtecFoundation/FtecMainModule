@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class EnumController {
 	private final UserDAO userDao;
-	
+
 	@Autowired
 	public EnumController(UserDAO userDao) {
 		this.userDao = userDao;
 	}
-	
+
 	@PostMapping("/nextStep")
 	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException {
 		Long userId = TokenService.getUserIdFromToken(request);
@@ -29,22 +29,21 @@ public class EnumController {
 		TutorialSteps.setNextStep(user);
 		return user.getCurrentStep();
 	}
-	
+
 	@GetMapping("/getCurrentStep")
 	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
 		Long userId = TokenService.getUserIdFromToken(request);
 		User user = userDao.findById(userId).get();
-		return user.getCurrentStep();		
+		return user.getCurrentStep();
 	}
-	
+
 	@GetMapping("/securedTest")
 	public ResponseEntity<?> testSecuredPage() {
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
-	
+
 	/*
 	 * TODO test
 	 */
 
 }
-

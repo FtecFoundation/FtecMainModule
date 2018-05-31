@@ -39,13 +39,13 @@ public class IdManagerTest {
     public void idManagerGetLastNotExistsTest() {
         assert idManager.getLastId(UserToken.class)==1;
     }
-    
+
     @Test
     public void idManagerGetLastExistingTest() {
         idsDAO.save(new Ids(TelegramSettings.class.getName(), 1));
         assert idManager.getLastId(TelegramSettings.class)>0;
     }
-    
+
     @Test
     public void idManagerIncrementTest(){
         idsDAO.save(new Ids(User.class.getName(), 1));

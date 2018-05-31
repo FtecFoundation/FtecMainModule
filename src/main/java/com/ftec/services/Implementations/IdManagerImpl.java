@@ -44,4 +44,17 @@ public class IdManagerImpl implements IdManager {
         }
         return ids;
     }
+
+	@Override
+	public Iterable<Ids> findAll() {
+		
+		return idsDAO.findAll();
+	}
+
+	@Override
+	public Ids findByTableName(Class table) {
+		return idsDAO.findByTableName(table.getName());
+	}
+
+
 }

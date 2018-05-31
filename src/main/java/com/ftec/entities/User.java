@@ -3,6 +3,7 @@ package com.ftec.entities;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.ftec.controllers.RegistrationController;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -10,7 +11,7 @@ import com.ftec.configs.enums.TutorialSteps;
 
 @Document(indexName = "#{@users}")
 public class User {
-	
+
     @Id
     private long id;
 
@@ -24,16 +25,30 @@ public class User {
 
     @NotNull
     private String email;
-    
+
     private TutorialSteps currentStep;
 
     @NotNull
     private boolean subscribeForNews;
-    
+
     @NotNull
     private Boolean twoStepVerification;
-    
+
+
     public User() {
+    }
+
+    public User(RegistrationController.UserRegistration userRegistration) {
+        this.username = userRegistration.getUsername();
+        this.password = userRegistration.getPassword();
+        this.email = userRegistration.getEmail();
+        this.subscribeForNews = userRegistration.isSubscribeForNews();
+    }
+
+
+    public void fillEmptyFields() {
+        //todo add another fields
+        this.currentStep = TutorialSteps.FIRST;
     }
 
     public long getId() {
@@ -76,24 +91,24 @@ public class User {
         this.subscribeForNews = subscribeForNews;
     }
 
-	public TutorialSteps getCurrentStep() {
-		return currentStep;
-	}
+    public TutorialSteps getCurrentStep() {
+        return currentStep;
+    }
 
-	public void setCurrentStep(TutorialSteps currentStep) {
-		this.currentStep = currentStep;
-	}
+    public void setCurrentStep(TutorialSteps currentStep) {
+        this.currentStep = currentStep;
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
-	}
+    public Boolean isTwoStepVerification() {
+        return twoStepVerification;
+    }
 
-	public Boolean isTwoStepVerification() {
-		return twoStepVerification;
-	}
+    public void setTwoStepVerification(Boolean twoStepVerification) {
+        this.twoStepVerification = twoStepVerification;
+    }
 
-	public void setTwoStepVerification(Boolean twoStepVerification) {
-		this.twoStepVerification = twoStepVerification;
-	}
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
+    }
 }
