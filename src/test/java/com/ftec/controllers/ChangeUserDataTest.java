@@ -31,7 +31,7 @@ import com.ftec.services.TokenService;
 public class ChangeUserDataTest {
 
 	@Autowired
-	UserDAO DAO;
+	UserDAO userDAO;
 	
 
 	@Autowired
@@ -42,11 +42,11 @@ public class ChangeUserDataTest {
 	
 	@Before
 	public void SetUp() {
-		DAO.deleteAll();
+		userDAO.deleteAll();
 	}
 	
 	private void printUser() {
-		Iterable<User> allIteration = DAO.findAll();
+		Iterable<User> allIteration = userDAO.findAll();
 		Iterator<User> iterator = allIteration.iterator();
 		for (User user : allIteration) {
 			System.out.println(user);
@@ -61,7 +61,7 @@ public class ChangeUserDataTest {
 		u.setPassword("old_password");
 		u.setEmail("old_email");
 		u.setTwoStepVerification(false);
-		DAO.save(u); //TODO add auto-flash
+		userDAO.save(u); //TODO add auto-flash
 		
 		UserUpdate updatedUserData = new UserUpdate();
 		updatedUserData.setPassword("neWStrong123");
@@ -76,11 +76,71 @@ public class ChangeUserDataTest {
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isOk());
 		
-		User userAfterChange = DAO.findById(id).get();
+		User userAfterChange = userDAO.findById(id).get();
 		
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert userAfterChange.isTwoStepVerification() == true;
 	}
 	
+	@Test
+	public void changeNothing() throws Exception {
+		String token = service.createSaveAndGetNewToken(295L);
+		User u = new User();
+		u.setId(295L);
+		userDAO.save(u);
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+		.andDo(print()).andExpect(status().isOk());
+	}
+	
+	@Test
+	public void tryChangeToInvalidData() throws Exception {
+		String token = service.createSaveAndGetNewToken(2911L);
+		User u = new User();
+		u.setId(2911L);
+		u.setEmail("email_1");
+		userDAO.save(u);
+		
+		UserUpdate userUpdate = new UserUpdate();
+		userUpdate.setEmail("invalidEmail");
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+		.andDo(print()).andExpect(status().isBadRequest());
+		
+		userUpdate.setEmail("validEmail@Gmail.com");
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+		.andDo(print()).andExpect(status().isOk());
+		
+		userUpdate.setPassword("invalidpass");
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+		.andDo(print()).andExpect(status().isBadRequest());
+		
+		User u2 = new User();
+		u2.setId(11L);
+		u2.setEmail("dublicate_email@wda.net");
+		userDAO.save(u2);
+		
+		userUpdate.setEmail("dublicate_email@wda.net");
+		
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+		.andDo(print()).andExpect(status().isBadRequest());
+	}
 }

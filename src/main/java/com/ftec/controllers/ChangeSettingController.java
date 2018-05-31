@@ -1,6 +1,7 @@
 package com.ftec.controllers;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -30,9 +31,9 @@ public class ChangeSettingController {
 	}
 	
 	@PostMapping("/changeUserSetting")
-	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request) {
+	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 
-		if(br.hasErrors()) return new MvcResponse(400,br.getAllErrors());
+		if(br.hasErrors()) { return new MvcResponse(set400Status(response),br.getAllErrors());}
 			
 		User userFromDB = userDAO.findById(TokenService.getUserIdFromToken(request)).get();
 		
@@ -40,6 +41,11 @@ public class ChangeSettingController {
 		
 		userDAO.save(userFromDB);
 		return new MvcResponse(200);
+	}
+
+	public int set400Status(HttpServletResponse response) {
+		response.setStatus(400);
+		return 400;
 	}
 
 	@Data
