@@ -1,11 +1,11 @@
 package com.ftec.entities;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-import java.util.Date;
-
-@Document(indexName = "usertokens")
+@Document(indexName = "#{@usertokens}")
 public class UserToken {
 	
 	@Id

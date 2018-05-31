@@ -86,7 +86,7 @@ public class TokenServiceTest {
 		
 		String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
 
-		assertTrue ( tokenDAO.getByToken(token) != null);
+		assertTrue ( tokenDAO.findByToken(token) != null);
 		
 		dao.deleteById(id);
 		
@@ -100,7 +100,7 @@ public class TokenServiceTest {
     	
     	tokenDAO.save(uToken);
     	
-    	assertTrue(tokenDAO.getByToken(token) != null);
-    	assertTrue(tokenDAO.getByToken(token).getExpirationTime().equals(current));
+    	assertTrue(tokenDAO.findByToken(token) != null);
+    	assertTrue(tokenDAO.findByToken(token).getExpirationTime().equals(current));
     }
 }

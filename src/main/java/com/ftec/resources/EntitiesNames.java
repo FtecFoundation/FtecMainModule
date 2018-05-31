@@ -28,4 +28,16 @@ public class EntitiesNames {
     public String getUserNameTest() {
         return "users_test";
     }
+    
+    @Profile("development")
+    @Bean(name = "usertokens")
+    public String getTokenDaoDeveloper() {
+        return "usertokens_dev";
+    }
+    
+    @Profile("test")
+    @Bean(name = "usertokens")
+    public String getTokenDaoTest() {
+        return "usertokens_test";
+    }
 }

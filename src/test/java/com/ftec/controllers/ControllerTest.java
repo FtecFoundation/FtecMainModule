@@ -21,7 +21,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
@@ -75,23 +74,13 @@ public class ControllerTest {
 		assertTrue(dao.findByUsername(username).isPresent());
 	}
 
-	@Test(expected = NestedServletException.class)
-	public void trySaveDublicateUsername() throws Exception {
-		String userName = "tester2";
-		User u = newUser(userName);
+	public void tryDublicateUsername() throws Exception {
+		String dublicateUserName = "tester2";
+		User u = newUser(dublicateUserName);
 		u.setId(235L);
-		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
-				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isCreated());
-		
-		//should be status BadRequest
-		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-				content( asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
-				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isBadRequest());
-		
-		assertTrue(userService.isDuplicateUserName(userName));
+		dao.save(u);
+		assert userService.isDuplicateUserName(dublicateUserName) == true;
+
 	}
 	
 	
