@@ -47,7 +47,7 @@ public class User {
 
     public void fillEmptyFields() {
         //todo add another fields
-        currentStep = TutorialSteps.FIRST;
+        this.currentStep = TutorialSteps.FIRST;
     }
 
     public long getId() {
