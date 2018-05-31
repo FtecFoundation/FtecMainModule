@@ -2,7 +2,6 @@ package com.ftec.services.Implementations;
 
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
-import com.ftec.repositories.IdsDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.IdManager;
 import com.ftec.services.interfaces.UserService;
@@ -42,11 +41,6 @@ public class UserServiceImpl implements UserService {
             throw new UserExistException();
         }
     }
-
-	public void inrementAndGetLastId(User user) {
-		idManager.incrementLastId(User.class);
-		user.setId(idManager.findByTableName(User.class).getLastId());
-	}
 
     /**
      * Takes the users password and encodes it into secured

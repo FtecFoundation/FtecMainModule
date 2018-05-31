@@ -14,6 +14,6 @@ public class EntitiesNames {
     @Profile("test")
     @Bean(name = "idsIndex")
     public String getIndexNameTest() {
-        return "ids";
+        return "ids_test";
     }
 }

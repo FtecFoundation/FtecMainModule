@@ -21,11 +21,7 @@ public class IdManagerImpl implements IdManager {
 
     @Override
     public long getLastId(String tableName) {
-        Ids ids = idsDAO.findByTableName(tableName);
-        if(ids == null){
-            ids = new Ids(tableName, 1);
-            idsDAO.save(ids);
-        }
+        Ids ids = findByTableName(tableName);
         return ids.getLastId();
     }
 
@@ -36,23 +32,16 @@ public class IdManagerImpl implements IdManager {
 
     @Override
     public void incrementLastId(String tableName) {
-        idsDAO.incrementLastId(tableName);
+        Ids id = findByTableName(tableName);
+        id.incrementIndex();
+        idsDAO.save(id);
     }
-
-	@Override
-	public Iterable<Ids> findAll() {
-		
-		return idsDAO.findAll();
-	}
-
-	@Override
-	public Ids findByTableName(Class table) {
-		return idsDAO.findByTableName(table.getName());
-	}
-
-	@Override
-	public Ids findByTableName(String table) {
-		return idsDAO.findByTableName(table);
-
-	}
+    private Ids findByTableName(String tableName){
+        Ids ids = idsDAO.findByTableName(tableName);
+        if(ids == null){
+            ids = new Ids(tableName, 1);
+            idsDAO.save(ids);
+        }
+        return ids;
+    }
 }
