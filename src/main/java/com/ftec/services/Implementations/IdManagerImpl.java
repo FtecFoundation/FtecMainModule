@@ -50,9 +50,5 @@ public class IdManagerImpl implements IdManager {
 		return idsDAO.findByTableName(table.getName());
 	}
 
-	@Override
-	public Ids findByTableName(String table) {
-		return idsDAO.findByTableName(table);
 
-	}
 }
