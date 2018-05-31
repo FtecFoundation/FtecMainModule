@@ -3,6 +3,7 @@ package com.ftec.entities;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.ftec.controllers.RegistrationController;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -33,17 +34,10 @@ public class User {
     @NotNull
     private Boolean twoStepVerification;
 
-    private UserConstraint userConstraint;
 
     public User() {
     }
 
-    public User(UserConstraint userConstraint) {
-        this.username = userConstraint.getUsername();
-        this.password = userConstraint.getPassword();
-        this.email = userConstraint.getEmail();
-        this.subscribeForNews = userConstraint.isSubscribeForNews();
-    }
 
     public void fillEmptyFields() {
         //todo add another fields
@@ -104,14 +98,6 @@ public class User {
 
     public void setTwoStepVerification(Boolean twoStepVerification) {
         this.twoStepVerification = twoStepVerification;
-    }
-
-    public UserConstraint getUserConstraint() {
-        return userConstraint;
-    }
-
-    public void setUserConstraint(UserConstraint userConstraint) {
-        this.userConstraint = userConstraint;
     }
 
     @Override
