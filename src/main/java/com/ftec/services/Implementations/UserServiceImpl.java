@@ -2,9 +2,7 @@ package com.ftec.services.Implementations;
 
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
-import com.ftec.repositories.IdsDAO;
 import com.ftec.repositories.UserDAO;
-import com.ftec.services.interfaces.IdManager;
 import com.ftec.services.interfaces.UserService;
 import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +14,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
-    private final IdManager idManager;
-
-    public static final String com_ftec_entities_User = "com.ftec.entities.User";
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, IdManager idManager) {
+    public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
-        this.idManager = idManager;
     }
 
     @Override
@@ -43,7 +37,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-	/**
+    /**
      * Takes the users password and encodes it into secured
      *
      * @param userPassword - raw Password

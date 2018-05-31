@@ -38,6 +38,13 @@ public class User {
     public User() {
     }
 
+    public User(RegistrationController.UserRegistration userRegistration) {
+        this.username = userRegistration.getUsername();
+        this.password = userRegistration.getPassword();
+        this.email = userRegistration.getEmail();
+        this.subscribeForNews = userRegistration.isSubscribeForNews();
+    }
+
 
     public void fillEmptyFields() {
         //todo add another fields
