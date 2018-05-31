@@ -52,7 +52,7 @@ public class TokenService {
 		return token.substring(0, token.indexOf("_"));
 	}
 
-	private static String getToken(HttpServletRequest request) throws NullTokenException{
+	public static String getToken(HttpServletRequest request) throws NullTokenException{
 		String token = request.getHeader(TOKEN_NAME);
 		
 		if(token == null) throw new NullTokenException("No token in the header!");
@@ -108,7 +108,7 @@ public class TokenService {
 	
 	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
 		String token = getToken(request);
-		UserToken userToken = tokenManager.getByToken(token);
+		UserToken userToken = tokenManager.findByToken(token);
 		
 		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
 		return userToken;
