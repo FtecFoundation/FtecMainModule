@@ -1,6 +1,7 @@
 package com.ftec.controllers;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,7 +50,7 @@ public class LogOutTest {
 	public void logOutTest() throws Exception {
 		String token = tokenService.createSaveAndGetNewToken(112L);
 		UserToken tokenFromDB = tokenDAO.findByToken(token);
-		assertTrue( tokenFromDB != null);
+		assertNotNull(tokenFromDB);
 		
 		  mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/logout")
 	                .header(TokenService.TOKEN_NAME, token)
@@ -59,7 +60,19 @@ public class LogOutTest {
 		  
 		  UserToken tokenFromDBAfterLogout = tokenDAO.findByToken(token);
 		  
-		  assertTrue(tokenFromDBAfterLogout == null);
+		  assertNull(tokenFromDBAfterLogout);
+	}
+	
+	@Test
+	public void testDelete() {
+		String token = tokenService.createSaveAndGetNewToken(1124L);
+		UserToken tokenFromDB = tokenDAO.findByToken(token);
+		
+		assertNotNull(tokenFromDB);
+		
+		tokenDAO.deleteByToken(token);
+		
+		assertNull(tokenDAO.findByToken(token));
 	}
 
 }

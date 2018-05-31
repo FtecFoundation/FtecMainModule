@@ -1,11 +1,11 @@
 package com.ftec.constratints;
 
-import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
-import org.springframework.stereotype.Service;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.springframework.stereotype.Service;
+
+import com.ftec.repositories.UserDAO;
 
 @Service
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
@@ -16,11 +16,10 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
     }
 
     @Override
-    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        //TODO implement check
-        User u = userDAO.findById(1L).get();
-        System.out.println(u);
-        return false;
+    public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {
+    	if(email == null) return true;
+    	
+        return !userDAO.findByEmail(email).isPresent();
     }
 
 }

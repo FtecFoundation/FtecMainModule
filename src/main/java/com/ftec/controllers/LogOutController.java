@@ -21,7 +21,6 @@ public class LogOutController {
 		this.tokenDAO = tokenDAO;
 	}
 	
-	//TODO configure security for this method
 	@GetMapping("/logout")
 	public ResponseEntity<String> logOut(HttpServletRequest request){
 		try {

@@ -48,7 +48,7 @@ public class AuthorizationController {
 			
 			User user = userOpt.get();
 			
-			if(isRequired2Fa(user)) check2FaCode(twoStepVerCode, user);
+			verify2FaCode(twoStepVerCode, user);
 						
 			if(isValidUsernamePassword(password, user)) {
 				sendToken(response, user);
@@ -61,6 +61,10 @@ public class AuthorizationController {
 		}
 		
 		
+	}
+
+	public void verify2FaCode(String twoStepVerCode, User user) throws AuthorizationException {
+		if(isRequired2Fa(user)) check2FaCode(twoStepVerCode, user);
 	}
 
 	public Boolean isRequired2Fa(User user) {

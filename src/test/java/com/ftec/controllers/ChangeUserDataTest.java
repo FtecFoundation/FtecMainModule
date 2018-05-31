@@ -1,4 +1,4 @@
-package com.ftec.repositories;
+package com.ftec.controllers;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,8 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.ControllerTest;
+import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.entities.User;
+import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
 
 @ActiveProfiles("test")
@@ -62,11 +63,10 @@ public class ChangeUserDataTest {
 		u.setTwoStepVerification(false);
 		DAO.save(u); //TODO add auto-flash
 		
-		User updatedUserData = new User();
-		updatedUserData.setId(id);
-		updatedUserData.setPassword("new_password");
+		UserUpdate updatedUserData = new UserUpdate();
+		updatedUserData.setPassword("neWStrong123");
 		updatedUserData.setEmail("new_email@gmail.com");
-		updatedUserData.setTwoStepVerification(true);
+		updatedUserData.setTwoFactorEnabled(true);
 		
 		String token = service.createSaveAndGetNewToken(id);
 		
@@ -74,13 +74,13 @@ public class ChangeUserDataTest {
 				.content( ControllerTest.asJsonString(updatedUserData)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isAccepted());
+		.andDo(print()).andExpect(status().isOk());
 		
-		updatedUserData = DAO.findById(id).get();
+		User userAfterChange = DAO.findById(id).get();
 		
-		assert updatedUserData.getPassword().equals("new_password");
-		assert updatedUserData.getEmail().equals("new_email@gmail.com");
-		assert updatedUserData.isTwoStepVerification() == true;
+		assert userAfterChange.getPassword().equals("neWStrong123");
+		assert userAfterChange.getEmail().equals("new_email@gmail.com");
+		assert userAfterChange.isTwoStepVerification() == true;
 	}
 	
 }
