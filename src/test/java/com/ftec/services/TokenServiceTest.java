@@ -25,7 +25,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ControllerTest;
 import com.ftec.entities.User;
 import com.ftec.entities.UserToken;
-import com.ftec.exceptions.InvalidTokenException;
+import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 
@@ -86,7 +86,7 @@ public class TokenServiceTest {
 		
 		String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
 
-		assertTrue ( tokenDAO.getByToken(token) != null);
+		assertTrue ( tokenDAO.findByToken(token) != null);
 		
 		dao.deleteById(id);
 		
@@ -100,7 +100,7 @@ public class TokenServiceTest {
     	
     	tokenDAO.save(uToken);
     	
-    	assertTrue(tokenDAO.getByToken(token) != null);
-    	assertTrue(tokenDAO.getByToken(token).getExpirationTime().equals(current));
+    	assertTrue(tokenDAO.findByToken(token) != null);
+    	assertTrue(tokenDAO.findByToken(token).getExpirationTime().equals(current));
     }
 }

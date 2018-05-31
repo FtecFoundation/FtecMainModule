@@ -1,8 +1,8 @@
 package com.ftec.controllers;
 
 import com.ftec.entities.User;
-import com.ftec.exceptions.TokenException;
 import com.ftec.exceptions.UserExistException;
+import com.ftec.exceptions.token.TokenException;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.UserService;

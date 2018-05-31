@@ -1,6 +1,5 @@
 package com.ftec.utils;
 
-import com.ftec.logger.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

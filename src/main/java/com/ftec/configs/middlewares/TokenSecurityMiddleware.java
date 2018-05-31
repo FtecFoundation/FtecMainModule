@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.ftec.exceptions.TokenException;
+import com.ftec.exceptions.token.TokenException;
 import com.ftec.services.TokenService;
 
 @Service
@@ -22,11 +22,8 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		
-		try {		
-			
-			tokenService.verifyRequest(request);		
-		
+		try {
+			tokenService.verifyToken(request.getHeader(TokenService.TOKEN_NAME));
 		} catch(TokenException ex) {
 			response.setStatus(403);
 			return false;

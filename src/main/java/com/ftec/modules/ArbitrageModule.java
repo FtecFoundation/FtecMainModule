@@ -3,7 +3,7 @@ package com.ftec.modules;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.exceptions.NotEnoughCreditsException;
-import com.ftec.logger.Logger;
+import com.ftec.utils.Logger;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.utils.RequestsHelper;

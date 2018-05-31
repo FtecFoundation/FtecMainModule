@@ -3,14 +3,15 @@ package com.ftec.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
-@Document(indexName = "#{@idsIndex}")
+@Document(indexName = "#{@idsIndex}", type="ids")
 public class Ids {
 	
     @Id
-    private String tableName = "";
-    private long lastId = 0;
+    private String tableName;
+    private long lastId;
 
     public Ids() {
+        lastId=0;
     }
 
     public Ids(String tableName, long lastId) {

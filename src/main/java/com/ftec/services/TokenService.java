@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ftec.entities.UserToken;
-import com.ftec.exceptions.InvalidTokenException;
-import com.ftec.exceptions.NullTokenException;
-import com.ftec.exceptions.TokenException;
-import com.ftec.exceptions.TokenExpiredException;
+import com.ftec.exceptions.token.InvalidTokenException;
+import com.ftec.exceptions.token.NullTokenException;
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.UserTokenDAO;
 
 @Service
@@ -35,7 +35,7 @@ public class TokenService {
 		return Long.valueOf(extractUserID(token));
 	}
 	
-	public static void checkTokenFormat(String token) {
+	static void checkTokenFormat(String token) {
 		if(!token.contains("_")) throw new InvalidTokenException("Invalid token format! {UserID}_{Hash} expected.");
 		
 		String userId = extractUserID(token);
@@ -48,11 +48,11 @@ public class TokenService {
 		
 	}
 
-	public static String extractUserID(String token) {
+	static String extractUserID(String token) {
 		return token.substring(0, token.indexOf("_"));
 	}
 
-	private static String getToken(HttpServletRequest request) throws NullTokenException{
+	public static String getToken(HttpServletRequest request) throws NullTokenException{
 		String token = request.getHeader(TOKEN_NAME);
 		
 		if(token == null) throw new NullTokenException("No token in the header!");
@@ -70,11 +70,11 @@ public class TokenService {
 		return token;
 	}
 
-	public void setExpirationTime(Date expiration) {
+	private void setExpirationTime(Date expiration) {
 		expiration.setTime(expiration.getTime() + 1800000);
 	}
 
-	public static String generateToken(Long id) {
+	static String generateToken(Long id) {
 		return id.toString() + "_" + generateRandomString();
 	}
 	
@@ -89,26 +89,23 @@ public class TokenService {
 	          (random.nextFloat() * (rightLimit - leftLimit + 1));
 	        buffer.append((char) randomLimitedInt);
 	    }
-	    String generatedString = buffer.toString();
-	 
-	    return generatedString;
+		return buffer.toString();
 	}
 	
-	public void verifyRequest(HttpServletRequest request) throws TokenException{
-		UserToken tokenEntity = getUserTokenFromRequest(request);
+	public void verifyToken(String token) throws TokenException{
+		UserToken tokenEntity = getUserTokenFromRequest(token);
 		
 		Date expirationTime = tokenEntity.getExpirationTime();
 		
 		checkIfTokenExpired(expirationTime);	
 	}
 
-	public void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException{
+	private void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException{
 		if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
 	}
 	
-	private UserToken getUserTokenFromRequest(HttpServletRequest request) throws TokenException{
-		String token = getToken(request);
-		UserToken userToken = tokenManager.getByToken(token);
+	private UserToken getUserTokenFromRequest(String token) throws TokenException{
+		UserToken userToken = tokenManager.findByToken(token);
 		
 		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
 		return userToken;

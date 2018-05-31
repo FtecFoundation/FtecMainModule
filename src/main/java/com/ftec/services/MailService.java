@@ -1,6 +1,6 @@
 package com.ftec.services;
 
-import com.ftec.logger.Logger;
+import com.ftec.utils.Logger;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import org.apache.commons.mail.HtmlEmail;

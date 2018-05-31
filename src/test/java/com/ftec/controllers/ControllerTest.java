@@ -161,7 +161,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void regExpEmailTestt() {
+    public void regExpEmailTest() {
         String validEmails[] = new String[]{
                 "alex@yandex.ru",
                 "alex-27@yandex.com",
