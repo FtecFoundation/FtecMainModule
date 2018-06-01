@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
+import com.ftec.utils.Logger;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -70,6 +71,7 @@ public class AvatarController {
                 saveUploadedFiles(uploadFile, userFromDBId);
             }
         } catch (IOException e) {
+            Logger.logException("While retrieving image", e, true);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<Object>("Successfully uploaded - " + uploadFile.getOriginalFilename(), HttpStatus.OK);
