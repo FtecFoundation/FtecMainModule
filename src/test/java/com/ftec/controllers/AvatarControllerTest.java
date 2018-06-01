@@ -49,26 +49,6 @@ public class AvatarControllerTest {
         tokenDAO.deleteAll();
     }
 
-    /*@Test
-    public void getFileTest() throws Exception {
-        File file = new File("C:/image.jpg");
-        byte[] byteObject = Files.toByteArray(file);
-        String mockedFile = new BASE64Encoder().encode(byteObject);
-
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/image")
-                .contentType(MediaType.ALL_VALUE)
-                .accept(MediaType.ALL_VALUE))
-                .andDo(print()).andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JSONObject o = new JSONObject(jsonResponse);
-        JSONObject jsonResp = o.getJSONObject("response");
-        byte[] jsonImageString = jsonResp.getString("image").getBytes();
-
-
-        assertEquals(jsonImageString, byteObject);
-    }*/
-
     @Test
     public void getImageTest() throws Exception {
 
