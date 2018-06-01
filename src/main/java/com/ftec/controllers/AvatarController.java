@@ -5,6 +5,7 @@ import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 @RestController
 public class AvatarController {
@@ -31,19 +33,25 @@ public class AvatarController {
     }
 
     private static String UPLOADED_FOLDER = "C://Images//";
-    private static File DEFAULT_IMAGE = new File(UPLOADED_FOLDER + 0 + ".jpg");
 
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
-        long userFromDBId = userDAO.findById(TokenService.getUserIdFromToken(request)).get().getId();
+        final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
+        Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
 
-        String fileName = userFromDBId + ".jpg";
-        File file = new File(UPLOADED_FOLDER + fileName);
-        if (file.exists()) {
-            return com.google.common.io.Files.toByteArray(file);
+        if (user.isPresent()) {
+            long userFromDBId = user.get().getId();
+            String fileName = userFromDBId + ".jpg";
+            File file = new File(UPLOADED_FOLDER + fileName);
+
+            if (file.exists()) {
+                return com.google.common.io.Files.toByteArray(file);
+            } else {
+                return com.google.common.io.Files.toByteArray(DEFAULT_IMAGE);
+            }
         } else {
-            return com.google.common.io.Files.toByteArray(DEFAULT_IMAGE);
+            return null;
         }
     }
 
@@ -55,8 +63,12 @@ public class AvatarController {
         }
 
         try {
-            long userFromDBId = userDAO.findById(TokenService.getUserIdFromToken(request)).get().getId();
-            saveUploadedFiles(uploadFile, userFromDBId);
+            Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
+
+            if (user.isPresent()) {
+                long userFromDBId = user.get().getId();
+                saveUploadedFiles(uploadFile, userFromDBId);
+            }
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
