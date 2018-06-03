@@ -1,11 +1,8 @@
 package com.ftec.controllers;
 
-import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
-import com.ftec.exceptions.token.TokenException;
-import com.ftec.services.TokenService;
-import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.UserService;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import com.ftec.entities.User;
+import com.ftec.exceptions.UserExistException;
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.resources.MailResources;
+import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.UserService;
 
 @RestController
 @RequestMapping("/registration")
@@ -24,7 +26,10 @@ public class RegistrationController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RegistrationService registrationService;
-
+   
+    @Autowired
+    MailResources mailRes;
+    
     public static class UserRegistration {
         private String username;
 
@@ -86,7 +91,8 @@ public class RegistrationController {
 
     @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(@RequestBody @Valid UserRegistration userRegistration, HttpServletResponse response) throws UserExistException {
-        try {
+    	String userid = mailRes.getUserid();
+    	try {
             User userToSave = registrationService.registerUser(userRegistration);
             userService.registerNewUserAccount(userToSave);
             sendToken(userToSave, response);

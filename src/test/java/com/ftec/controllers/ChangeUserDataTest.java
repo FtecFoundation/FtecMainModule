@@ -61,7 +61,7 @@ public class ChangeUserDataTest {
 		u.setPassword("old_password");
 		u.setEmail("old_email");
 		u.setTwoStepVerification(false);
-		userDAO.save(u); //TODO add auto-flash
+		userDAO.save(u);
 		
 		UserUpdate updatedUserData = new UserUpdate();
 		updatedUserData.setPassword("neWStrong123");

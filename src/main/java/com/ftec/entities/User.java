@@ -10,6 +10,9 @@ import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Document(indexName = "#{@users}")
 public class User {
 

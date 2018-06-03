@@ -34,13 +34,13 @@ public class LogOutTest {
 	
 	@Autowired
 	UserTokenDAO tokenDAO;
-	
+
 	@Autowired
-	TokenService tokenService; 
-	
+	TokenService tokenService;
+
 	@Autowired
 	LogOutController logOutController;
-	
+
 	@Before
 	public void setUp() {
 		tokenDAO.deleteAll();
@@ -48,6 +48,7 @@ public class LogOutTest {
 	
 	@Test
 	public void logOutTest() throws Exception {
+		tokenService.createSaveAndGetNewToken(322L);
 		String token = tokenService.createSaveAndGetNewToken(112L);
 		UserToken tokenFromDB = tokenDAO.findByToken(token);
 		assertNotNull(tokenFromDB);
@@ -56,7 +57,7 @@ public class LogOutTest {
 	                .header(TokenService.TOKEN_NAME, token)
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON))
-	                .andDo(print()).andExpect(status().isAccepted());
+	                .andExpect(status().isAccepted());
 		  
 		  UserToken tokenFromDBAfterLogout = tokenDAO.findByToken(token);
 		  
@@ -70,7 +71,7 @@ public class LogOutTest {
 		
 		assertNotNull(tokenFromDB);
 		
-		tokenDAO.deleteByToken(token);
+		tokenDAO.delete(tokenFromDB);
 		
 		assertNull(tokenDAO.findByToken(token));
 	}

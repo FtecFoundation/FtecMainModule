@@ -43,7 +43,7 @@ public class ChangeSettingController {
 		return new MvcResponse(200);
 	}
 
-	public int set400Status(HttpServletResponse response) {
+	public static int set400Status(HttpServletResponse response) {
 		response.setStatus(400);
 		return 400;
 	}
