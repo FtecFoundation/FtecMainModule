@@ -17,8 +17,8 @@ public class ReferralDAOImpl implements ReferralDAO {
         String query = "SELECT SUM(balance) FROM (" +
                 "SELECT * FROM referral_level_one one " +
                 "UNION SELECT * FROM referral_level_two two " +
-                "UNION SELECT * FROM referral_level_three three) " +
-                "WHERE user = " + user;
+                "UNION SELECT * FROM referral_level_three three " +
+                "WHERE user = " + user + ") AS totalBalance";
         return entityManager.createQuery(query, Double.class).getSingleResult();
     }
 }
