@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,14 +40,9 @@ public class TokenSecurityTest {
     @Autowired
     TokenService tokenService;
 
-    @Before
-    public void setUp(){
-        tokenDao.deleteAll();
-    }
-
     @Test
     public void securityAccess() throws Exception {
-        String token = tokenService.createSaveAndGetNewToken(255L);
+        String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
 
         mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")
                 .header(TokenService.TOKEN_NAME, token)

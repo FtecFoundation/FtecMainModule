@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,19 +51,13 @@ public class LogOutTest {
 
 	@Before
 	public void setUp() {
+		userDAO.deleteAll();
 		tokenDAO.deleteAll();
 	}
 
-	String username = "user1";
-	String password = "pass1";
-	String email = "email@d.net";
-	TutorialSteps currentStep = TutorialSteps.FIRST;
-	boolean subscribeForNews = false;
-	Boolean twoStepVerification = false;
-
 	@Test
 	public void logOutTest() throws Exception {
-		User u = new User(username,password,email,currentStep,subscribeForNews,twoStepVerification);
+		User u = EntityGenerator.getNewUser();
 		userDAO.save(u);
 
 		String token = tokenService.createSaveAndGetNewToken(u.getId());
@@ -80,7 +75,7 @@ public class LogOutTest {
 	
 	@Test
 	public void testDelete() {
-		String token = tokenService.createSaveAndGetNewToken(1124L);
+		String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
 		UserToken tokenFromDB = tokenDAO.findByToken(token).get();
 		
 		assertNotNull(tokenFromDB);

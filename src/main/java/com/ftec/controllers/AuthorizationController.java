@@ -44,7 +44,7 @@ public class AuthorizationController {
 		
 		try {
 			Optional<User> userOpt = userDAO.findByUsername(username);	
-			isLoginValid(userOpt);
+			verifyIsUserFinded(userOpt);
 			
 			User user = userOpt.get();
 			
@@ -68,7 +68,7 @@ public class AuthorizationController {
 	}
 
 	public Boolean isRequired2Fa(User user) {
-		return user.isTwoStepVerification();
+		return user.getTwoStepVerification();
 	}
 
 	public void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException{	
@@ -77,11 +77,11 @@ public class AuthorizationController {
 	
 		if(this.environment.getActiveProfiles()[0].equals("test")) return;
 		
-		throw new AuthorizationException("Test profile not selected!");
+		else throw new AuthorizationException("Test profile not selected!");
 
 	}
 
-	public void isLoginValid(Optional<User> userOpt) throws AuthorizationException {
+	public void verifyIsUserFinded(Optional<User> userOpt) throws AuthorizationException {
 		if(!userOpt.isPresent()) throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
 	}
 

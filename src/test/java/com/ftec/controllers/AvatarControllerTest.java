@@ -5,6 +5,7 @@ import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
+import com.ftec.utils.EntityGenerator;
 import com.google.common.io.Files;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -46,18 +47,15 @@ public class AvatarControllerTest {
 
     @Before
     public void setUp() {
+        userDAO.deleteAll();
         tokenDAO.deleteAll();
     }
 
     @Test
     public void getImageTest() throws Exception {
 
-        User user = new User();
-        user.setUsername("testUsername");
-        user.setPassword("strongPass123");
-        user.setEmail("testmail@mail.com");
-        user.setSubscribeForNews(true);
-        user.setTwoStepVerification(false);
+        User user = EntityGenerator.getNewUser();
+
         userDAO.save(user);
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
@@ -72,12 +70,8 @@ public class AvatarControllerTest {
 
     @Test
     public void uploadFileTest() throws Exception {
-        User user = new User();
-        user.setUsername("testUsername");
-        user.setPassword("StrongPas1231321");
-        user.setEmail("testmail@mail.com");
-        user.setSubscribeForNews(true);
-        user.setTwoStepVerification(false);
+        User user = EntityGenerator.getNewUser();
+
         userDAO.save(user);
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
@@ -90,7 +84,7 @@ public class AvatarControllerTest {
 
         MockMultipartFile mockedFile = new MockMultipartFile("file", bytesFromFile);
 
-        //todo find not deprecated alternative
+        //TODO find not deprecated alternative
         mvc.perform(MockMvcRequestBuilders.fileUpload("http://localhost:8080/upload")
                 .file(mockedFile)
                 .header(TokenService.TOKEN_NAME, token)

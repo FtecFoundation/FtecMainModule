@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -30,6 +32,21 @@ public class UserToken  implements Serializable{
 				"token='" + token + '\'' +
 				", expirationTime=" + expirationTime +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		UserToken userToken = (UserToken) o;
+		return Objects.equals(token, userToken.token) &&
+				Objects.equals(expirationTime, userToken.expirationTime);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(token, expirationTime);
 	}
 
 	public Date getExpirationTime() {

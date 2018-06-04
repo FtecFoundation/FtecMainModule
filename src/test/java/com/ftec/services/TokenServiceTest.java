@@ -53,6 +53,7 @@ public class TokenServiceTest {
         userDao.deleteAll();
         tokenDAO.deleteAll();
     }
+
     @Test
     public void getValidIdFromTokenTest() {
         assertThat(TokenService.extractUserID("23_NDKJAWNWKAJDNAkWKDNAW"),is("23"));

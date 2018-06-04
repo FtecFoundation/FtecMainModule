@@ -48,6 +48,7 @@ public class ChangeSettingController {
 		return 400;
 	}
 
+
 	@Data
 	@NoArgsConstructor
 	public static class UserUpdate{
