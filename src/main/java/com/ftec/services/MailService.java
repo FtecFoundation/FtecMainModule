@@ -1,53 +1,72 @@
 package com.ftec.services;
 
-import com.ftec.utils.Logger;
-import com.ftec.resources.Resources;
-import com.ftec.resources.Stocks;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.mail.HtmlEmail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.InternetAddress;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.ftec.resources.MailResources;
+import com.ftec.resources.Stocks;
+import com.ftec.utils.Logger;
+import com.sendpulse.restapi.Sendpulse;
 
 @Service
 public class MailService {
 
     //For translations
     private final MessageSource messageSource;
-    private final Resources resources;
 
-    public MailService(MessageSource messageSource, Resources resources) {
+    private MailResources mailRes;
+
+    @Autowired
+    public MailService(MessageSource messageSource, MailResources mailRes) {
         this.messageSource = messageSource;
-        this.resources = resources;
+        this.mailRes = mailRes;
     }
 
     public void sendEmail(List<? extends EmailUser> users, Emails emailType){
-        if(resources.emulateEmail) return;
+        // if(mailRes.emulateEmail) return;
         try {
             List<Locale> uniqueLocales = new ArrayList<>();
             users.forEach(emailUser -> {
                 if (!uniqueLocales.contains(emailUser.language)) uniqueLocales.add(emailUser.language);
             });
+
+            String fromEmail = mailRes.getSendFrom();
+
+            String userId = mailRes.getUserid();
+            String userSecret = mailRes.getUserSecret();
+
+            Sendpulse sendpulse = new Sendpulse(userId, userSecret);
+
+            Map<String, Object> from = new HashMap<String, Object>();
+            from.put("name", "admin");
+            from.put("email", fromEmail);
+
             Map<Locale, String> subjects = prepareSubjects(uniqueLocales, emailType);
             Map<Locale, String> headers = prepareHeaders(uniqueLocales);
             Map<Locale, String> footers = prepareFooters(uniqueLocales);
             Map<Locale, String> templates = prepareTemplates(uniqueLocales, emailType);
+
             for (EmailUser user : users) {
-                HtmlEmail email = getEmail();
+
                 if (!user.subscribedToEmail) continue;
-                email.addTo(user.email);
-                email.setSubject(subjects.get(user.language));
+
                 try {
-                    email.setHtmlMsg(headers.get(user.language)
-                            + insertValues(templates.get(user.language), user.createParams())
-                            + footers.get(user.language));
-                    email.send();
+
+                    sendOneEmail(sendpulse, from, headers, footers, templates, user);
+
                 }catch (Exception e){
                     Logger.logException("While sending email "+emailType.name()+" to user "+user.email, e, true);
                 }
@@ -57,28 +76,60 @@ public class MailService {
         }
     }
 
+    private void sendOneEmail(Sendpulse sendpulse, Map<String, Object> from, Map<Locale, String> headers, Map<Locale, String> footers, Map<Locale, String> templates, EmailUser user) {
+        Map<String, Object> emaildata = new HashMap<String, Object>();
+
+        List<Map> to =  new ArrayList<Map>();
+
+        Map<String,Object> receiver = new HashMap<String,Object>();
+        receiver.put("name", "namee");
+        receiver.put("email", user.email);
+
+        to.add(receiver);
+
+        emaildata.put("html",headers.get(user.language)
+                + insertValues(templates.get(user.language), user.createParams())
+                + footers.get(user.language));
+        emaildata.put("text","text to " + user.email);
+        emaildata.put("subject","subject");
+        emaildata.put("from",from);//ok
+        emaildata.put("to",to);
+        Map<String, Object> result = (Map<String, Object>) sendpulse.smtpSendMail(emaildata);
+        System.out.println("Results: " + result);
+    }
+
     public void sendToMany(List<String> emails, Locale locale, String text){
-        if(resources.emulateEmail) return;
-        try {
-            String message = prepareHeaders(locale)+createInfoBody(locale, text)+prepareFooters(locale);
-            for (int i=emails.size()-1; i>=0; i-=10){
-                HtmlEmail email = getEmail();
-                email.setSubject(prepareSubjects(locale, Emails.InfoEmail));
-                email.setHtmlMsg(message);
-                ArrayList<InternetAddress> addresses = new ArrayList<>();
-                for(int j=0; j<((i>10)?10:i+1); j++){
-                    addresses.add(new InternetAddress(emails.get(i-j)));
-                }
-                email.setTo(addresses);
-                try {
-                    email.send();
-                }catch (Exception e){
-                    Logger.logException("While sending email info email to user", e, true);
-                }
-            }
-        }catch (Exception e){
-            Logger.logException("While creating info email", e, true);
+
+
+        String sendFromEmail = mailRes.getSendFrom();
+        String userId = mailRes.getUserid();
+        String userSecret = mailRes.getUserSecret();
+
+        Sendpulse sendpulse = new Sendpulse(userId, userSecret);
+        ArrayList<Map> to = new ArrayList<Map>();
+
+        Map<String, Object> from = new HashMap<String, Object>();
+        from.put("name", "admin");
+        from.put("email", sendFromEmail);
+
+        Map<String, Object> elemto = null;
+
+        for(String email : emails) {
+            elemto = new HashMap<String, Object>();
+            elemto.put("name", "name1");
+            elemto.put("email", email);
+            to.add(elemto);
         }
+
+        Map<String, Object> emaildata = new HashMap<String, Object>();
+        emaildata.put("html",text);
+        emaildata.put("text","text");
+        emaildata.put("subject","text");
+        emaildata.put("from",from);//ok
+        emaildata.put("to",to);
+
+        Map<String, Object> result = (Map<String, Object>) sendpulse.smtpSendMail(emaildata);
+        System.out.println("Results: " + result);
     }
 
     public static abstract class EmailUser{
@@ -112,7 +163,6 @@ public class MailService {
             this.login = login;
             this.stock = stock;
         }
-
 
         @Override
         Map<String, String> createParams(){
@@ -176,6 +226,7 @@ public class MailService {
                     '}';
         }
     }
+
     public static class Email_Balance extends EmailUser{
         String login;
         public double currentBalance;
@@ -264,7 +315,7 @@ public class MailService {
         return headers;
     }
     private String prepareHeaders(Locale locale){
-        String prefixPathToHeader = "static/emails/shared/header";
+        String prefixPathToHeader ="static/emails/shared/header";
         return loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html");
     }
 
@@ -317,7 +368,7 @@ public class MailService {
         try {
             ClassPathResource file = new ClassPathResource(filename);
             if(!file.exists()) file=new ClassPathResource(filename.substring(0, filename.indexOf("_"))+"_"+fallbackLanguage+".html");
-            return Files.lines(Paths.get(file.getPath()), Charset.forName("utf8")).collect(Collectors.joining());
+            return Files.lines(Paths.get(file.getURI())).collect(Collectors.joining());
         }catch (Exception e){
             Logger.logException("Loading html content from file "+filename, e, true);
         }
@@ -346,27 +397,27 @@ public class MailService {
 
     private HtmlEmail getEmail(){
         HtmlEmail email = new HtmlEmail();
-        email.setHostName(resources.email.host_name);
-        email.setSmtpPort(resources.email.smtp_port);
-        email.setTLS(resources.email.tls);
-        email.setSSL(resources.email.ssl);
-        email.setCharset("utf-8");
-        if(resources.email.authNeeded) {
-            email.setAuthentication(resources.email.mailLogin, resources.email.mailPassword);
-        }
+//        email.setHostName(resources.email.host_name);
+//        email.setSmtpPort(resources.email.smtp_port);
+//        email.setTLS(resources.email.tls);
+//        email.setSSL(resources.email.ssl);
+//        email.setCharset("utf-8");
+//        if(resources.email.authNeeded) {
+//            email.setAuthentication(resources.email.mailLogin, resources.email.mailPassword);
+//        }
         return email;
     }
     //Temporary disable unused messages
     public enum Emails{
-//        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
-//        ManualTrades(EmailUser.class, "ManualTrades"),
-//        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
-//        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
-//        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
-//        ForgotPassword(Email_Link.class, "ForgotPassword"),
-//        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
-//        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
-//        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant"),
+        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
+        ManualTrades(EmailUser.class, "ManualTrades"),
+        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
+        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
+        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
+        ForgotPassword(Email_Link.class, "ForgotPassword"),
+        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
+        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
+        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant"),
         InfoEmail(null, "InfoTemplate");
 
         private String filePrefix;
@@ -376,7 +427,7 @@ public class MailService {
             this.filePrefix = filePrefix;
         }
         String getPath(){
-            return "static/emails/"+filePrefix+"/main";
+            return "static/emails/" +filePrefix+"/main";
         }
     }
 }

@@ -19,6 +19,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public User registerUser(RegistrationController.UserRegistration userRegistration) {
         User userToSave = new User(userRegistration);
         userToSave.setId(idManager.getLastId(User.class));
+        //todo Put increment method into getLastId
+        idManager.incrementLastId(User.class);
         userToSave.fillEmptyFields();
         return userToSave;
     }

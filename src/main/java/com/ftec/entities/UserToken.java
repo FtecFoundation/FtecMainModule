@@ -20,6 +20,14 @@ public class UserToken {
 		this.expirationTime = expirationTime;
 	}
 
+	@Override
+	public String toString() {
+		return "UserToken{" +
+				"token='" + token + '\'' +
+				", expirationTime=" + expirationTime +
+				'}';
+	}
+
 	public Date getExpirationTime() {
 		return expirationTime;
 	}
@@ -32,4 +40,5 @@ public class UserToken {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
 }

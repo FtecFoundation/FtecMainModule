@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
+import com.ftec.resources.MailResources;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
@@ -48,6 +49,10 @@ public class RegistrationController {
             return null;
         }
     }
+
+
+    @Autowired
+    MailResources mailRes;
 
     public static class UserRegistration {
         private String username;

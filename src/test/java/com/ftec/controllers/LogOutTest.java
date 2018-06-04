@@ -4,6 +4,12 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.UserToken;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +47,17 @@ public class LogOutTest {
 
 	@Test
 	public void logOutTest() throws Exception {
-		String token = tokenService.createSaveAndGetNewToken(112L);
-		Optional<UserToken> tokenFromDB = tokenDAO.findByToken(token);
-		assert tokenFromDB.isPresent();
+        tokenService.createSaveAndGetNewToken(322L);
+        String token = tokenService.createSaveAndGetNewToken(112L);
+        Optional<UserToken> tokenFromDB = tokenDAO.findByToken(token);
+        assert tokenFromDB.isPresent();
 
-		mvc.perform(MockMvcRequestBuilders.get("/logout")
-				.header(TokenService.TOKEN_NAME, token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isAccepted());
+        mvc.perform(MockMvcRequestBuilders.get("/logout")
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isAccepted());
 
-		Optional<UserToken> tokenFromDBAfterLogout = tokenDAO.findByToken(token);
-
-		assert !tokenFromDBAfterLogout.isPresent();
-	}
-
+        Optional<UserToken> tokenFromDBAfterLogout = tokenDAO.findByToken(token);
+    }
 }
