@@ -1,10 +1,14 @@
 package com.ftec.controllers;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.entities.User;
+import com.ftec.repositories.UserDAO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +40,9 @@ public class LogOutTest {
 	UserTokenDAO tokenDAO;
 
 	@Autowired
+	UserDAO userDAO;
+
+	@Autowired
 	TokenService tokenService;
 
 	@Autowired
@@ -45,12 +52,21 @@ public class LogOutTest {
 	public void setUp() {
 		tokenDAO.deleteAll();
 	}
-	
+
+	String username = "user1";
+	String password = "pass1";
+	String email = "email@d.net";
+	TutorialSteps currentStep = TutorialSteps.FIRST;
+	boolean subscribeForNews = false;
+	Boolean twoStepVerification = false;
+
 	@Test
 	public void logOutTest() throws Exception {
-		tokenService.createSaveAndGetNewToken(322L);
-		String token = tokenService.createSaveAndGetNewToken(112L);
-		UserToken tokenFromDB = tokenDAO.findByToken(token);
+		User u = new User(username,password,email,currentStep,subscribeForNews,twoStepVerification);
+		userDAO.save(u);
+
+		String token = tokenService.createSaveAndGetNewToken(u.getId());
+		UserToken tokenFromDB = tokenDAO.findByToken(token).get();
 		assertNotNull(tokenFromDB);
 		
 		  mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/logout")
@@ -58,22 +74,20 @@ public class LogOutTest {
 	                .contentType(MediaType.APPLICATION_JSON)
 	                .accept(MediaType.APPLICATION_JSON))
 	                .andExpect(status().isAccepted());
-		  
-		  UserToken tokenFromDBAfterLogout = tokenDAO.findByToken(token);
-		  
-		  assertNull(tokenFromDBAfterLogout);
+
+		  assertFalse(tokenDAO.findByToken(token).isPresent());
 	}
 	
 	@Test
 	public void testDelete() {
 		String token = tokenService.createSaveAndGetNewToken(1124L);
-		UserToken tokenFromDB = tokenDAO.findByToken(token);
+		UserToken tokenFromDB = tokenDAO.findByToken(token).get();
 		
 		assertNotNull(tokenFromDB);
 		
 		tokenDAO.delete(tokenFromDB);
 		
-		assertNull(tokenDAO.findByToken(token));
+		assertFalse(tokenDAO.findByToken(token).isPresent());
 	}
 
 }

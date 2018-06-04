@@ -62,9 +62,10 @@ public class TokenService {
 	
 	public String createSaveAndGetNewToken(Long id) {
 		String token = generateToken(id);
+
 		Date expiration = new Date();
-		
-		setExpirationTime(expiration); 
+		setExpirationTime(expiration);
+
 		tokenManager.save(new UserToken(token, expiration));
 		
 		return token;
@@ -105,9 +106,9 @@ public class TokenService {
 	}
 	
 	private UserToken getUserTokenFromRequest(String token) throws TokenException{
-		UserToken userToken = tokenManager.findByToken(token);
+	    if(!tokenManager.findByToken(token).isPresent()) throw new TokenException("Token not found!");
+		UserToken userToken = tokenManager.findByToken(token).get();
 		
-		if(userToken == null)	throw new TokenException("Can't find token in the DB!");
 		return userToken;
 	}
 }

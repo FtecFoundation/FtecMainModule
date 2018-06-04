@@ -1,11 +1,12 @@
 package com.ftec.entities;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+import javax.persistence.*;
 
-@Document(indexName = "telegramsettings")
+@Entity
+@Table
 public class TelegramSettings {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long userId;
     private String accessCode, linkedUsername;
     private long linkedUserChatId;

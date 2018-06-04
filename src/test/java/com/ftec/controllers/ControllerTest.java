@@ -112,7 +112,7 @@ public class ControllerTest {
     public void checkReturnedToken() throws Exception {
         RegistrationController.UserRegistration userRegistration = new RegistrationController.UserRegistration();
         userRegistration.setUsername("tester3_v2");
-        userRegistration.setPassword("pass_user1");
+        userRegistration.setPassword("pass_useR1");
         userRegistration.setEmail("emaill@mail.com");
         userRegistration.setSubscribeForNews(true);
 

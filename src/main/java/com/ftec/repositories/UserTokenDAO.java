@@ -1,12 +1,16 @@
 package com.ftec.repositories;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
 import com.ftec.entities.UserToken;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 
-public interface UserTokenDAO extends ElasticsearchRepository<UserToken, String> {
-	UserToken findByToken(String token);
+@Repository
+public interface UserTokenDAO extends CrudRepository<UserToken, String> {
+	Optional<UserToken> findByToken(String token);
+	@Transactional
+	void deleteByToken(String token);
 }

@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
         if (!isDuplicateUserName(user.getUsername())) {
             String securedPassword = encodeUserPassword(user.getPassword());
             user.setPassword(securedPassword);
-            //TODO inrementAndGetLastId(user);  uncomment after fix idsDAO.incrementLastId(...) method
             userDAO.save(user);
         } else {
             throw new UserExistException();
