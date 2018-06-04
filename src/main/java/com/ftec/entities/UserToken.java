@@ -1,10 +1,9 @@
 package com.ftec.entities;
 
-import org.hibernate.annotations.GeneratorType;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,10 +16,9 @@ public class UserToken  implements Serializable{
 	private String token;
 	@Id
 	private Date expirationTime;
-	
-	public UserToken() {
-		
-	}
+
+	public UserToken() {}
+
 	public UserToken(String token, Date expirationTime) {
 		this.token = token;
 		this.expirationTime = expirationTime;
