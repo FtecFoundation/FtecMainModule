@@ -1,6 +1,6 @@
 package com.ftec.controllers;
 
-import com.ftec.entities.MvcResponse;
+import com.ftec.resources.models.MvcResponse;
 import com.google.common.io.Files;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

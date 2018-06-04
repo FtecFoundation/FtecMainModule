@@ -28,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
@@ -54,7 +53,6 @@ public class ControllerTest {
         u.setUsername(login);
         u.setPassword("pass_user1");
         u.setEmail("emaill");
-
         return u;
     }
 
@@ -66,10 +64,10 @@ public class ControllerTest {
         userRegistration.setEmail("emaill@mail.com");
         userRegistration.setSubscribeForNews(true);
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("/registration/registr_test").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isCreated());
+                .andDo(print()).andExpect(status().is(200));
 
         assertTrue(dao.findByUsername("tester1").isPresent());
     }
@@ -86,7 +84,7 @@ public class ControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isCreated());
+                .andDo(print()).andExpect(status().is(200));
 
         //should be status BadRequest
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
@@ -101,8 +99,7 @@ public class ControllerTest {
     public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
+            return mapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -140,12 +137,12 @@ public class ControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
                 content(asJsonString(userRegistration1)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
                 content(asJsonString(userRegistration2)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
 
     }
 
