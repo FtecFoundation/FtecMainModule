@@ -1,15 +1,21 @@
 package com.ftec.entities;
 
+import org.hibernate.annotations.GeneratorType;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+@Entity
+@Table
+@IdClass(UserToken.class)
+public class UserToken  implements Serializable{
 
-@Document(indexName = "#{@usertokens}")
-public class UserToken {
-	
 	@Id
 	private String token;
+	@Id
 	private Date expirationTime;
 	
 	public UserToken() {

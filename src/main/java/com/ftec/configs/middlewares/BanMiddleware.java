@@ -16,35 +16,36 @@ public class BanMiddleware implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(banned==null) init();
-        String ip = RequestsMapper.getClientIp(request);
-        if(banned.contains(ip)){
-            if(request.getMethod().toUpperCase().equals("GET")) {
-                response.sendRedirect("/error/banned");
-                return false;
-            }
-            response.sendError(423, "Your ip range was banned. Contact admin@coinbot.club for more info.");
-            return false;
-        }
-        if(request.getMethod().toUpperCase().equals("GET")) return true;
-        List<Date> access = accesses.get(ip);
-        if(access==null){
-            accesses.put(ip, new ArrayList<Date>(){{add(new Date());}});
-        } else{
-            access.add(new Date());
-            if(access.size()==10){
-                long difference = access.get(access.size()-1).getTime() - access.get(0).getTime();
-                if(difference>=2*1000){
-                    access.remove(0);
-                    return true;
-                } else{
-                    banUser(ip);
-                    accesses.remove(ip);
-                    response.sendError(423, "Your ip range was banned. Contact admin@coinbot.club for more info.");
-                    return false;
-                }
-            }
-        }
+        //TODO uncomment and configure
+//        if(banned==null) init();
+//        String ip = RequestsMapper.getClientIp(request);
+//        if(banned.contains(ip)){
+//            if(request.getMethod().toUpperCase().equals("GET")) {
+//                response.sendRedirect("/error/banned");
+//                return false;
+//            }
+//            response.sendError(423, "Your ip range was banned. Contact admin@coinbot.club for more info.");
+//            return false;
+//        }
+//        if(request.getMethod().toUpperCase().equals("GET")) return true;
+//        List<Date> access = accesses.get(ip);
+//        if(access==null){
+//            accesses.put(ip, new ArrayList<Date>(){{add(new Date());}});
+//        } else{
+//            access.add(new Date());
+//            if(access.size()==10){
+//                long difference = access.get(access.size()-1).getTime() - access.get(0).getTime();
+//                if(difference>=2*1000){
+//                    access.remove(0);
+//                    return true;
+//                } else{
+//                    banUser(ip);
+//                    accesses.remove(ip);
+//                    response.sendError(423, "Your ip range was banned. Contact admin@coinbot.club for more info.");
+//                    return false;
+//                }
+//            }
+//        }
         return true;
     }
 

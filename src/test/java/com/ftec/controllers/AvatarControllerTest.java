@@ -53,11 +53,11 @@ public class AvatarControllerTest {
     public void getImageTest() throws Exception {
 
         User user = new User();
-        user.setId(4L);
         user.setUsername("testUsername");
-        user.setPassword("123456");
+        user.setPassword("strongPass123");
         user.setEmail("testmail@mail.com");
         user.setSubscribeForNews(true);
+        user.setTwoStepVerification(false);
         userDAO.save(user);
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
@@ -73,11 +73,11 @@ public class AvatarControllerTest {
     @Test
     public void uploadFileTest() throws Exception {
         User user = new User();
-        user.setId(3L);
         user.setUsername("testUsername");
-        user.setPassword("123456");
+        user.setPassword("StrongPas1231321");
         user.setEmail("testmail@mail.com");
         user.setSubscribeForNews(true);
+        user.setTwoStepVerification(false);
         userDAO.save(user);
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());

@@ -28,7 +28,7 @@ public class LogOutController {
 		try {
 
 			String token = TokenService.getToken(request);
-			UserToken userToken = tokenDAO.findByToken(token);
+			UserToken userToken = tokenDAO.findByToken(token).get();
 			tokenDAO.delete(userToken);
 
 		} catch(Exception e) {

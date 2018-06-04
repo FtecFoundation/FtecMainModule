@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Iterator;
 
+import com.ftec.configs.enums.TutorialSteps;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,6 @@ public class ChangeUserDataTest {
 
 	@Autowired
 	UserDAO userDAO;
-	
 
 	@Autowired
 	MockMvc mvc;
@@ -52,17 +52,26 @@ public class ChangeUserDataTest {
 			System.out.println(user);
 		}
 	}
-	
+
+	String username = "user1";
+	String password = "pass1";
+	String email = "email@d.net";
+	TutorialSteps currentStep = TutorialSteps.FIRST;
+	boolean subscribeForNews = false;
+	Boolean twoStepVerification = false;
+
 	@Test
 	public void changeUserDataIntegrationTest() throws Exception {
-		User u = new User();
-		long id = 88L;
-		u.setId(id);
-		u.setPassword("old_password");
+		User u =  new User(username, password,
+				email, currentStep, subscribeForNews, twoStepVerification);
+
+		u.setPassword("old_passworD123");
 		u.setEmail("old_email");
 		u.setTwoStepVerification(false);
 		userDAO.save(u);
-		
+
+		long id = u.getId();
+
 		UserUpdate updatedUserData = new UserUpdate();
 		updatedUserData.setPassword("neWStrong123");
 		updatedUserData.setEmail("new_email@gmail.com");
@@ -81,30 +90,40 @@ public class ChangeUserDataTest {
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert userAfterChange.isTwoStepVerification() == true;
+
+		userDAO.deleteAll();
 	}
 	
 	@Test
 	public void changeNothing() throws Exception {
-		String token = service.createSaveAndGetNewToken(295L);
-		User u = new User();
-		u.setId(295L);
+		User u = new User(username, password,
+				email, currentStep, subscribeForNews, twoStepVerification);
 		userDAO.save(u);
-		
+		long id = u.getId();
+
+		String token = service.createSaveAndGetNewToken(id);
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isOk());
+
+		userDAO.deleteAll();
 	}
 	
 	@Test
-	public void tryChangeToInvalidData() throws Exception {
-		String token = service.createSaveAndGetNewToken(2911L);
-		User u = new User();
-		u.setId(2911L);
-		u.setEmail("email_1");
+	public void tryChangeToInvalidEmailAndPass() throws Exception {
+
+
+		User u = new User(username, password,
+				email, currentStep, subscribeForNews, twoStepVerification);
+
+		u.setEmail("validEmail123@gmail.com");
 		userDAO.save(u);
-		
+
+		String token = service.createSaveAndGetNewToken(u.getId());
+
 		UserUpdate userUpdate = new UserUpdate();
 		userUpdate.setEmail("invalidEmail");
 		
@@ -123,24 +142,51 @@ public class ChangeUserDataTest {
 		.andDo(print()).andExpect(status().isOk());
 		
 		userUpdate.setPassword("invalidpass");
-		
+		userUpdate.setEmail(null);
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isBadRequest());
 		
-		User u2 = new User();
-		u2.setId(11L);
-		u2.setEmail("dublicate_email@wda.net");
+		userUpdate.setPassword("validPass1231");
+		userUpdate.setEmail(null);
+
+		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
+				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.header(TokenService.TOKEN_NAME, token))
+				.andDo(print()).andExpect(status().isOk());
+
+		userDAO.deleteAll();
+	}
+
+	@Test
+	public void trySaveDublicateEmail() throws Exception {
+		User u = new User(username, password,
+				email, currentStep, subscribeForNews, twoStepVerification);
+
+		u.setEmail("dublicate_email@wda.net");
+		userDAO.save(u);
+
+		User u2 = new User(username, password,
+				email, currentStep, subscribeForNews, twoStepVerification);
+
+		u2.setEmail("goodEmail@gmail.com");
+		String token = service.createSaveAndGetNewToken(u2.getId());
 		userDAO.save(u2);
-		
+
+		UserUpdate userUpdate = new UserUpdate();
+
 		userUpdate.setEmail("dublicate_email@wda.net");
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isBadRequest());
+				.andDo(print()).andExpect(status().isBadRequest());
+
+		userDAO.deleteAll();
 	}
 }
