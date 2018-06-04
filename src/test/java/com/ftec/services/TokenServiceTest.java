@@ -8,6 +8,17 @@ import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 import org.junit.Assert;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Date;
+
+import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.controllers.RegistrationController;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +57,9 @@ public class TokenServiceTest {
     @Autowired
     UserDAO dao;
 
+    @Autowired
+    UserDAO userDao;
+
     @Test
     public void getValidIdFromTokenTest() {
         assertThat(TokenService.extractUserID("23_NDKJAWNWKAJDNAkWKDNAW"),is("23"));
@@ -73,34 +87,39 @@ public class TokenServiceTest {
         TokenService.checkTokenFormat("23aNDKJAWNWKAJDNAkWKDNAW");
     }
 
-    @Test //integration test
-    public void testSaveTokenIntoDBthroughRegistrationController() throws Exception {
-        String userName = "tester2";
-        User u = ControllerTest.newUser(userName);
-        Long id = 565L;
-        u.setId(id);
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
-                content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
-                accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME)).andReturn();
+    @Test
+    public void testSaveTokenAndUserIntoDBthroughRegistrationController() throws Exception {
+    	String userName = "tester2";
+        RegistrationController.UserRegistration u = new RegistrationController.UserRegistration(userName,"somePass","email@gmail.com",false);
 
-        String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+				content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+				accept(MediaType.APPLICATION_JSON))
+		.andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME)).andReturn();
+
+		String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
+
+        Long id = Long.valueOf(TokenService.extractUserID(token));
 
         assertNotNull(tokenDAO.findByToken(token));
 
-        dao.deleteById(id);
+		assertEquals(userDao.findById(id).get().getUsername(),userName);
 
+		userDao.deleteById(id);
+		assertFalse(userDao.findById(id).isPresent());
     }
 
     @Test
-    public void saveTokenIntoDB() {
-        String token = TokenService.generateToken(998L);
-        Date current = new Date();
-        UserToken uToken = new UserToken(token, current);
-
-        tokenDAO.save(uToken);
+    public void saveTokenIntoDB() throws InterruptedException {
+    	String token = TokenService.generateToken(998L);
+    	Date current = new Date();
+    	UserToken uToken = new UserToken(token, current);
+    	
+    	tokenDAO.save(uToken);
 
         assertNotNull(tokenDAO.findByToken(token));
-        Assert.assertEquals(tokenDAO.findByToken(token).get().getExpirationTime(), current);
+
+
+        assertEquals(tokenDAO.findByToken(token).get().getToken(), token);
     }
 }

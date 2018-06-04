@@ -1,11 +1,11 @@
 package com.ftec.repositories;
 
 import com.ftec.entities.TelegramSettings;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface TelegramSettingsDAO extends ElasticsearchRepository<TelegramSettings, String> {
+@Repository
+public interface TelegramSettingsDAO extends JpaRepository<TelegramSettings, String> {
     TelegramSettings getByUserId(long userId);
-    @Query
-    void updateCode();
+
 }

@@ -1,8 +1,11 @@
 
 package com.ftec.middlewares;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +29,6 @@ import com.ftec.services.TokenService;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
 public class TokenSecurityTest {
-    @Autowired
-    UserDAO userDao;
 
     @Autowired
     MockMvc mvc;
@@ -38,18 +39,14 @@ public class TokenSecurityTest {
     @Autowired
     TokenService tokenService;
 
-    public static User newUser(String login) {
-        User u = new User();
-        u.setUsername(login);
-        u.setPassword("pass_user1");
-        u.setEmail("emaildl");
-        return u;
+    @Before
+    public void setUp(){
+        tokenDao.deleteAll();
     }
 
     @Test
     public void securityAccess() throws Exception {
         String token = tokenService.createSaveAndGetNewToken(255L);
-        System.out.println("generate token = " + token);
 
         mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")
                 .header(TokenService.TOKEN_NAME, token)
@@ -57,7 +54,9 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isAccepted());
 
-        tokenDao.deleteById(token);
+        assertTrue(tokenDao.findByToken(token).isPresent());
+        tokenDao.deleteByToken(token);
+        assertFalse(tokenDao.findByToken(token).isPresent());
     }
 
     @Test
@@ -68,4 +67,6 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden());
     }
+
+    //TODO expired token test
 }

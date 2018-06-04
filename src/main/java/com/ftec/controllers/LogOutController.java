@@ -1,18 +1,16 @@
 package com.ftec.controllers;
 
-import com.ftec.exceptions.token.TokenException;
+import com.ftec.entities.UserToken;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
-import javax.servlet.http.HttpServletRequest;
-
-import com.ftec.entities.UserToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @RestController
 public class LogOutController {
 
@@ -24,14 +22,15 @@ public class LogOutController {
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<String> logOut(HttpServletRequest request){
+	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 
 			String token = TokenService.getToken(request);
-			tokenDAO.deleteById(token);
-			return new ResponseEntity<>(HttpStatus.ACCEPTED);
-		} catch(TokenException e) {
-			return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+			UserToken userToken = tokenDAO.findByToken(token).get();
+			return "ok";
+		} catch(Exception e) {
+		    response.sendError(400);
+		    return null;
 		}
 	}
 }
