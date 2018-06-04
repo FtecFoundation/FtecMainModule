@@ -93,5 +93,5 @@ public class AuthorizationController {
 		return user.getPassword().equals(password);
 	}
 	
-
+	//delete
 }
