@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class AuthorizationControllerTest {
+public class LoginControllerTest {
 
     @Autowired
     UserDAO userDAO;
@@ -86,10 +86,10 @@ public class AuthorizationControllerTest {
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         assertTrue(mvcResult1.getResponse().getContentAsString()
-                .equals(AuthorizationController.INVALID_USERNAME_OR_PASSWORD));
+                .equals(LoginController.INVALID_USERNAME_OR_PASSWORD));
 
         assertTrue(mvcResult2.getResponse().getContentAsString()
-                .equals(AuthorizationController.INVALID_USERNAME_OR_PASSWORD));
+                .equals(LoginController.INVALID_USERNAME_OR_PASSWORD));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class AuthorizationControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
-        mvcResult.getResponse().getContentAsString().equals(AuthorizationController.EMPTY_2FA_CODE_MESSAGE);
+        mvcResult.getResponse().getContentAsString().equals(LoginController.EMPTY_2FA_CODE_MESSAGE);
     }
 
     @Test

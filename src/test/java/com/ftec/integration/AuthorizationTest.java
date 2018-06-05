@@ -2,13 +2,9 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
-import com.ftec.repositories.UserDAO;
-import com.ftec.repositories.UserTokenDAO;
-import com.ftec.services.Implementations.UserServiceImpl;
-import com.ftec.services.RegistrationService;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -25,8 +21,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,21 +34,6 @@ public class AuthorizationTest {
 	@Autowired
 	MockMvc mvc;
 
-	@Autowired
-	UserServiceImpl userService;
-
-	@Autowired
-	RegistrationService registrationService;
-
-	@Autowired
-	UserTokenDAO tokenDAO;
-
-	@Autowired
-	TokenService tokenService;
-
-	@Autowired
-    UserDAO userDAO;
-
 	@Test
 	public void authorization() throws Exception {
 		String invalidLogin = "invalid login";
@@ -66,12 +45,10 @@ public class AuthorizationTest {
         String username = user.getUsername();
         String password = user.getPassword();
 
-        assertFalse(userDAO.findByUsername(user.getUsername()).isPresent());
 		MvcResult result = mvc.perform(post("/registration")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(user)))
 				.andExpect(status().is(200)).andReturn();
-        assertTrue(userDAO.findByUsername(user.getUsername()).isPresent());
 
 		String token = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 		assert !token.isEmpty();
@@ -100,7 +77,6 @@ public class AuthorizationTest {
         ).andExpect(status().is(403));
 
 		assertEquals("ok", logoutResult);
-        assertFalse(tokenService.findByToken(token).isPresent());
 
 		String invalidCredentialsAnswer = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -118,9 +94,6 @@ public class AuthorizationTest {
 
         String tokenAfterLogin = new JSONObject(resultLogin.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
-
-        assertFalse(userDAO.findByUsername(user.getUsername()).get().getTwoStepVerification());
-
         ChangeSettingController.UserUpdate updateSetting = new ChangeSettingController.UserUpdate();
         updateSetting.setTwoFactorEnabled(true);
 
@@ -130,10 +103,7 @@ public class AuthorizationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateSetting))
         ).andExpect(status().is(200));
-
-        assertTrue(userDAO.findByUsername(user.getUsername()).get().getTwoStepVerification());
-
-    }
+	}
 
 //	@Test
 //	public void authWithout2FaCode() throws Exception {
