@@ -3,7 +3,7 @@ package com.ftec.repositories;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.entities.User;
-import com.ftec.services.TokenService;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -28,30 +29,26 @@ public class UserDBTest {
         userDAO.deleteAll();
     }
 
-
     @Test
     public void userDBtest() {
-        assertFalse(userDAO.findAll().iterator().hasNext()); //isEmptyTable
 
+        User u = EntityGenerator.getNewUser();
 
-        String username = "user1";
-        String password = "pass1";
-        String email = "email@d.net";
+        String username = u.getUsername();
+        String password = u.getPassword();
+        String email = u.getEmail();
         TutorialSteps currentStep = TutorialSteps.FIRST;
-        boolean subscribeForNews = false;
-        Boolean twoStepVerification = false;
 
-        User u = new User(username, password,
-                email, currentStep, subscribeForNews, twoStepVerification);
         userDAO.save(u);
         long id = u.getId();
-        //works with 1 user
+
         assertTrue(userDAO.findById(id).get().getUsername().equals(username));
         assertTrue(userDAO.findByUsername(username).get().getPassword().equals(password));
         assertTrue(userDAO.findByEmail(email).get().getUsername().equals(username));
         assertTrue(userDAO.findByCurrentStep(currentStep).get().getUsername().equals(username));
 
-        User u2 = new User("name","passs","user2",currentStep,true,false);
+        User u2 = EntityGenerator.getNewUser();
         userDAO.save(u2);
+        assertEquals(u2.getId() - u.getId(),1);
     }
 }

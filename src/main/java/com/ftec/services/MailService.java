@@ -367,7 +367,7 @@ public class MailService {
         String fallbackLanguage="en";
         try {
             ClassPathResource file = new ClassPathResource(filename);
-            if(!file.exists()) file=new ClassPathResource(filename.substring(0, filename.indexOf("_"))+"_"+fallbackLanguage+".html");
+
             return Files.lines(Paths.get(file.getURI())).collect(Collectors.joining());
         }catch (Exception e){
             Logger.logException("Loading html content from file "+filename, e, true);

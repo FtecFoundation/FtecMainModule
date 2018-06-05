@@ -6,9 +6,11 @@ import com.ftec.controllers.RegistrationController;
 import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
@@ -23,6 +25,9 @@ public class User {
 
     private String username;
 
+    @NotNull
+    @Size(min = 4)
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
     private String password;
 
     private String email;
@@ -44,15 +49,14 @@ public class User {
         this.twoStepVerification = twoStepVerification;
     }
 
-    public User() {
-    }
-
     public User(RegistrationController.UserRegistration userRegistration) {
         this.username = userRegistration.getUsername();
         this.password = userRegistration.getPassword();
         this.email = userRegistration.getEmail();
         this.subscribeForNews = userRegistration.isSubscribeForNews();
     }
+
+    public User(){}
 
     public void apllyChangeSettings(UserUpdate userUpdate) {
         if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();

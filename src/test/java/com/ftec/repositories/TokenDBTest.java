@@ -3,6 +3,7 @@ package com.ftec.repositories;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.UserToken;
 import com.ftec.services.TokenService;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,15 +34,14 @@ public class TokenDBTest {
         tokenDAO.deleteAll();
     }
 
-
     @Test
     public void TokenDBtest() {
-        String token = service.createSaveAndGetNewToken(132L);
-        Optional<UserToken> byId = tokenDAO.findByToken(token);
+        String token = service.createSaveAndGetNewToken(EntityGenerator.getNextNum());
+        Optional<UserToken> byId = tokenDAO.findByIdToken(token);
         UserToken userToken = byId.get();
-        assertNotNull(byId.get());
-        assertTrue(tokenDAO.findByToken(token).get().getToken().equals(token));
-        tokenDAO.deleteByToken(token);
-        assertFalse(tokenDAO.findByToken(token).isPresent());
+
+        assertTrue(tokenDAO.findByIdToken(token).get().getToken().equals(token));
+        tokenDAO.deleteByIdToken(token);
+        assertFalse(tokenDAO.findByIdToken(token).isPresent());
     }
 }

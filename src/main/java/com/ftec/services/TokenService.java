@@ -16,7 +16,6 @@ import java.util.Random;
 
 @Service
 public class TokenService {
-
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
     private final UserTokenDAO tokenManager;
 
@@ -104,9 +103,10 @@ public class TokenService {
     }
 
     private UserToken getUserTokenFromRequest(String token) throws TokenException{
-        Optional<UserToken> userToken = tokenManager.findByToken(token);
+        Optional<UserToken> userToken = tokenManager.findByIdToken(token);
 
         if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
         return userToken.get();
     }
+
 }

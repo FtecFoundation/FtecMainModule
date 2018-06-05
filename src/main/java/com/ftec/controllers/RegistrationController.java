@@ -7,6 +7,9 @@ import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.UserService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +28,6 @@ public class RegistrationController {
     private final TokenService tokenService;
     private final RegistrationService registrationService;
 
-    @Autowired
-    public RegistrationController(UserService userService, TokenService tokenService, RegistrationService registrationService) {
-        this.userService = userService;
-        this.tokenService = tokenService;
-        this.registrationService = registrationService;
-    }
 
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, HttpServletResponse response) throws UserExistException, IOException, IOException {
@@ -49,6 +46,9 @@ public class RegistrationController {
         }
     }
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserRegistration {
         private String username;
 
@@ -57,47 +57,12 @@ public class RegistrationController {
         private String email;
 
         private boolean subscribeForNews;
+    }
 
-        public UserRegistration() {
-        }
-
-        public UserRegistration(String username, String password, String email, boolean subscribeForNews) {
-            this.username = username;
-            this.password = password;
-            this.email = email;
-            this.subscribeForNews = subscribeForNews;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public boolean isSubscribeForNews() {
-            return subscribeForNews;
-        }
-
-        public void setSubscribeForNews(boolean subscribeForNews) {
-            this.subscribeForNews = subscribeForNews;
-        }
+    @Autowired
+    public RegistrationController(UserService userService, TokenService tokenService, RegistrationService registrationService) {
+        this.userService = userService;
+        this.tokenService = tokenService;
+        this.registrationService = registrationService;
     }
 }

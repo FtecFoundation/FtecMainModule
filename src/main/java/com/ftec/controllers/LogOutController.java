@@ -25,7 +25,7 @@ public class LogOutController {
 		try {
 
 			String token = TokenService.getToken(request);
-			tokenDAO.deleteByToken(token);
+			tokenDAO.deleteByIdToken(token);
 			return "ok";
 		} catch(Exception e) {
 		    response.sendError(400);

@@ -17,14 +17,14 @@ import java.util.Optional;
 
 @RestController
 public class AuthorizationController {
-	private final static String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password!";
+	final static String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password!";
 
 	private final TokenService tokenService;
 	private final UserDAO userDAO;
 	private final Environment environment;
 
 	
-	private static final String EMPTY_2FA_CODE_MESSAGE = "2Fa code is emply!";
+	static final String EMPTY_2FA_CODE_MESSAGE = "2Fa code is emply!";
 	
 	@Autowired
 	public AuthorizationController(TokenService tokenService, UserDAO userDAO, Environment environment) {
@@ -42,7 +42,6 @@ public class AuthorizationController {
 		
 		try {
 			Optional<User> userOpt = userDAO.findByUsername(username);	
-
 			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
 				if(userOpt.get().getTwoStepVerification()) check2FaCode(twoStepVerCode, userOpt.get());
 				return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
@@ -61,7 +60,7 @@ public class AuthorizationController {
 	
 		if(this.environment.getActiveProfiles()[0].equals("test")) return;
 		
-		throw new AuthorizationException("Test profile not selected!");
+		else throw new AuthorizationException("Test profile not selected!");
 
 	}
 }

@@ -1,50 +1,31 @@
 package com.ftec.entities;
 
-import org.hibernate.annotations.GeneratorType;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table
-@IdClass(UserToken.class)
-public class UserToken  implements Serializable{
+@Data
+public class UserToken implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-	@Id
-	private String token;
-	@Id
-	private Date expirationTime;
-	
-	public UserToken() {
-		
-	}
+	@EmbeddedId
+	private TokenEmbId id;
+
+	public UserToken() {}
+
 	public UserToken(String token, Date expirationTime) {
-		this.token = token;
-		this.expirationTime = expirationTime;
+		this.id = new TokenEmbId(token,expirationTime);
 	}
 
-	@Override
-	public String toString() {
-		return "UserToken{" +
-				"token='" + token + '\'' +
-				", expirationTime=" + expirationTime +
-				'}';
+	public Date getExpirationTime(){
+		return id.getExpirationTime();
 	}
 
-	public Date getExpirationTime() {
-		return expirationTime;
+	public String getToken(){
+		return id.getToken();
 	}
-	public void setExpirationTime(Date expirationTime) {
-		this.expirationTime = expirationTime;
-	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-
 }
