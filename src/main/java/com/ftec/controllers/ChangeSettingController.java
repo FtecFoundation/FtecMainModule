@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -40,7 +39,7 @@ public class ChangeSettingController {
 
 		if(br.hasErrors()) {
 		    response.setStatus(400);
-		    return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+		    return MvcResponse.getMvcResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
 		}
 
 		User userFromDB = userDAO.findById(TokenService.getUserIdFromToken(request)).get();

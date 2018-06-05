@@ -1,5 +1,6 @@
 package com.ftec.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
@@ -40,18 +41,7 @@ public class ChangeUserDataTest {
 	@Autowired
 	TokenService service;
 	
-	@Before
-	public void SetUp() {
-		userDAO.deleteAll();
-	}
-	
-	private void printUser() {
-		Iterable<User> allIteration = userDAO.findAll();
-		Iterator<User> iterator = allIteration.iterator();
-		for (User user : allIteration) {
-			System.out.println(user);
-		}
-	}
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	String username = "user1";
 	String password = "pass1";
@@ -61,12 +51,9 @@ public class ChangeUserDataTest {
 	Boolean twoStepVerification = false;
 
 	@Test
-	public void changeUserDataIntegrationTest() throws Exception {
-		User u =  new User(username, password,
-				email, currentStep, subscribeForNews, twoStepVerification);
+	public void changeUserDataTest() throws Exception {
+		User u =  EntityGenerator.getNewUser();
 
-		u.setPassword("old_passworD123");
-		u.setEmail("old_email");
 		u.setTwoStepVerification(false);
 		userDAO.save(u);
 
@@ -80,7 +67,7 @@ public class ChangeUserDataTest {
 		String token = service.createSaveAndGetNewToken(id);
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(updatedUserData)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(updatedUserData)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isOk());
@@ -90,25 +77,21 @@ public class ChangeUserDataTest {
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert userAfterChange.getTwoStepVerification();
-
-		userDAO.deleteAll();
-	}
+		}
 	
 	@Test
 	public void changeNothing() throws Exception {
 		User u = EntityGenerator.getNewUser();
 
 		userDAO.save(u);
-
 		String token = service.createSaveAndGetNewToken(u.getId());
 
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isOk());
 
-		userDAO.deleteAll();
 	}
 	
 	@Test
@@ -125,7 +108,7 @@ public class ChangeUserDataTest {
 		userUpdate.setEmail("invalidEmail");
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isBadRequest());
@@ -133,7 +116,7 @@ public class ChangeUserDataTest {
 		userUpdate.setEmail("validEmail@Gmail.com");
 		
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isOk());
@@ -142,7 +125,7 @@ public class ChangeUserDataTest {
 		userUpdate.setEmail(null);
 
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 		.andDo(print()).andExpect(status().isBadRequest());
@@ -151,7 +134,7 @@ public class ChangeUserDataTest {
 		userUpdate.setEmail(null);
 
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 				.andDo(print()).andExpect(status().isOk());
@@ -162,18 +145,21 @@ public class ChangeUserDataTest {
 	@Test
 	public void trySaveDublicateEmail() throws Exception {
 		User u =  EntityGenerator.getNewUser();
-
 		u.setEmail("dublicate_email@wda.net");
 		userDAO.save(u);
 
-		String token = service.createSaveAndGetNewToken(u.getId());
+		User u2 = EntityGenerator.getNewUser();
+		u2.setEmail("ok_email@gmail.com");
+		userDAO.save(u2);
+
+		String token = service.createSaveAndGetNewToken(u2.getId());
 
 		UserUpdate userUpdate = new UserUpdate();
 
 		userUpdate.setEmail("dublicate_email@wda.net");
 
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
+				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
 				.andDo(print()).andExpect(status().isBadRequest());

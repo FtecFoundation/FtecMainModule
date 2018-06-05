@@ -7,6 +7,5 @@ public interface UserService {
 
     User getById(long id);
 
-    void registerNewUserAccount(User user) throws UserExistException;
 
 }

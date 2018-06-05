@@ -1,11 +1,11 @@
 package com.ftec.services;
 
-import com.ftec.entities.UserToken;
+import com.ftec.entities.Token;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.NullTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
-import com.ftec.repositories.UserTokenDAO;
+import com.ftec.repositories.TokenDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +18,10 @@ import java.util.Random;
 @Service
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
-    private final UserTokenDAO tokenDAO;
+    private final TokenDAO tokenDAO;
 
     @Autowired
-    public TokenService(UserTokenDAO tokenDAO) {
+    public TokenService(TokenDAO tokenDAO) {
         this.tokenDAO = tokenDAO;
     }
 
@@ -64,7 +64,7 @@ public class TokenService {
         Date expiration = new Date();
 
         setExpirationTime(expiration);
-        tokenDAO.save(new UserToken(token, expiration));
+        tokenDAO.save(new Token(token, expiration));
 
         return token;
     }
@@ -92,19 +92,19 @@ public class TokenService {
     }
 
     public void verifyToken(String token) throws TokenException{
-        UserToken tokenEntity = getUserTokenFromRequest(token);
+        Token tokenEntity = getUserTokenFromRequest(token);
 
         Date expirationTime = tokenEntity.getExpirationTime();
 
         checkIfTokenExpired(expirationTime);
     }
 
-    private void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException {
+    public static void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException {
         if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
     }
 
-    private UserToken getUserTokenFromRequest(String token) throws TokenException{
-        Optional<UserToken> userToken = tokenDAO.findByToken(token);
+    private Token getUserTokenFromRequest(String token) throws TokenException{
+        Optional<Token> userToken = tokenDAO.findByToken(token);
 
         if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
         return userToken.get();
@@ -115,7 +115,7 @@ public class TokenService {
         tokenDAO.deleteByToken(token);
     }
 
-    public Optional<UserToken> findByToken(String token) {
+    public Optional<Token> findByToken(String token) {
         return tokenDAO.findByToken(token);
     }
 

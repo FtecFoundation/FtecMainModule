@@ -1,7 +1,10 @@
 
 package com.ftec.middlewares;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.repositories.UserTokenDAO;
+import com.ftec.entities.Token;
+import com.ftec.entities.User;
+import com.ftec.repositories.UserDAO;
+import com.ftec.repositories.TokenDAO;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -15,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.Date;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -31,34 +36,68 @@ public class TokenSecurityTest {
     MockMvc mvc;
 
     @Autowired
-    UserTokenDAO tokenDao;
+    TokenDAO tokenDAO;
 
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    UserDAO userDAO;
+
     @Test
     public void securityAccess() throws Exception {
         String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
+        assertTrue(tokenDAO.findByToken(token).isPresent());
 
-        mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isAccepted());
+                .andDo(print()).andExpect(status().isOk());
 
-        assertTrue(tokenDao.findByToken(token).isPresent());
-        tokenDao.deleteByToken(token);
-        assertFalse(tokenDao.findByToken(token).isPresent());
+        tokenDAO.deleteByToken(token);
+        assertFalse(tokenDAO.findByToken(token).isPresent());
     }
 
     @Test
     public void tryAccessWithoutValidToken() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/securedTest")
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/cabinet/tutorial/nextStep")
                 .header(TokenService.TOKEN_NAME, "123_UNVALIDTOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden());
     }
 
+    @Test//(expected = TokenExpiredException.class)
+    public void tryAccessWithExpiredToken() throws Exception {
+        User user = EntityGenerator.getNewUser();
+        userDAO.save(user);
+
+        long id = user.getId();
+
+        Token token = new Token();
+        token.setToken(id+"_"+"wdawdawdafa");
+        Date normalTime = new Date();
+        normalTime.setTime(new Date().getTime() + 180000);
+        token.setExpirationTime(normalTime);
+        tokenDAO.save(token);
+
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
+                .header(TokenService.TOKEN_NAME, id+"_"+"wdawdawdafa")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk());
+
+        Token expiredToken = new Token();
+        expiredToken.setToken("1_dwankdwakj");
+        expiredToken.setExpirationTime(new Date());
+        tokenDAO.save(expiredToken);
+
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
+                .header(TokenService.TOKEN_NAME, id+"_"+"dwankdwakj")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isForbidden());
+    }
     //TODO expired token test
 }

@@ -3,7 +3,7 @@ package com.ftec.controllers;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
-import com.ftec.repositories.UserTokenDAO;
+import com.ftec.repositories.TokenDAO;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.google.common.io.Files;
@@ -37,7 +37,7 @@ public class AvatarControllerTest {
     MockMvc mvc;
 
     @Autowired
-    UserTokenDAO tokenDAO;
+    TokenDAO tokenDAO;
 
     @Autowired
     TokenService tokenService;

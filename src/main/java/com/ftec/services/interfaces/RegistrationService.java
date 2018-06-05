@@ -2,7 +2,9 @@ package com.ftec.services.interfaces;
 
 import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
+import com.ftec.exceptions.UserExistException;
 
 public interface RegistrationService {
-    User registerUser(RegistrationController.UserRegistration userRegistration);
+    void registerNewUserAccount(User user) throws UserExistException;
+
 }

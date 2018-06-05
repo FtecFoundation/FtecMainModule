@@ -50,7 +50,7 @@ public class LoginController {
 			
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
-			return MvcResponse.getError(403, e.getMessage());
+			return MvcResponse.getMvcResponse(403, e.getMessage());
 		}
 		
 		

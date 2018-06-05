@@ -45,7 +45,7 @@ public class MvcResponse {
         this.status = status;
     }
 
-    public String getError() {
+    public String getMvcResponse() {
         return error;
     }
 
@@ -76,7 +76,7 @@ public class MvcResponse {
 		return "MvcResponse [status=" + status + ", response=" + response + ", error=" + error + "]";
 	}
 
-	public static MvcResponse getError(int status, String errorMsg){
+	public static MvcResponse getMvcResponse(int status, String errorMsg){
         MvcResponse mvc = new MvcResponse(status);
         mvc.setError(errorMsg);
         return mvc;

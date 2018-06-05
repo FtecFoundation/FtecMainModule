@@ -23,13 +23,12 @@ public class TutorialTest {
     TutorialService tutorialService;
     @Autowired
     RegistrationService registrationService;
-    @Autowired
-    UserService userService;
+
 
     @Test
     public void testRegisteredStep() throws UserExistException {
         User u = EntityGenerator.getNewUser();
-        userService.registerNewUserAccount(u);
+        registrationService.registerNewUserAccount(u);
         assertEquals(tutorialService.getCurrentStep(u.getId()),(TutorialSteps.FIRST));
     }
 }
