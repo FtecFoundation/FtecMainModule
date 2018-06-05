@@ -29,9 +29,6 @@ public class RegistrationController {
     private final UserService userService;
     private final TokenService tokenService;
     private final RegistrationService registrationService;
-   
-    @Autowired
-    MailResources mailRes;
 
     @Data
     @AllArgsConstructor
@@ -55,19 +52,18 @@ public class RegistrationController {
 
     @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(@RequestBody @Valid UserRegistration userRegistration, HttpServletResponse response) throws UserExistException {
-    	String userid = mailRes.getUserid();
     	try {
             User userToSave = registrationService.registerUser(userRegistration);
             userService.registerNewUserAccount(userToSave);
             sendToken(userToSave, response);
 
-            return new ResponseEntity<String>(HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (TokenException e) {
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void sendToken(User user, HttpServletResponse response) throws TokenException {
+    private void sendToken(User user, HttpServletResponse response) throws TokenException {
 
         long id = user.getId();
         if (id == 0)
