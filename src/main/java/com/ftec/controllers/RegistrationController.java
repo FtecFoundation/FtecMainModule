@@ -21,7 +21,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/registration")
 public class RegistrationController {
 
     private final UserService userService;

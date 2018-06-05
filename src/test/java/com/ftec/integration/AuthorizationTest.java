@@ -15,6 +15,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,15 +58,17 @@ public class AuthorizationTest {
 
 		RegistrationController.UserRegistration user = new RegistrationController.UserRegistration(login, pass, validEmail, true);
 
-		MvcResult result = mvc.perform(post("/registration").
-				content(objectMapper.writeValueAsString(user)))
+		MvcResult result = mvc.perform(post("/registration")
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(objectMapper.writeValueAsString(user)))
 				.andExpect(status().is(200)).andReturn();
-		String token = new JSONObject(result.getResponse().getContentAsString()).getString("token");
+
+		String token = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 		assert !token.isEmpty();
 
 		TutorialSteps step = TutorialSteps.valueOf(mvc.perform(get("/cabinet/tutorial/getCurrentStep")
 				.header(TokenService.TOKEN_NAME,token)
-		).andExpect(status().is(200)).andReturn().getResponse().getContentAsString());
+		).andExpect(status().is(200)).andReturn().getResponse().getContentAsString().replaceAll("^\"|\"$", ""));
 
 		assertEquals(TutorialSteps.FIRST, step);
 
@@ -75,7 +78,7 @@ public class AuthorizationTest {
 		assertEquals("ok", logoutResult);
 
 		String invalidCredentialsAnswer = mvc.perform(post("/login")
-				.param("login",invalidLogin)
+				.param("username",invalidLogin)
 				.param("password", invalidPassword)).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
 	}

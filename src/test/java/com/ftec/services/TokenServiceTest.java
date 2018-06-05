@@ -80,7 +80,7 @@ public class TokenServiceTest {
     	String userName = "tester2";
         RegistrationController.UserRegistration u = new RegistrationController.UserRegistration(userName,"somePass","email@gmail.com",false);
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
 				content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
 				accept(MediaType.APPLICATION_JSON))
 		.andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME)).andReturn();

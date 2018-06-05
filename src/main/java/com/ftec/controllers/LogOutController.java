@@ -3,7 +3,7 @@ package com.ftec.controllers;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class LogOutController {
 		this.tokenDAO = tokenDAO;
 	}
 
-	@GetMapping("/logout")
+	@PostMapping("/logout")
 	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 
