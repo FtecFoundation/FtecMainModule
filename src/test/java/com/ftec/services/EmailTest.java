@@ -1,12 +1,10 @@
 package com.ftec.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.mail.internet.AddressException;
-
+import com.ftec.configs.ApplicationConfig;
 import com.ftec.resources.MailResources;
+import com.ftec.resources.Stocks;
+import com.ftec.services.MailService.Email_BotTradesUser;
+import com.ftec.services.MailService.Emails;
 import org.apache.commons.mail.EmailException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.ftec.configs.ApplicationConfig;
-import com.ftec.resources.Stocks;
-import com.ftec.services.MailService.Email_BotTradesUser;
-import com.ftec.services.MailService.Emails;
+import javax.mail.internet.AddressException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -35,13 +32,10 @@ public class EmailTest {
     @Test
     public void sendEmails() throws AddressException, EmailException {
         List<String> users = new ArrayList<String>(){{
-            add("a@ukr.net");
-            add("example@gmail.com");
             add(MailResources.sendToStatic);
-
         }};
         
-        emailService.sendToMany(users, new Locale("en"), "Hello! You received this letter since you have been used the services of COINBOT trading modules.<br>" +
+        emailService.sendToMany(users, "Super subject", "Hello! You received this letter since you have been used the services of COINBOT trading modules.<br>" +
                 "<br>" +
                 "If the fields of algorithmic trading and crypto trading in general are interesting for you, pay attention to the Token Sale of the First Trading Ecosystem.<br>" +
                 "<br>" +
@@ -89,6 +83,10 @@ public class EmailTest {
         }};
         emailService.sendEmail(users, Emails.AutomaticTradesStarted);
         assertNotNull(MailResources.sendToStatic);
-        }
+    }
 
+    @Test
+    public void sendSimpleEmail() {
+        emailService.sendSimpleMessageWithText(MailResources.sendToStatic, "Test subject", "Test text");
+    }
 }

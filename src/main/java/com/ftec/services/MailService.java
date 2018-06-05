@@ -1,42 +1,34 @@
 package com.ftec.services;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.mail.HtmlEmail;
+import com.ftec.resources.MailResources;
+import com.ftec.resources.Stocks;
+import com.ftec.utils.Logger;
+import com.sendpulse.restapi.Sendpulse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import com.ftec.resources.MailResources;
-import com.ftec.resources.Stocks;
-import com.ftec.utils.Logger;
-import com.sendpulse.restapi.Sendpulse;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MailService {
-
-    //For translations
     private final MessageSource messageSource;
-
     private MailResources mailRes;
+    private final Sendpulse sendpulse;
 
     @Autowired
     public MailService(MessageSource messageSource, MailResources mailRes) {
         this.messageSource = messageSource;
         this.mailRes = mailRes;
+        sendpulse = new Sendpulse(mailRes.getUserid(), mailRes.getUserSecret());
     }
 
     public void sendEmail(List<? extends EmailUser> users, Emails emailType){
-        // if(mailRes.emulateEmail) return;
+         if(mailRes.isEmulateEmail()) return;
         try {
             List<Locale> uniqueLocales = new ArrayList<>();
             users.forEach(emailUser -> {
@@ -44,11 +36,6 @@ public class MailService {
             });
 
             String fromEmail = mailRes.getSendFrom();
-
-            String userId = mailRes.getUserid();
-            String userSecret = mailRes.getUserSecret();
-
-            Sendpulse sendpulse = new Sendpulse(userId, userSecret);
 
             Map<String, Object> from = new HashMap<String, Object>();
             from.put("name", "admin");
@@ -64,9 +51,7 @@ public class MailService {
                 if (!user.subscribedToEmail) continue;
 
                 try {
-
-                    sendOneEmail(sendpulse, from, headers, footers, templates, user);
-
+                    sendOneEmail(sendpulse, from, subjects.get(user.language), headers.get(user.language), footers.get(user.language), insertValues(templates.get(user.language), user.createParams()), user);
                 }catch (Exception e){
                     Logger.logException("While sending email "+emailType.name()+" to user "+user.email, e, true);
                 }
@@ -76,29 +61,27 @@ public class MailService {
         }
     }
 
-    private void sendOneEmail(Sendpulse sendpulse, Map<String, Object> from, Map<Locale, String> headers, Map<Locale, String> footers, Map<Locale, String> templates, EmailUser user) {
+    private void sendOneEmail(Sendpulse sendpulse, Map<String, Object> from, String subject, String header, String footer, String template, EmailUser user) {
         Map<String, Object> emaildata = new HashMap<String, Object>();
 
         List<Map> to =  new ArrayList<Map>();
 
         Map<String,Object> receiver = new HashMap<String,Object>();
-        receiver.put("name", "namee");
+        receiver.put("name", user.email);
         receiver.put("email", user.email);
 
         to.add(receiver);
 
-        emaildata.put("html",headers.get(user.language)
-                + insertValues(templates.get(user.language), user.createParams())
-                + footers.get(user.language));
-        emaildata.put("text","text to " + user.email);
-        emaildata.put("subject","subject");
+        emaildata.put("html",header+template+ footer);
+        emaildata.put("text", template);
+        emaildata.put("subject",subject);
         emaildata.put("from",from);//ok
         emaildata.put("to",to);
-        Map<String, Object> result = (Map<String, Object>) sendpulse.smtpSendMail(emaildata);
+        Map<String, Object> result = sendpulse.smtpSendMail(emaildata);
         System.out.println("Results: " + result);
     }
 
-    public void sendToMany(List<String> emails, Locale locale, String text){
+    public void sendToMany(List<String> emails, String subject, String text){
 
 
         String sendFromEmail = mailRes.getSendFrom();
@@ -106,29 +89,28 @@ public class MailService {
         String userSecret = mailRes.getUserSecret();
 
         Sendpulse sendpulse = new Sendpulse(userId, userSecret);
-        ArrayList<Map> to = new ArrayList<Map>();
+        ArrayList<Map> to = new ArrayList<>();
 
         Map<String, Object> from = new HashMap<String, Object>();
         from.put("name", "admin");
         from.put("email", sendFromEmail);
 
-        Map<String, Object> elemto = null;
 
         for(String email : emails) {
-            elemto = new HashMap<String, Object>();
-            elemto.put("name", "name1");
-            elemto.put("email", email);
-            to.add(elemto);
+            Map<String, String> elemTo = new HashMap<>();
+            elemTo.put("name", email);
+            elemTo.put("email", email);
+            to.add(elemTo);
         }
 
-        Map<String, Object> emaildata = new HashMap<String, Object>();
-        emaildata.put("html",text);
-        emaildata.put("text","text");
-        emaildata.put("subject","text");
-        emaildata.put("from",from);//ok
-        emaildata.put("to",to);
+        Map<String, Object> emailData = new HashMap<String, Object>();
+        emailData.put("html",text);
+        emailData.put("text",text);
+        emailData.put("subject", subject);
+        emailData.put("from",from);//ok
+        emailData.put("to",to);
 
-        Map<String, Object> result = (Map<String, Object>) sendpulse.smtpSendMail(emaildata);
+        Map<String, Object> result = sendpulse.smtpSendMail(emailData);
         System.out.println("Results: " + result);
     }
 
@@ -367,7 +349,7 @@ public class MailService {
         String fallbackLanguage="en";
         try {
             ClassPathResource file = new ClassPathResource(filename);
-
+            if(!file.exists()) file = new ClassPathResource(filename.substring(0, filename.indexOf("_"))+"_"+fallbackLanguage);
             return Files.lines(Paths.get(file.getURI())).collect(Collectors.joining());
         }catch (Exception e){
             Logger.logException("Loading html content from file "+filename, e, true);
@@ -383,30 +365,31 @@ public class MailService {
      */
     public void sendSimpleMessageWithText(String to, String subject, String text) {
         try {
-            HtmlEmail email = getEmail();
-            email.setFrom("example@example.com");
-            email.addTo(to);
-            email.setSubject(subject);
-            email.setCharset("utf-8");
-            email.setHtmlMsg(text);
-            email.send();
+            Map<String, Object> emaildata = new HashMap<String, Object>();
+
+            List<Map> toArr =  new ArrayList<Map>();
+
+            Map<String,Object> receiver = new HashMap<String,Object>();
+            receiver.put("name", to);
+            receiver.put("email", to);
+
+            toArr.add(receiver);
+
+            emaildata.put("html",text);
+            emaildata.put("text", text);
+            emaildata.put("subject",subject);
+            Map<String, Object> from = new HashMap<String, Object>();
+            from.put("name", mailRes.getSendFrom());
+            from.put("email", mailRes.getSendFrom());
+            emaildata.put("from",from);
+            emaildata.put("to",toArr);
+            Map<String, Object> result = sendpulse.smtpSendMail(emaildata);
+            System.out.println(result);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private HtmlEmail getEmail(){
-        HtmlEmail email = new HtmlEmail();
-//        email.setHostName(resources.email.host_name);
-//        email.setSmtpPort(resources.email.smtp_port);
-//        email.setTLS(resources.email.tls);
-//        email.setSSL(resources.email.ssl);
-//        email.setCharset("utf-8");
-//        if(resources.email.authNeeded) {
-//            email.setAuthentication(resources.email.mailLogin, resources.email.mailPassword);
-//        }
-        return email;
-    }
     //Temporary disable unused messages
     public enum Emails{
         BotDisabled(Email_BotDisabled.class, "BotDisabled"),
@@ -430,4 +413,5 @@ public class MailService {
             return "static/emails/" +filePrefix+"/main";
         }
     }
+
 }

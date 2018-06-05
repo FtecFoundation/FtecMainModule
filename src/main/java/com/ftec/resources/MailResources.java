@@ -1,7 +1,6 @@
 package com.ftec.resources;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +13,7 @@ public class MailResources {
 	public static String userSecretStatic;
 	public static String sendFromStatic;
 	public static String sendToStatic;
+	public static boolean emulatedEmail;
 
 	private String userid;
 
@@ -22,6 +22,8 @@ public class MailResources {
 	private String sendFrom;
 
 	private String sendTo;
+
+	private boolean emulateEmail;
 
 	public Test test = new Test(); //does'nt works with mail.test.testdata = test
 
@@ -64,6 +66,15 @@ public class MailResources {
 	public void setSendTo(String sendTo) {
 		sendToStatic = sendTo;
 		this.sendTo = sendTo;
+	}
+
+	public boolean isEmulateEmail() {
+		return emulateEmail;
+	}
+
+	public void setEmulateEmail(boolean emulateEmail) {
+    	emulatedEmail = emulateEmail;
+		this.emulateEmail = emulateEmail;
 	}
 
 	public Test getTest() {
