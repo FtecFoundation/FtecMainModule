@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserTokenDAO extends CrudRepository<UserToken, TokenEmbId> {
-	Optional<UserToken> findByIdToken(String token);
+	Optional<UserToken> findByToken(String token);
 	@Transactional
-	void deleteByIdToken(String token);
+	void deleteByToken(String token);
 }

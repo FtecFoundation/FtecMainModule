@@ -2,22 +2,11 @@ package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ControllerTest;
-import com.ftec.entities.User;
+import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
-import org.junit.Assert;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Date;
-
-import com.ftec.controllers.RegistrationController;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +19,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.Date;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -92,7 +89,7 @@ public class TokenServiceTest {
 
         Long id = Long.valueOf(TokenService.extractUserID(token));
 
-        assertNotNull(tokenDAO.findByIdToken(token));
+        assertNotNull(tokenDAO.findByToken(token));
 
 		assertEquals(userDao.findById(id).get().getUsername(),userName);
 
@@ -108,9 +105,9 @@ public class TokenServiceTest {
     	
     	tokenDAO.save(uToken);
 
-        assertNotNull(tokenDAO.findByIdToken(token));
+        assertNotNull(tokenDAO.findByToken(token));
 
 
-        assertEquals(tokenDAO.findByIdToken(token).get().getToken(), token);
+        assertEquals(tokenDAO.findByToken(token).get().getToken(), token);
     }
 }

@@ -1,10 +1,8 @@
 
 package com.ftec.middlewares;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.ftec.configs.ApplicationConfig;
+import com.ftec.repositories.UserTokenDAO;
+import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +16,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.ftec.configs.ApplicationConfig;
-import com.ftec.repositories.UserTokenDAO;
-import com.ftec.services.TokenService;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -47,9 +46,9 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isAccepted());
 
-        assertTrue(tokenDao.findByIdToken(token).isPresent());
-        tokenDao.deleteByIdToken(token);
-        assertFalse(tokenDao.findByIdToken(token).isPresent());
+        assertTrue(tokenDao.findByToken(token).isPresent());
+        tokenDao.deleteByToken(token);
+        assertFalse(tokenDao.findByToken(token).isPresent());
     }
 
     @Test

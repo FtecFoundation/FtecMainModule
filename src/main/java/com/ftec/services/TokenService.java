@@ -103,7 +103,7 @@ public class TokenService {
     }
 
     private UserToken getUserTokenFromRequest(String token) throws TokenException{
-        Optional<UserToken> userToken = tokenManager.findByIdToken(token);
+        Optional<UserToken> userToken = tokenManager.findByToken(token);
 
         if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
         return userToken.get();
