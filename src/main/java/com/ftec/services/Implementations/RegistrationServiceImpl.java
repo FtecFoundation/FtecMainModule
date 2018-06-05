@@ -13,9 +13,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public User registerUser(RegistrationController.UserRegistration userRegistration) {
         User userToSave = new User(userRegistration);
-        //todo Put increment method into getLastId
 
-        //todo id
         userToSave.fillEmptyFields();
         return userToSave;
     }
