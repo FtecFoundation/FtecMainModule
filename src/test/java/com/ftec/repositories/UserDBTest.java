@@ -1,7 +1,7 @@
 package com.ftec.repositories;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Before;

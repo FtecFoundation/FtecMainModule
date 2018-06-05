@@ -1,22 +1,22 @@
 package com.ftec.entities;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @Entity
 @Table
+@ToString
 public class User {
 
     @Id
@@ -25,9 +25,6 @@ public class User {
 
     private String username;
 
-    @NotNull
-    @Size(min = 4)
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
     private String password;
 
     private String email;
@@ -72,8 +69,5 @@ public class User {
         this.salt = PasswordUtils.getSalt(10);
     }
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
-    }
+
 }

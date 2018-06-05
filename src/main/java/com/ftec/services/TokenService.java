@@ -8,6 +8,7 @@ import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.UserTokenDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -17,11 +18,11 @@ import java.util.Random;
 @Service
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
-    private final UserTokenDAO tokenManager;
+    private final UserTokenDAO tokenDAO;
 
     @Autowired
-    public TokenService(UserTokenDAO tokenManager) {
-        this.tokenManager = tokenManager;
+    public TokenService(UserTokenDAO tokenDAO) {
+        this.tokenDAO = tokenDAO;
     }
 
     public static Long getUserIdFromToken(HttpServletRequest request) {
@@ -63,7 +64,7 @@ public class TokenService {
         Date expiration = new Date();
 
         setExpirationTime(expiration);
-        tokenManager.save(new UserToken(token, expiration));
+        tokenDAO.save(new UserToken(token, expiration));
 
         return token;
     }
@@ -103,10 +104,22 @@ public class TokenService {
     }
 
     private UserToken getUserTokenFromRequest(String token) throws TokenException{
-        Optional<UserToken> userToken = tokenManager.findByToken(token);
+        Optional<UserToken> userToken = tokenDAO.findByToken(token);
 
         if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
         return userToken.get();
     }
 
+    @Transactional
+    public void deleteByToken(String token){
+        tokenDAO.deleteByToken(token);
+    }
+
+    public Optional<UserToken> findByToken(String token) {
+        return tokenDAO.findByToken(token);
+    }
+
+    public void deleteAll() {
+        tokenDAO.deleteAll();
+    }
 }

@@ -14,7 +14,7 @@ import com.ftec.configs.ApplicationConfig;
 @ActiveProfiles("test")
 @SpringBootTest(classes = ApplicationConfig.class)
 @RunWith(SpringRunner.class)
-public class UniqueEmailConstraint {
+public class UniqueEmailConstraintTest {
 
     @Autowired
     private Validator validator;

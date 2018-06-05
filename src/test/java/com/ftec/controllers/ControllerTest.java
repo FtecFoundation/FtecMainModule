@@ -19,10 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.util.NestedServletException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
@@ -96,15 +98,21 @@ public class ControllerTest {
 
         RegistrationController.UserRegistration userRegistration2 = EntityGenerator.getNewRegisrtUser();
 
+        assertFalse(userDAO.findByUsername(userRegistration1.getUsername()).isPresent());
+        assertFalse(userDAO.findByUsername(userRegistration2.getUsername()).isPresent());
+
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration1)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200));
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration2)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200));
+
+        assertTrue(userDAO.findByUsername(userRegistration1.getUsername()).isPresent());
+        assertTrue(userDAO.findByUsername(userRegistration2.getUsername()).isPresent());
 
     }
 

@@ -1,7 +1,7 @@
 package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
@@ -36,15 +36,15 @@ public class ChangeUserDataTest {
 
 	@Autowired
 	MockMvc mvc;
-	
+
 	@Autowired
 	TokenService service;
-	
+
 	@Before
 	public void SetUp() {
 		userDAO.deleteAll();
 	}
-	
+
 	private void printUser() {
 		Iterable<User> allIteration = userDAO.findAll();
 		Iterator<User> iterator = allIteration.iterator();
@@ -76,24 +76,24 @@ public class ChangeUserDataTest {
 		updatedUserData.setPassword("neWStrong123");
 		updatedUserData.setEmail("new_email@gmail.com");
 		updatedUserData.setTwoFactorEnabled(true);
-		
+
 		String token = service.createSaveAndGetNewToken(id);
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(updatedUserData)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
-		
+				.andDo(print()).andExpect(status().isOk());
+
 		User userAfterChange = userDAO.findById(id).get();
-		
+
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert userAfterChange.getTwoStepVerification();
 
 		userDAO.deleteAll();
 	}
-	
+
 	@Test
 	public void changeNothing() throws Exception {
 		User u = EntityGenerator.getNewUser();
@@ -106,11 +106,11 @@ public class ChangeUserDataTest {
 				.content( ControllerTest.asJsonString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
+				.andDo(print()).andExpect(status().isOk());
 
 		userDAO.deleteAll();
 	}
-	
+
 	@Test
 	public void tryChangeToInvalidEmailAndPass() throws Exception {
 
@@ -123,21 +123,21 @@ public class ChangeUserDataTest {
 
 		UserUpdate userUpdate = new UserUpdate();
 		userUpdate.setEmail("invalidEmail");
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isBadRequest());
-		
+				.andDo(print()).andExpect(status().isBadRequest());
+
 		userUpdate.setEmail("validEmail@Gmail.com");
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
-		
+				.andDo(print()).andExpect(status().isOk());
+
 		userUpdate.setPassword("invalidpass");
 		userUpdate.setEmail(null);
 
@@ -145,8 +145,8 @@ public class ChangeUserDataTest {
 				.content( ControllerTest.asJsonString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isBadRequest());
-		
+				.andDo(print()).andExpect(status().isBadRequest());
+
 		userUpdate.setPassword("validPass1231");
 		userUpdate.setEmail(null);
 

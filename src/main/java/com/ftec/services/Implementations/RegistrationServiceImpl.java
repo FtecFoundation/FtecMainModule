@@ -13,7 +13,6 @@ public class RegistrationServiceImpl implements RegistrationService {
     public User registerUser(RegistrationController.UserRegistration userRegistration) {
         User userToSave = new User(userRegistration);
         userToSave.fillEmptyFields();
-        userToSave.setPassword(PasswordUtils.generateSecurePassword(userToSave.getPassword(), userToSave.getSalt()));
         return userToSave;
     }
 }

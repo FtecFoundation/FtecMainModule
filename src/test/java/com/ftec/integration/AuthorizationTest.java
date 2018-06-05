@@ -2,12 +2,11 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
-import com.ftec.repositories.UserTokenDAO;
-import com.ftec.services.Implementations.UserServiceImpl;
-import com.ftec.services.RegistrationService;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.services.TokenService;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,28 +34,16 @@ public class AuthorizationTest {
 	@Autowired
 	MockMvc mvc;
 
-	@Autowired
-	UserServiceImpl userService;
-
-	@Autowired
-	RegistrationService registrationService;
-
-	@Autowired
-	UserTokenDAO tokenDAO;
-
-	@Autowired
-	TokenService tokenService;
-
 	@Test
 	public void authorization() throws Exception {
-		String login = "log";
-		String pass = "pass";
-		String validEmail = "example@example.com";
 		String invalidLogin = "invalid login";
 		String invalidPassword = "invalid password";
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		RegistrationController.UserRegistration user = new RegistrationController.UserRegistration(login, pass, validEmail, true);
+		RegistrationController.UserRegistration user = EntityGenerator.getNewRegisrtUser();
+
+        String username = user.getUsername();
+        String password = user.getPassword();
 
 		MvcResult result = mvc.perform(post("/registration")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -75,12 +62,48 @@ public class AuthorizationTest {
 		String logoutResult = mvc.perform(post("/logout").header(TokenService.TOKEN_NAME,token))
 				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
+		//with removed token
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME,token)
+        ).andExpect(status().is(403));
+
+        //with invalid token
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME,"23_DWWDAAWDDWA")
+        ).andExpect(status().is(403));
+
+        //without token
+        mvc.perform(post("/changeUserSetting")
+        ).andExpect(status().is(403));
+
 		assertEquals("ok", logoutResult);
 
 		String invalidCredentialsAnswer = mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
 				.param("username",invalidLogin)
-				.param("password", invalidPassword)).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
+				.param("password", invalidPassword)).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
+        JSONObject mvcResponseString = new JSONObject(invalidCredentialsAnswer);
+
+        assertEquals(mvcResponseString.getInt("status"),403);
+
+        MvcResult resultLogin = mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("username", username)
+                .param("password", password)).andExpect(status().is(200)).andReturn();
+
+        String tokenAfterLogin = new JSONObject(resultLogin.getResponse().getContentAsString()).getJSONObject("response").getString("token");
+
+        ChangeSettingController.UserUpdate updateSetting = new ChangeSettingController.UserUpdate();
+        updateSetting.setTwoFactorEnabled(true);
+
+
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME,tokenAfterLogin)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(updateSetting))
+        ).andExpect(status().is(200));
+        //TODO access with 2fa on and without 2fa x3
 	}
 
 //	@Test

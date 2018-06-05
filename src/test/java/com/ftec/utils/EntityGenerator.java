@@ -1,6 +1,6 @@
 package com.ftec.utils;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
 
@@ -16,8 +16,10 @@ public class EntityGenerator {
 
     public static User getNewUser(){
         num++;
-        return new User(username + num,password + num,
+        User u = new User(username + num,password + num,
                 email1 + num + email2,TutorialSteps.FIRST,false,false);
+        u.setSalt(PasswordUtils.getSalt(10));
+        return u;
     }
     public static long getNextNum(){
         num++;

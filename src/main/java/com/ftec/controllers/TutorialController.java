@@ -1,10 +1,9 @@
 package com.ftec.controllers;
 
-import com.ftec.configs.enums.TutorialSteps;
-import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
+import com.ftec.resources.enums.TutorialSteps;
+import com.ftec.exceptions.TutorialCompletedException;
 import com.ftec.services.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ftec.services.interfaces.TutorialService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,26 +12,20 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class TutorialController {
-	private final UserDAO userDao;
+	private final TutorialService tutorialService;
 
-	@Autowired
-	public TutorialController(UserDAO userDao) {
-		this.userDao = userDao;
+	public TutorialController(TutorialService tutorialService) {
+		this.tutorialService = tutorialService;
 	}
 
 	@PostMapping("/cabinet/tutorial/nextStep")
-	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException {
-		Long userId = TokenService.getUserIdFromToken(request);
-		User user = userDao.findById(userId).get();
-		TutorialSteps.setNextStep(user);
-		return user.getCurrentStep();
+	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException, TutorialCompletedException {
+		return tutorialService.proceedToNextStep(TokenService.getUserIdFromToken(request));
 	}
 
 	@GetMapping("/cabinet/tutorial/getCurrentStep")
 	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
-		Long userId = TokenService.getUserIdFromToken(request);
-		User user = userDao.findById(userId).get();
-		return user.getCurrentStep();
+		return tutorialService.getCurrentStep(TokenService.getUserIdFromToken(request));
 	}
 
 }

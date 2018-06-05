@@ -7,9 +7,11 @@ import com.ftec.entities.UserToken;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
+import jdk.nashorn.internal.parser.Token;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -77,33 +79,34 @@ public class TokenServiceTest {
 
     @Test
     public void testSaveTokenAndUserIntoDBthroughRegistrationController() throws Exception {
-    	String userName = "tester2";
-        RegistrationController.UserRegistration u = new RegistrationController.UserRegistration(userName,"somePass","email@gmail.com",false);
+        String userName = "tester2";
+        RegistrationController.UserRegistration u = new RegistrationController.UserRegistration(userName,"Strong_Pass123","email@gmail.com",false);
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
-				content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
-				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME)).andReturn();
+                content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk()).andReturn();
 
-		String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
+        String mvcResponse = mvcResult.getResponse().getContentAsString();
+        String token = new JSONObject(mvcResponse).getJSONObject("response").getString("token");
 
         Long id = Long.valueOf(TokenService.extractUserID(token));
 
         assertNotNull(tokenDAO.findByToken(token));
 
-		assertEquals(userDao.findById(id).get().getUsername(),userName);
+        assertEquals(userDao.findById(id).get().getUsername(),userName);
 
-		userDao.deleteById(id);
-		assertFalse(userDao.findById(id).isPresent());
+        userDao.deleteById(id);
+        assertFalse(userDao.findById(id).isPresent());
     }
 
     @Test
     public void saveTokenIntoDB() throws InterruptedException {
-    	String token = TokenService.generateToken(998L);
-    	Date current = new Date();
-    	UserToken uToken = new UserToken(token, current);
-    	
-    	tokenDAO.save(uToken);
+        String token = TokenService.generateToken(998L);
+        Date current = new Date();
+        UserToken uToken = new UserToken(token, current);
+
+        tokenDAO.save(uToken);
 
         assertNotNull(tokenDAO.findByToken(token));
 
