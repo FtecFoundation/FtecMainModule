@@ -20,27 +20,25 @@ public class ReferralDAOImpl implements ReferralDAO {
     @Override
     @Transactional
     public void saveReferralLevelOne(ReferralLevelOne referralLevelOne) {
-        String query = "INSERT INTO referral_level_one (user_Id, referrer_Id, balance) " +
-                "VALUES (" + referralLevelOne.getUserId() + ", " + referralLevelOne.getReferrerId() +
-                ", " + referralLevelOne.getBalance() + ";";
+        String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
+                "VALUES (" + referralLevelOne.getUserId() + ", " + referralLevelOne.getReferrerId() + ", " + referralLevelOne.getBalance() + ");";
+//        String query = "";
         entityManager.createNativeQuery(query).executeUpdate();
     }
 
     @Override
     @Transactional
     public void saveReferralLevelTwo(ReferralLevelTwo referralLevelTwo) {
-        String query = "INSERT INTO referral_level_two (user_Id, referrer_Id, balance) " +
-                "VALUES (" + referralLevelTwo.getUserId() + ", " + referralLevelTwo.getReferrerId() +
-                ", " + referralLevelTwo.getBalance() + ";";
+        String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
+                "VALUES (" + referralLevelTwo.getUserId() + ", " + referralLevelTwo.getReferrerId() + ", " + referralLevelTwo.getBalance() + ");";
         entityManager.createNativeQuery(query).executeUpdate();
     }
 
     @Override
     @Transactional
     public void saveReferralLevelThree(ReferralLevelThree referralLevelThree) {
-        String query = "INSERT INTO referral_level_three (user_Id, referrer_Id, balance) " +
-                "VALUES (" + referralLevelThree.getUserId() + ", " + referralLevelThree.getReferrerId() +
-                ", " + referralLevelThree.getBalance() + ";";
+        String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
+                "VALUES (" + referralLevelThree.getUserId() + ", " + referralLevelThree.getReferrerId() + ", " + referralLevelThree.getBalance() + ");";
         entityManager.createNativeQuery(query).executeUpdate();
     }
 
