@@ -31,17 +31,13 @@ public class EmailTest {
     @Autowired
     public MailService emailService;
 
-    @Autowired
-    private MailResources mailResources;
-
-
 
     @Test
     public void sendEmails() throws AddressException, EmailException {
         List<String> users = new ArrayList<String>(){{
             add("a@ukr.net");
             add("example@gmail.com");
-            add("example@gmail.com");
+            add(MailResources.sendToStatic);
 
         }};
         
@@ -88,11 +84,11 @@ public class EmailTest {
     public void sendUniqueEmails() throws AddressException, EmailException {
         List<Email_BotTradesUser> users = new ArrayList<Email_BotTradesUser>(){{
 
-            add(new Email_BotTradesUser(mailResources.sendTo, true, new Locale("en"), "pair", "logs",Stocks.Binance));
+            add(new Email_BotTradesUser(MailResources.sendToStatic, true, new Locale("en"), "pair", "logs",Stocks.Binance));
 
         }};
         emailService.sendEmail(users, Emails.AutomaticTradesStarted);
-        assertNotNull(mailResources.sendTo);
+        assertNotNull(MailResources.sendToStatic);
         }
 
 }

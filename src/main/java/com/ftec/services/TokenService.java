@@ -106,8 +106,8 @@ public class TokenService {
 	}
 	
 	private UserToken getUserTokenFromRequest(String token) throws TokenException{
-	    if(!tokenManager.findByToken(token).isPresent()) throw new TokenException("Token not found!");
-		UserToken userToken = tokenManager.findByToken(token).get();
+	    if(!tokenManager.findByIdToken(token).isPresent()) throw new TokenException("Token not found!");
+		UserToken userToken = tokenManager.findByIdToken(token).get();
 		
 		return userToken;
 	}

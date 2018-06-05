@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Date;
 
-import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ControllerTest;
-import com.ftec.entities.User;
 import com.ftec.entities.UserToken;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.repositories.UserDAO;
@@ -53,6 +51,7 @@ public class TokenServiceTest {
         userDao.deleteAll();
         tokenDAO.deleteAll();
     }
+
     @Test
     public void getValidIdFromTokenTest() {
         assertThat(TokenService.extractUserID("23_NDKJAWNWKAJDNAkWKDNAW"),is("23"));
@@ -94,7 +93,7 @@ public class TokenServiceTest {
 
         Long id = Long.valueOf(TokenService.extractUserID(token));
 
-        assertTrue ( tokenDAO.findByToken(token) != null);
+        assertTrue ( tokenDAO.findByIdToken(token) != null);
 
 		assertEquals(userDao.findById(id).get().getUsername(),userName);
 
@@ -110,9 +109,9 @@ public class TokenServiceTest {
     	
     	tokenDAO.save(uToken);
 
-    	assertTrue(tokenDAO.findByToken(token) != null);
+    	assertTrue(tokenDAO.findByIdToken(token) != null);
 
 
-        assertEquals(tokenDAO.findByToken(token).get().getToken(), token);
+        assertEquals(tokenDAO.findByIdToken(token).get().getToken(), token);
     }
 }

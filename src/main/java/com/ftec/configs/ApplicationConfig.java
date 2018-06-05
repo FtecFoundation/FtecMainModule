@@ -1,5 +1,9 @@
 package com.ftec.configs;
 
+import com.ftec.repositories.UserDAO;
+import com.ftec.services.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -15,7 +19,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(scanBasePackages = {"com.ftec.*"})
 @EnableJpaRepositories(value = {"com.ftec.repositories"})
 @EntityScan("com.ftec.entities")
-public class ApplicationConfig extends SpringBootServletInitializer {
+public class ApplicationConfig extends SpringBootServletInitializer implements CommandLineRunner {
+    @Autowired
+    TokenService tokenService;
     //Also added configuration for tomcat starting
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
@@ -44,5 +50,10 @@ public class ApplicationConfig extends SpringBootServletInitializer {
         messageSource.addBasenames("classpath:locales/ValidationMessages");
         messageSource.setCacheSeconds(0);
         return messageSource;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        tokenService.createSaveAndGetNewToken(111l);
     }
 }

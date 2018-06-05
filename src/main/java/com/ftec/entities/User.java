@@ -4,11 +4,15 @@ import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+@Data
 @AllArgsConstructor
 @Entity
 @Table
@@ -24,7 +28,7 @@ public class User {
 
     @NotNull
     @Size(min = 4)
-    //TODO add regexp for password - it will fail all my tests...
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
     private String password;
 
     @NotNull
@@ -46,15 +50,14 @@ public class User {
         this.twoStepVerification = twoStepVerification;
     }
 
-    public User() {
-    }
-
     public User(RegistrationController.UserRegistration userRegistration) {
         this.username = userRegistration.getUsername();
         this.password = userRegistration.getPassword();
         this.email = userRegistration.getEmail();
         this.subscribeForNews = userRegistration.isSubscribeForNews();
     }
+
+    public User(){}
 
     public void apllyChangeSettings(UserUpdate userUpdate) {
     	changeEmailIfRequired(userUpdate.getEmail());
@@ -84,64 +87,4 @@ public class User {
         this.twoStepVerification = false;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public boolean isSubscribeForNews() {
-        return subscribeForNews;
-    }
-
-    public void setSubscribeForNews(boolean subscribeForNews) {
-        this.subscribeForNews = subscribeForNews;
-    }
-
-    public TutorialSteps getCurrentStep() {
-        return currentStep;
-    }
-
-    public void setCurrentStep(TutorialSteps currentStep) {
-        this.currentStep = currentStep;
-    }
-
-    public Boolean isTwoStepVerification() {
-        return twoStepVerification;
-    }
-
-    public void setTwoStepVerification(Boolean twoStepVerification) {
-        this.twoStepVerification = twoStepVerification;
-    }
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email + ", currentStep=" + currentStep + ", subscribeForNews=" + subscribeForNews + "]";
-    }
 }

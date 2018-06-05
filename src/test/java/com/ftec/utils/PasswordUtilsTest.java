@@ -26,4 +26,6 @@ public class PasswordUtilsTest {
         //todo What expected?
         assertEquals(securedPassword, PasswordUtils.generateSecurePassword(rawPassword, salt));
     }
+
+
 }
