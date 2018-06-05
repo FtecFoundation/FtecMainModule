@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
+import com.ftec.repositories.TokenDAO;
+import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
@@ -19,8 +21,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.w3c.dom.UserDataHandler;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +38,12 @@ public class AuthorizationTest {
 
 	@Autowired
 	MockMvc mvc;
+
+	@Autowired
+    UserDAO userDAO;
+
+	@Autowired
+    TokenDAO tokenDAO;
 
 	@Test
 	public void authorization() throws Exception {
@@ -97,61 +108,41 @@ public class AuthorizationTest {
         ChangeSettingController.UserUpdate updateSetting = new ChangeSettingController.UserUpdate();
         updateSetting.setTwoFactorEnabled(true);
 
+        assertFalse(userDAO.findByUsername(username).get().getTwoStepVerification());
 
         mvc.perform(post("/changeUserSetting")
                 .header(TokenService.TOKEN_NAME,tokenAfterLogin)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateSetting))
         ).andExpect(status().is(200));
-        //TODO access with 2fa on and without 2fa x3
+
+        assertTrue(userDAO.findByUsername(username).get().getTwoStepVerification());
+
+        mvc.perform(post("/logout").header(TokenService.TOKEN_NAME, tokenAfterLogin))
+                .andExpect(status().is(200));
+        assertFalse(tokenDAO.findByToken(tokenAfterLogin).isPresent());
+
+        //null 2fa
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("username", username)
+                .param("password", password)).andExpect(status().is(403));
+
+        //empty 2fa
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("username", username)
+                .param("password", password)
+                .param("code",""))
+                .andExpect(status().is(403));
+
+        //any 2fa (should works with profile test
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("username", username)
+                .param("password", password)
+                .param("code","123sad"))
+                .andExpect(status().is(200));
 	}
 
-//	@Test
-//	public void authWithout2FaCode() throws Exception {
-//		String userName = "log1";
-//		User user = ControllerTest.newUser(userName);
-//		Long id = 132L;
-//		user.setId(id);
-//		String pass = "pass";
-//		user.setPassword(pass);
-//		user.setTwoStepVerification(true);
-//		userDAO.save(user);
-//
-//
-//		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
-//				.param("username", "log1")
-//				.param("password", "pass")
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.accept(MediaType.APPLICATION_JSON))
-//				.andDo(print()).andExpect(status().isBadRequest()).andReturn();
-//
-//		assertEquals(mvcResult.getResponse().getContentAsString(),AuthorizationController.EMPTY_2FA_CODE_MESSAGE);
-//	}
-//
-//	@Test
-//	public void authWith2FaCode() throws Exception {
-//		String userName = "log1";
-//		User user = ControllerTest.newUser(userName);
-//		Long id = 132L;
-//		user.setId(id);
-//		String pass = "pass";
-//		user.setPassword(pass);
-//		user.setTwoStepVerification(true);
-//		userDAO.save(user);
-//
-//		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
-//				.param("username", "log1")
-//				.param("password", "pass")
-//				.param("twoStepVerCode", "with_test_pofile_its_ok")
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.accept(MediaType.APPLICATION_JSON))
-//				.andDo(print()).andExpect(status().isAccepted()).andReturn();
-//
-//		String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
-//
-//		assertNotNull(tokenDAO.findByToken(token));
-//
-//		tokenService.verifyToken(token); //should not throw exception
-//
-//	}
 }

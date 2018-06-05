@@ -6,6 +6,7 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.resources.models.MvcResponse;
+import com.ftec.services.Implementations.RegistrationServiceImpl;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.UserService;
@@ -42,17 +43,17 @@ public class RegistrationController {
 
             if(br.hasErrors()) {
                 response.setStatus(400);
-                return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
 
-            User userToSave = registrationService.registerUser(userRegistration);
-            userService.registerNewUserAccount(userToSave);
+            User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
+            registrationService.registerNewUserAccount(userToSave);
 
             String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
-            return MvcResponse.getError(403,"TokenNotCreated");
+            return MvcResponse.getMvcErrorResponse(403,"TokenNotCreated");
         }
     }
 

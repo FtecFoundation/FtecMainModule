@@ -46,6 +46,7 @@ public class User {
         this.twoStepVerification = twoStepVerification;
     }
 
+
     public User(RegistrationController.UserRegistration userRegistration) {
         this.username = userRegistration.getUsername();
         this.password = userRegistration.getPassword();

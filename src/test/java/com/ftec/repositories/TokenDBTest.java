@@ -1,7 +1,7 @@
 package com.ftec.repositories;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.entities.UserToken;
+import com.ftec.entities.Token;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class TokenDBTest {
 
     @Autowired
-    UserTokenDAO tokenDAO;
+    TokenDAO tokenDAO;
 
     @Autowired
     TokenService service;
@@ -36,8 +36,8 @@ public class TokenDBTest {
     @Test
     public void TokenDBtest() {
         String token = service.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-        Optional<UserToken> byId = tokenDAO.findByToken(token);
-        UserToken userToken = byId.get();
+        Optional<Token> byId = tokenDAO.findByToken(token);
+        Token userToken = byId.get();
 
         assertTrue(tokenDAO.findByToken(token).get().getToken().equals(token));
         tokenDAO.deleteByToken(token);

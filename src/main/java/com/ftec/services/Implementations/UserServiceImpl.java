@@ -26,23 +26,8 @@ public class UserServiceImpl implements UserService {
         return userDAO.findById(id).get();
     }
 
-    @Transactional
-    @Override
-    public void registerNewUserAccount(User user) throws UserExistException {
-        user.setPassword(encodeUserPassword(user.getPassword(), user.getSalt()));
-        userDAO.save(user);
-    }
 
-    /**
-     * Takes the users password and encodes it into secured
-     *
-     * @param userPassword - raw Password
-     * @return secured password
-     */
-    private String encodeUserPassword(String userPassword,String salt) {
 
-        return PasswordUtils.generateSecurePassword(userPassword, salt);
-    }
 
     /**
      * @param username - users name

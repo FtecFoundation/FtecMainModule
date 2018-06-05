@@ -1,5 +1,18 @@
 package com.ftec.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ftec.constratints.UniqueEmail;
 import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.resources.models.MvcResponse;
@@ -7,18 +20,7 @@ import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.ChangeSettingsService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,13 +36,13 @@ public class ChangeSettingController {
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 		if(br.hasErrors()) {
 		    response.setStatus(400);
-		    return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+		    return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
 		}
 		try {
 			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request));
 		}catch (UserNotExistsException ex){
 			response.setStatus(400);
-			return MvcResponse.getError(400, "NoUserExists");
+			return MvcResponse.getMvcErrorResponse(400, "NoUserExists");
 		}
 		return new MvcResponse(200);
 	}

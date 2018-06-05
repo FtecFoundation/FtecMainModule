@@ -1,12 +1,15 @@
 package com.ftec.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
-import com.ftec.repositories.UserTokenDAO;
+import com.ftec.repositories.TokenDAO;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,56 +45,51 @@ public class LoginControllerTest {
     UserServiceImpl userService;
 
     @Autowired
-    UserTokenDAO tokenDAO;
+    TokenDAO tokenDAO;
 
     @Autowired
     TokenService tokenService;
 
-    @Before
-    public void setUp(){
-        userDAO.deleteAll();
-        tokenDAO.deleteAll();
-    }
+    @Autowired
+    RegistrationService registrationService;
+
 
     @Test
     public void authorization() throws Exception {
+
         User u = EntityGenerator.getNewUser();
         String username = u.getUsername();
         String pass = u.getPassword();
+        String email = u.getEmail();
+
         u.setTwoStepVerification(false);
 
-        userDAO.save(u);
+        registrationService.registerNewUserAccount(u);
 
-        long id = u.getId();
+        assertEquals(userDAO.findByUsername(username).get().getEmail(), email);
 
-        assertTrue(userDAO.findById(id).get().getUsername().equals(username));
-
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("username", username)
-                .param("password", pass)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isAccepted());
+                .param("password", pass)).andExpect(status().is(200));
 
-        MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
-                .param("username", "invaliUsername")
-                .param("password", "pass")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest()).andReturn();
-
-        MvcResult mvcResult2 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
-                .param("username", "log")
+        MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
+                .param("username", username)
                 .param("password", "invalidPass")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest()).andReturn();
+                .andDo(print()).andExpect(status().isForbidden()).andReturn();
 
-        assertTrue(mvcResult1.getResponse().getContentAsString()
-                .equals(LoginController.INVALID_USERNAME_OR_PASSWORD));
+        MvcResult mvcResult2 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
+                .param("username", "invalidLog")
+                .param("password", pass)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isForbidden()).andReturn();
 
-        assertTrue(mvcResult2.getResponse().getContentAsString()
-                .equals(LoginController.INVALID_USERNAME_OR_PASSWORD));
+        assertEquals(new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("error"), LoginController.INVALID_USERNAME_OR_PASSWORD);
+
+        assertEquals(new JSONObject(mvcResult2.getResponse().getContentAsString()).getString("error"), LoginController.INVALID_USERNAME_OR_PASSWORD);
     }
 
     @Test
@@ -100,17 +100,16 @@ public class LoginControllerTest {
         String pass = user.getPassword();
         user.setTwoStepVerification(true);
 
-        userDAO.save(user);
-        long id = user.getId();
+        registrationService.registerNewUserAccount(user);
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
                 .param("username", username)
                 .param("password", pass)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest()).andReturn();
+                .andDo(print()).andExpect(status().isForbidden()).andReturn();
 
-        mvcResult.getResponse().getContentAsString().equals(LoginController.EMPTY_2FA_CODE_MESSAGE);
+        assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), LoginController.EMPTY_2FA_CODE_MESSAGE);
     }
 
     @Test
@@ -120,22 +119,16 @@ public class LoginControllerTest {
         String pass = user.getPassword();
         user.setTwoStepVerification(true);
 
-        userDAO.save(user);
-        long id = user.getId();
+        registrationService.registerNewUserAccount(user);
 
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/authorization")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
                 .param("username", userName)
                 .param("password", pass)
-                .param("twoStepVerCode", "with_test_pofile_its_ok")
+                .param("code", "with_test_pofile_its_ok")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isAccepted()).andReturn();
+                .andDo(print()).andExpect(status().isOk()).andReturn();
 
-        String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
-
-        assertTrue(tokenDAO.findByToken(token) != null);
-
-        tokenService.verifyToken(token); //should not throw exception
 
     }
 }
