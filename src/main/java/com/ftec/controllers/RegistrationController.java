@@ -39,10 +39,12 @@ public class RegistrationController {
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
         try {
+
             if(br.hasErrors()) {
                 response.setStatus(400);
                 return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
+
             User userToSave = registrationService.registerUser(userRegistration);
             userService.registerNewUserAccount(userToSave);
 
