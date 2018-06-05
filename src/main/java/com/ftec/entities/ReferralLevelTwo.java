@@ -13,10 +13,10 @@ import javax.persistence.Id;
 @ToString
 public class ReferralLevelTwo extends ReferralSystem {
 
-    private long user;
+    private long userId;
 
     @Id
-    private long invited;
+    private long invitedId;
 
     private double Balance;
 }

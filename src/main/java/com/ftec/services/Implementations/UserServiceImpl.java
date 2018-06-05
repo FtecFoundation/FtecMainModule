@@ -26,6 +26,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getByUserName(String username) {
+        return userDAO.findByUsername(username).get();
+    }
+
+    @Override
     public void registerNewUserAccount(User user) throws UserExistException {
         if (!isDuplicateUserName(user.getUsername())) {
             String securedPassword = encodeUserPassword(user.getPassword());
