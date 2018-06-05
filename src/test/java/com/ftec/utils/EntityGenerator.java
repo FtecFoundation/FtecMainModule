@@ -1,6 +1,6 @@
 package com.ftec.utils;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
 

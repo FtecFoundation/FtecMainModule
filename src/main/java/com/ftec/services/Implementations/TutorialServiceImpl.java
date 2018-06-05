@@ -1,6 +1,6 @@
 package com.ftec.services.Implementations;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
 import com.ftec.exceptions.TutorialCompletedException;
 import com.ftec.repositories.UserDAO;

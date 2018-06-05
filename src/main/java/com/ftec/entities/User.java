@@ -1,17 +1,15 @@
 package com.ftec.entities;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data

@@ -2,7 +2,7 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.repositories.UserDAO;
@@ -23,9 +23,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

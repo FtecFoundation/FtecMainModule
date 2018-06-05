@@ -1,7 +1,7 @@
 package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;

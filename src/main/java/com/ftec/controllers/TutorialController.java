@@ -1,6 +1,6 @@
 package com.ftec.controllers;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.exceptions.TutorialCompletedException;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.TutorialService;

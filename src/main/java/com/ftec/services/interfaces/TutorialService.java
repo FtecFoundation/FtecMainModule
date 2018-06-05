@@ -1,6 +1,6 @@
 package com.ftec.services.interfaces;
 
-import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
 import com.ftec.exceptions.TutorialCompletedException;
 
