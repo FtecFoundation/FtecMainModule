@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
         if (!isDuplicateUserName(user.getUsername())) {
-            String securedPassword = encodeUserPassword(user.getPassword());
+            String securedPassword = encodeUserPassword(user.getPassword(), user.getSalt());
             user.setPassword(securedPassword);
             userDAO.save(user);
         } else {
@@ -42,8 +42,8 @@ public class UserServiceImpl implements UserService {
      * @param userPassword - raw Password
      * @return secured password
      */
-    private String encodeUserPassword(String userPassword) {
-        String salt = PasswordUtils.getSalt(30);
+    private String encodeUserPassword(String userPassword,String salt) {
+
         return PasswordUtils.generateSecurePassword(userPassword, salt);
     }
 

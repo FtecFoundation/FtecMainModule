@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
+import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.services.RegistrationService;
 import com.ftec.services.TokenService;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,21 +54,26 @@ public class AuthorizationTest {
 	@Autowired
 	TokenService tokenService;
 
+	@Autowired
+    UserDAO userDAO;
+
 	@Test
 	public void authorization() throws Exception {
-		String login = "log";
-		String pass = "pass";
-		String validEmail = "example@example.com";
 		String invalidLogin = "invalid login";
 		String invalidPassword = "invalid password";
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		RegistrationController.UserRegistration user = new RegistrationController.UserRegistration(login, pass, validEmail, true);
+		RegistrationController.UserRegistration user = EntityGenerator.getNewRegisrtUser();
 
+        String username = user.getUsername();
+        String password = user.getPassword();
+
+        assertFalse(userDAO.findByUsername(user.getUsername()).isPresent());
 		MvcResult result = mvc.perform(post("/registration")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(objectMapper.writeValueAsString(user)))
 				.andExpect(status().is(200)).andReturn();
+        assertTrue(userDAO.findByUsername(user.getUsername()).isPresent());
 
 		String token = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 		assert !token.isEmpty();
@@ -76,12 +88,30 @@ public class AuthorizationTest {
 				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
 		assertEquals("ok", logoutResult);
+        assertFalse(tokenService.findByToken(token).isPresent());
 
 		String invalidCredentialsAnswer = mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
 				.param("username",invalidLogin)
-				.param("password", invalidPassword)).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
+				.param("password", invalidPassword)).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
-	}
+        JSONObject mvcResponseString = new JSONObject(invalidCredentialsAnswer);
+
+        assertEquals(mvcResponseString.getInt("status"),403);
+
+        MvcResult resultLogin = mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("username", username)
+                .param("password", password)).andExpect(status().is(200)).andReturn();
+
+        String tokenAfterLogin = new JSONObject(resultLogin.getResponse().getContentAsString()).getJSONObject("response").getString("token");
+
+        mvc.perform(get("/cabinet/tutorial/getCurrentStep")
+                .header(TokenService.TOKEN_NAME,tokenAfterLogin)
+        ).andExpect(status().is(200));
+
+
+    }
 
 //	@Test
 //	public void authWithout2FaCode() throws Exception {
