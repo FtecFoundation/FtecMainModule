@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,18 +52,17 @@ public class ChangeSettingController {
 
 	@Data
 	@NoArgsConstructor
-	public static class UserUpdate{
-
-		
+	public static class UserUpdate {
+		//each field could be null
 		@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
 		private String password;
-		
+
 		@Email
 		@UniqueEmail
 		private String email;
-		
+
 		private Boolean twoFactorEnabled;
-		
+
 		private Boolean subscribeForNews;
 	}
 	

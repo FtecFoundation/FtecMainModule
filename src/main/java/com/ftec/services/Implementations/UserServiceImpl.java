@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
-        user.setPassword(encodeUserPassword(user.getPassword()));
+        user.setPassword(encodeUserPassword(user.getPassword(), user.getSalt()));
         userDAO.save(user);
     }
 
@@ -39,8 +39,8 @@ public class UserServiceImpl implements UserService {
      * @param userPassword - raw Password
      * @return secured password
      */
-    private String encodeUserPassword(String userPassword) {
-        String salt = PasswordUtils.getSalt(30);
+    private String encodeUserPassword(String userPassword,String salt) {
+
         return PasswordUtils.generateSecurePassword(userPassword, salt);
     }
 

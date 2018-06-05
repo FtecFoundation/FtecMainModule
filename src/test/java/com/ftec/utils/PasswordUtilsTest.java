@@ -11,10 +11,10 @@ public class PasswordUtilsTest {
     @Test
     public void isPasswordMatchTest() {
         String rawPassword = "myPassword123";
-        String securePassword = "HhaNvzTsVYwS/x/zbYXlLOE3ETMXQgllqrDaJY9PD/U=";
         String salt = "EqdmPh53c9x33EygXpTpcoJvc4VXLK";
+        String securePassword = PasswordUtils.generateSecurePassword(rawPassword, salt);
 
-        assertEquals(securePassword, PasswordUtils.generateSecurePassword(rawPassword, salt));
+        assert PasswordUtils.isPasswordMatch(rawPassword,securePassword,salt);
     }
 
     @Test

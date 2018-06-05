@@ -49,7 +49,8 @@ public class AuthorizationController {
 			else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
 			
 		} catch(AuthorizationException e) {
-			return MvcResponse.getError(400, e.getMessage());
+			response.setStatus(403);
+			return MvcResponse.getError(403, e.getMessage());
 		}
 		
 		

@@ -1,5 +1,7 @@
 package com.ftec.controllers;
 
+import com.ftec.constratints.UniqueEmail;
+import com.ftec.constratints.UniqueLogin;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
@@ -18,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 
 @RestController
@@ -33,11 +38,8 @@ public class RegistrationController {
         try {
             User userToSave = registrationService.registerUser(userRegistration);
             userService.registerNewUserAccount(userToSave);
-            long id = userToSave.getId();
-            if (id == 0)
-                throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
 
-            String token = tokenService.createSaveAndGetNewToken(id);
+            String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
@@ -49,10 +51,18 @@ public class RegistrationController {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserRegistration {
+
+        @NotNull
+        @Size(min = 4)
+        @UniqueLogin
         private String username;
 
+        @NotNull
+        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
         private String password;
 
+        @NotNull
+        @UniqueEmail
         private String email;
 
         private boolean subscribeForNews;
