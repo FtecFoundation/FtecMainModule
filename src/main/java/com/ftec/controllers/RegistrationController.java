@@ -12,7 +12,6 @@ import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
@@ -42,9 +41,9 @@ public class RegistrationController {
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
         try {
 
-            if(br.hasErrors()) {
+            if (br.hasErrors()) {
                 response.setStatus(400);
-                return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                return MvcResponse.getError(400, br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
 
             User userToSave = registrationService.registerUser(userRegistration);
@@ -64,13 +63,12 @@ public class RegistrationController {
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
-            return MvcResponse.getError(403,"TokenNotCreated");
+            return MvcResponse.getError(403, "TokenNotCreated");
         }
     }
 
     @Data
     @AllArgsConstructor
-    @NoArgsConstructor
     public static class UserRegistration {
 
         @NotNull
@@ -92,12 +90,15 @@ public class RegistrationController {
 
         private long referrerId;
 
-        public UserRegistration(@NotNull @Size(min = 4, max = 20) String username, @NotNull @Size(max = 20) @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$") String password, @NotNull @Size(max = 20) String email, boolean subscribeForNews) {
+        public UserRegistration() {
+        }
+
+        public UserRegistration(String username, String password, String email, boolean subscribeForNews) {
             this.username = username;
             this.password = password;
             this.email = email;
             this.subscribeForNews = subscribeForNews;
-            this.referrerId = 0;
+            referrerId = 0;
         }
     }
 
