@@ -7,6 +7,7 @@ import com.ftec.services.interfaces.UserService;
 import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -25,15 +26,11 @@ public class UserServiceImpl implements UserService {
         return userDAO.findById(id).get();
     }
 
+    @Transactional
     @Override
     public void registerNewUserAccount(User user) throws UserExistException {
-        if (!isDuplicateUserName(user.getUsername())) {
-            String securedPassword = encodeUserPassword(user.getPassword(), user.getSalt());
-            user.setPassword(securedPassword);
-            userDAO.save(user);
-        } else {
-            throw new UserExistException();
-        }
+        user.setPassword(encodeUserPassword(user.getPassword(), user.getSalt()));
+        userDAO.save(user);
     }
 
     /**

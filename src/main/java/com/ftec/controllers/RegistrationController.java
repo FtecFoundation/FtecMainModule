@@ -49,8 +49,8 @@ public class RegistrationController {
             String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
-            response.sendError(400);
-            return null;
+            response.setStatus(403);
+            return MvcResponse.getError(403,"TokenNotCreated");
         }
     }
 
