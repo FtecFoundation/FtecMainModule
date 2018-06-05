@@ -133,7 +133,7 @@ public class AuthorizationControllerTest {
 
         String token = mvcResult.getResponse().getHeader(TokenService.TOKEN_NAME);
 
-        assertTrue(tokenDAO.findByIdToken(token) != null);
+        assertTrue(tokenDAO.findByToken(token) != null);
 
         tokenService.verifyToken(token); //should not throw exception
 

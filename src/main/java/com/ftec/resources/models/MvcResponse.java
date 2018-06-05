@@ -75,4 +75,10 @@ public class MvcResponse {
 	public String toString() {
 		return "MvcResponse [status=" + status + ", response=" + response + ", error=" + error + "]";
 	}
+
+	public static MvcResponse getError(int status, String errorMsg){
+        MvcResponse mvc = new MvcResponse(status);
+        mvc.setError(errorMsg);
+        return mvc;
+    }
 }

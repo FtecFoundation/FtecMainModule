@@ -1,5 +1,7 @@
 package com.ftec.controllers;
 
+import com.ftec.resources.models.MvcResponse;
+import com.google.common.io.Files;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
@@ -19,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -81,8 +82,6 @@ public class AvatarController {
         String filename = String.valueOf(userId) + "." + FilenameUtils.getExtension(String.valueOf(file.getOriginalFilename()));
         byte[] bytes = file.getBytes();
         Path path = Paths.get(UPLOADED_FOLDER + filename);
-        Files.write(path, bytes);
+        Files.write(bytes, path.toFile());
     }
-
-
 }

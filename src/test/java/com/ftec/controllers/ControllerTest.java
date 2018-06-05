@@ -2,12 +2,10 @@ package com.ftec.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.util.NestedServletException;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
@@ -45,19 +38,14 @@ public class ControllerTest {
     @Autowired
     UserServiceImpl userService;
 
-    @Before
-    public void setUp() {
-        userDAO.deleteAll();
-    }
-
     @Test
     public void createValidUser() throws Exception {
         RegistrationController.UserRegistration userRegistration = EntityGenerator.getNewRegisrtUser();
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("/registration").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isCreated());
+                .andDo(print()).andExpect(status().is(200));
 
         assertTrue(userDAO.findByUsername(userRegistration.getUsername()).isPresent());
     }
@@ -67,13 +55,13 @@ public class ControllerTest {
         RegistrationController.UserRegistration userRegistration = EntityGenerator.getNewRegisrtUser();
         String userName = userRegistration.getUsername();
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isCreated());
+                .andDo(print()).andExpect(status().is(200));
 
         //should be status BadRequest
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isBadRequest());
@@ -85,8 +73,7 @@ public class ControllerTest {
     public static String asJsonString(final Object obj) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            final String jsonContent = mapper.writeValueAsString(obj);
-            return jsonContent;
+            return mapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -96,7 +83,7 @@ public class ControllerTest {
     public void checkReturnedToken() throws Exception {
         RegistrationController.UserRegistration userRegistration = EntityGenerator.getNewRegisrtUser();
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
@@ -109,15 +96,15 @@ public class ControllerTest {
 
         RegistrationController.UserRegistration userRegistration2 = EntityGenerator.getNewRegisrtUser();
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration1)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration/registr_test").
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(asJsonString(userRegistration2)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andExpect(header().exists(TokenService.TOKEN_NAME));
+                .andExpect(status().is(200)).andExpect(header().exists(TokenService.TOKEN_NAME));
 
     }
 

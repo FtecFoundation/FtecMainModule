@@ -1,34 +1,49 @@
 package com.ftec.controllers;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
+import com.ftec.entities.User;
+import com.ftec.exceptions.UserExistException;
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.resources.models.MvcResponse;
+import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
-import com.ftec.exceptions.token.TokenException;
-import com.ftec.resources.MailResources;
-import com.ftec.services.TokenService;
-import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.UserService;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
-@RequestMapping("/registration")
 public class RegistrationController {
 
     private final UserService userService;
     private final TokenService tokenService;
     private final RegistrationService registrationService;
+
+
+    @RequestMapping(path = "/registration", method = RequestMethod.POST)
+    public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, HttpServletResponse response) throws UserExistException, IOException, IOException {
+        try {
+            User userToSave = registrationService.registerUser(userRegistration);
+            userService.registerNewUserAccount(userToSave);
+            long id = userToSave.getId();
+            if (id == 0)
+                throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
+
+            String token = tokenService.createSaveAndGetNewToken(id);
+            return new MvcResponse(200, "token", token);
+        } catch (TokenException e) {
+            response.sendError(400);
+            return null;
+        }
+    }
 
     @Data
     @AllArgsConstructor
@@ -48,28 +63,5 @@ public class RegistrationController {
         this.userService = userService;
         this.tokenService = tokenService;
         this.registrationService = registrationService;
-    }
-
-    @RequestMapping(path = "/registr_test", method = RequestMethod.POST)
-    public ResponseEntity<String> createUser(@RequestBody @Valid UserRegistration userRegistration, HttpServletResponse response) throws UserExistException {
-    	try {
-            User userToSave = registrationService.registerUser(userRegistration);
-            userService.registerNewUserAccount(userToSave);
-            sendToken(userToSave, response);
-
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (TokenException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    private void sendToken(User user, HttpServletResponse response) throws TokenException {
-
-        long id = user.getId();
-        if (id == 0)
-            throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
-
-        String token = tokenService.createSaveAndGetNewToken(id);
-        response.addHeader(TokenService.TOKEN_NAME, token);
     }
 }

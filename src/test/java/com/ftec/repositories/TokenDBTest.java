@@ -15,7 +15,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles("test")
@@ -37,11 +36,11 @@ public class TokenDBTest {
     @Test
     public void TokenDBtest() {
         String token = service.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-        Optional<UserToken> byId = tokenDAO.findByIdToken(token);
+        Optional<UserToken> byId = tokenDAO.findByToken(token);
         UserToken userToken = byId.get();
 
-        assertTrue(tokenDAO.findByIdToken(token).get().getToken().equals(token));
-        tokenDAO.deleteByIdToken(token);
-        assertFalse(tokenDAO.findByIdToken(token).isPresent());
+        assertTrue(tokenDAO.findByToken(token).get().getToken().equals(token));
+        tokenDAO.deleteByToken(token);
+        assertFalse(tokenDAO.findByToken(token).isPresent());
     }
 }

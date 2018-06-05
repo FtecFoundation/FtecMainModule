@@ -1,40 +1,35 @@
 package com.ftec.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.ftec.entities.UserToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 public class LogOutController {
-	
+
 	private final UserTokenDAO tokenDAO;
-	
+
 	@Autowired
 	public LogOutController(UserTokenDAO tokenDAO) {
 		this.tokenDAO = tokenDAO;
 	}
 
-
-	@GetMapping("/logout")
-	public ResponseEntity<String> logOut(HttpServletRequest request){
+	@PostMapping("/logout")
+	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 
 			String token = TokenService.getToken(request);
-			UserToken userToken = tokenDAO.findByIdToken(token).get();
-			tokenDAO.delete(userToken);
-
+			tokenDAO.deleteByToken(token);
+			return "ok";
 		} catch(Exception e) {
-		    return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+		    response.sendError(400);
+		    return null;
 		}
-		return new ResponseEntity<>(HttpStatus.ACCEPTED);
-
 	}
 }

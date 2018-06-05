@@ -2,30 +2,40 @@ package com.ftec.entities;
 
 import lombok.Data;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-@Table
 @Data
-public class UserToken implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class UserToken{
 
-	@EmbeddedId
-	private TokenEmbId id;
+	@Id
+	@Column(length = 30)
+	private String token;
+	private Date expirationTime;
 
 	public UserToken() {}
 
 	public UserToken(String token, Date expirationTime) {
-		this.id = new TokenEmbId(token,expirationTime);
+		this.token = token;
+		this.expirationTime = expirationTime;
 	}
 
-	public Date getExpirationTime(){
-		return id.getExpirationTime();
+	public String getToken() {
+		return token;
 	}
 
-	public String getToken(){
-		return id.getToken();
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Date getExpirationTime() {
+		return expirationTime;
+	}
+
+	public void setExpirationTime(Date expirationTime) {
+		this.expirationTime = expirationTime;
 	}
 }
