@@ -35,8 +35,6 @@ public class EmailTest {
     @Test
     public void sendEmails() throws AddressException, EmailException {
         List<String> users = new ArrayList<String>(){{
-            add("a@ukr.net");
-            add("example@gmail.com");
             add(MailResources.sendToStatic);
 
         }};

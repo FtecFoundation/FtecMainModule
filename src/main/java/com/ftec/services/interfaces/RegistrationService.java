@@ -5,6 +5,6 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 
 public interface RegistrationService {
-    void registerNewUserAccount(User user) throws UserExistException;
+    void registerNewUserAccount(User user);
 
 }

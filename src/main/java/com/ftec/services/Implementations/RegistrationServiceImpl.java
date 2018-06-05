@@ -26,7 +26,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Transactional
     @Override
-    public void registerNewUserAccount(User user) throws UserExistException {
+    public void registerNewUserAccount(User user) {
         user.setPassword(PasswordUtils.encodeUserPassword(user.getPassword(), user.getSalt()));
         userDAO.save(user);
     }

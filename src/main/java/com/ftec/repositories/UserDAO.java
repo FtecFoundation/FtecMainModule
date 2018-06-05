@@ -3,6 +3,7 @@ package com.ftec.repositories;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -27,9 +28,11 @@ public interface UserDAO extends JpaRepository<User, Long> {
     
     Optional<User> findBySubscribeForNews(boolean subscribeForNews);
 
-    @Query("update User set currentStep=?2 where id=?1")
+    @Modifying
+    @Query("update User u set u.currentStep=?2 where u.id=?1")
     void updateTutorialStepForUser(long userId, TutorialSteps tutorialStep);
 
-    @Query("select currentStep from User where id=?1")
+
+    @Query("select u.currentStep from User u where u.id=?1")
     TutorialSteps getTutorialStep(long userId);
 }
