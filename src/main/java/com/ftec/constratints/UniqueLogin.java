@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = UniqueEmailValidator.class)
+@Constraint(validatedBy = UniqueLoginValidator.class)
 @Target( { ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueLogin {
-    String message() default "Email isn't unique";
+    String message() default "Unique login constraint fails";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

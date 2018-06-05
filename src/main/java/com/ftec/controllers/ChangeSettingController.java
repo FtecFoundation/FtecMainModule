@@ -6,8 +6,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +24,8 @@ import com.ftec.services.TokenService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.stream.Collectors;
+
 @RestController
 public class ChangeSettingController {
 	private final UserDAO userDAO;
@@ -34,8 +38,11 @@ public class ChangeSettingController {
 	@PostMapping("/changeUserSetting")
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 
-		if(br.hasErrors()) { return new MvcResponse(set400Status(response),br.getAllErrors());}
-			
+		if(br.hasErrors()) {
+		    response.setStatus(400);
+		    return MvcResponse.getError(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+		}
+
 		User userFromDB = userDAO.findById(TokenService.getUserIdFromToken(request)).get();
 		
 		userFromDB.apllyChangeSettings(userUpdate);
@@ -44,21 +51,18 @@ public class ChangeSettingController {
 		return new MvcResponse(200);
 	}
 
-	public static int set400Status(HttpServletResponse response) {
-		response.setStatus(400);
-		return 400;
-	}
-
 
 	@Data
 	@NoArgsConstructor
 	public static class UserUpdate {
 		//each field could be null
 		@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
+        @Size(max = 20)
 		private String password;
 
 		@Email
 		@UniqueEmail
+        @Size(max = 20)
 		private String email;
 
 		private Boolean twoFactorEnabled;

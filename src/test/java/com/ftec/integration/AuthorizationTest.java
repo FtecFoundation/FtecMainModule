@@ -3,6 +3,7 @@ package com.ftec.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
@@ -87,6 +88,20 @@ public class AuthorizationTest {
 		String logoutResult = mvc.perform(post("/logout").header(TokenService.TOKEN_NAME,token))
 				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
+		//with removed token
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME,token)
+        ).andExpect(status().is(403));
+
+        //with invalid token
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME,"23_DWWDAAWDDWA")
+        ).andExpect(status().is(403));
+
+        //without token
+        mvc.perform(post("/changeUserSetting")
+        ).andExpect(status().is(403));
+
 		assertEquals("ok", logoutResult);
         assertFalse(tokenService.findByToken(token).isPresent());
 
@@ -106,10 +121,20 @@ public class AuthorizationTest {
 
         String tokenAfterLogin = new JSONObject(resultLogin.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
-        mvc.perform(get("/cabinet/tutorial/getCurrentStep")
+
+        assertFalse(userDAO.findByUsername(user.getUsername()).get().getTwoStepVerification());
+
+        ChangeSettingController.UserUpdate updateSetting = new ChangeSettingController.UserUpdate();
+        updateSetting.setTwoFactorEnabled(true);
+
+
+        mvc.perform(post("/changeUserSetting")
                 .header(TokenService.TOKEN_NAME,tokenAfterLogin)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(updateSetting))
         ).andExpect(status().is(200));
 
+        assertTrue(userDAO.findByUsername(user.getUsername()).get().getTwoStepVerification());
 
     }
 
