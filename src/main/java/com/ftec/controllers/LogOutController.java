@@ -1,6 +1,5 @@
 package com.ftec.controllers;
 
-import com.ftec.entities.UserToken;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class LogOutController {
 		try {
 
 			String token = TokenService.getToken(request);
-			UserToken userToken = tokenDAO.findByToken(token).get();
+			tokenDAO.deleteByToken(token);
 			return "ok";
 		} catch(Exception e) {
 		    response.sendError(400);

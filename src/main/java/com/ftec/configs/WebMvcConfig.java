@@ -20,8 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/securedTest")
-				.order(1);
+		registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/cabinet","/cabinet/**");
 //        registry.addInterceptor(new BanMiddleware()).addPathPatterns("/","/*","/**").excludePathPatterns("/API/**","/API/*","/error/banned");
 		registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet","/cabinet/**").excludePathPatterns("/cabinet/tutorial","/cabinet/tutorial/*");
 	}

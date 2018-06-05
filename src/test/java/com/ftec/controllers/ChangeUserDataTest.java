@@ -1,11 +1,11 @@
 package com.ftec.controllers;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Iterator;
-
+import com.ftec.configs.ApplicationConfig;
 import com.ftec.configs.enums.TutorialSteps;
+import com.ftec.controllers.ChangeSettingController.UserUpdate;
+import com.ftec.entities.User;
+import com.ftec.repositories.UserDAO;
+import com.ftec.services.TokenService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,11 +19,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.ChangeSettingController.UserUpdate;
-import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
-import com.ftec.services.TokenService;
+import java.util.Iterator;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -89,7 +88,7 @@ public class ChangeUserDataTest {
 		
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
-		assert userAfterChange.isTwoStepVerification() == true;
+		assert userAfterChange.getTwoStepVerification();
 
 		userDAO.deleteAll();
 	}

@@ -2,7 +2,7 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.AuthorizationController;
+import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.Implementations.UserServiceImpl;
@@ -15,15 +15,14 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -64,29 +63,21 @@ public class AuthorizationTest {
 		String token = new JSONObject(result.getResponse().getContentAsString()).getString("token");
 		assert !token.isEmpty();
 
-		mvc.perform(post("http://localhost:8080/authorization")
-				.param("username", login)
-				.param("password", pass)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isAccepted());
+		TutorialSteps step = TutorialSteps.valueOf(mvc.perform(get("/cabinet/tutorial/getCurrentStep")
+				.header(TokenService.TOKEN_NAME,token)
+		).andExpect(status().is(200)).andReturn().getResponse().getContentAsString());
 
-		MvcResult mvcResult1 = mvc.perform(post("http://localhost:8080/authorization")
-				.param("username", invalidLogin)
-				.param("password", pass)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isBadRequest()).andReturn();
+		assertEquals(TutorialSteps.FIRST, step);
 
-		MvcResult mvcResult2 = mvc.perform(post("http://localhost:8080/authorization")
-				.param("username", login)
-				.param("password", invalidPassword)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andDo(print()).andExpect(status().isBadRequest()).andReturn();
+		String logoutResult = mvc.perform(post("/logout").header(TokenService.TOKEN_NAME,token))
+				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
-		assertEquals(mvcResult1.getResponse().getContentAsString(), AuthorizationController.INVALID_USERNAME_OR_PASSWORD);
-		assertEquals(mvcResult2.getResponse().getContentAsString(), AuthorizationController.INVALID_USERNAME_OR_PASSWORD);
+		assertEquals("ok", logoutResult);
+
+		String invalidCredentialsAnswer = mvc.perform(post("/login")
+				.param("login",invalidLogin)
+				.param("password", invalidPassword)).andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
+
 	}
 
 //	@Test
