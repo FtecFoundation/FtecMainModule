@@ -12,5 +12,9 @@ public interface ReferralService {
 
     void saveReferralLevelThree(ReferralLevelThree referralLevelThree);
 
+    long getReferrerForUser(long userId);
+
     double getTotalBalance(long id);
+
+    void assignReferral(long userId, long referrerId);
 }

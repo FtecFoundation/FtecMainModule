@@ -12,5 +12,7 @@ public interface ReferralDAO {
 
     void saveReferralLevelThree(ReferralLevelThree referralLevelThree);
 
+    long findReferrerForUser(long userId);
+
     double findTotalBalance(long user);
 }

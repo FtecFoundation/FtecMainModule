@@ -20,8 +20,8 @@ public class ReferralDAOImpl implements ReferralDAO {
     @Override
     @Transactional
     public void saveReferralLevelOne(ReferralLevelOne referralLevelOne) {
-        String query = "INSERT INTO referral_level_one (user_Id, invited_Id, balance) " +
-                "VALUES (" + referralLevelOne.getUserId() + ", " + referralLevelOne.getInvitedId() +
+        String query = "INSERT INTO referral_level_one (user_Id, referrer_Id, balance) " +
+                "VALUES (" + referralLevelOne.getUserId() + ", " + referralLevelOne.getReferrerId() +
                 ", " + referralLevelOne.getBalance() + ";";
         entityManager.createNativeQuery(query).executeUpdate();
     }
@@ -29,8 +29,8 @@ public class ReferralDAOImpl implements ReferralDAO {
     @Override
     @Transactional
     public void saveReferralLevelTwo(ReferralLevelTwo referralLevelTwo) {
-        String query = "INSERT INTO referral_level_two (user_Id, invited_Id, balance) " +
-                "VALUES (" + referralLevelTwo.getUserId() + ", " + referralLevelTwo.getInvitedId() +
+        String query = "INSERT INTO referral_level_two (user_Id, referrer_Id, balance) " +
+                "VALUES (" + referralLevelTwo.getUserId() + ", " + referralLevelTwo.getReferrerId() +
                 ", " + referralLevelTwo.getBalance() + ";";
         entityManager.createNativeQuery(query).executeUpdate();
     }
@@ -38,10 +38,16 @@ public class ReferralDAOImpl implements ReferralDAO {
     @Override
     @Transactional
     public void saveReferralLevelThree(ReferralLevelThree referralLevelThree) {
-        String query = "INSERT INTO referral_level_three (user_Id, invited_Id, balance) " +
-                "VALUES (" + referralLevelThree.getUserId() + ", " + referralLevelThree.getInvitedId() +
+        String query = "INSERT INTO referral_level_three (user_Id, referrer_Id, balance) " +
+                "VALUES (" + referralLevelThree.getUserId() + ", " + referralLevelThree.getReferrerId() +
                 ", " + referralLevelThree.getBalance() + ";";
         entityManager.createNativeQuery(query).executeUpdate();
+    }
+
+    @Override
+    public long findReferrerForUser(long userId) {
+        String query = "SELECT referrer_id FROM referral_level_one WHERE user_id = " + userId;
+        return entityManager.createQuery(query, Long.class).getSingleResult();
     }
 
     @Override

@@ -38,7 +38,33 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
+    public long getReferrerForUser(long userId) {
+        return referralDAO.findReferrerForUser(userId);
+    }
+
+    @Override
     public double getTotalBalance(long id) {
         return referralDAO.findTotalBalance(id);
+    }
+
+    @Override
+    @Transactional
+    public void assignReferral(long userId, long referrerId) {
+        //1 Save userId in level one
+        referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId, referrerId, 0));
+
+        //2 Check who invited referredId
+        long referrerForReferrer = referralDAO.findReferrerForUser(referrerId);
+        if (referrerForReferrer != 0) {
+            // 2.2 Save userId in level two
+            referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId, referrerForReferrer, 0));
+
+            // 3 Check who invited invitedForInvitedId
+            long referrerForReferrerForReferrer = referralDAO.findReferrerForUser(referrerForReferrer);
+            if (referrerForReferrerForReferrer != 0) {
+                // 3.2 Save userId in level three
+                referralDAO.saveReferralLevelThree(new ReferralLevelThree(userId, referrerForReferrerForReferrer, 0));
+            }
+        }
     }
 }

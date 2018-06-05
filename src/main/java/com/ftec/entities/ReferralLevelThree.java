@@ -11,12 +11,12 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ReferralLevelThree extends ReferralSystem {
+public class ReferralLevelThree {
 
     private long userId;
 
     @Id
-    private long invitedId;
+    private long referrerId;
 
     private double Balance;
 }
