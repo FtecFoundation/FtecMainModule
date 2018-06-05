@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ftec.utils.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.UserTokenDAO;
 import com.ftec.services.TokenService;
 
@@ -50,9 +47,9 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isAccepted());
 
-        assertTrue(tokenDao.findByToken(token).isPresent());
-        tokenDao.deleteByToken(token);
-        assertFalse(tokenDao.findByToken(token).isPresent());
+        assertTrue(tokenDao.findByIdToken(token).isPresent());
+        tokenDao.deleteByIdToken(token);
+        assertFalse(tokenDao.findByIdToken(token).isPresent());
     }
 
     @Test

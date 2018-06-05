@@ -1,1 +1,0 @@
-create table user_token (token varchar(255) not null, expiration_time datetime not null, primary key (token, expiration_time))

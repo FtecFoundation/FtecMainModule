@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ftec.configs.enums.TutorialSteps;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.utils.EntityGenerator;
@@ -61,7 +60,7 @@ public class LogOutTest {
 		userDAO.save(u);
 
 		String token = tokenService.createSaveAndGetNewToken(u.getId());
-		UserToken tokenFromDB = tokenDAO.findByToken(token).get();
+		UserToken tokenFromDB = tokenDAO.findByIdToken(token).get();
 		assertNotNull(tokenFromDB);
 		
 		  mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/logout")
@@ -70,19 +69,19 @@ public class LogOutTest {
 	                .accept(MediaType.APPLICATION_JSON))
 	                .andExpect(status().isAccepted());
 
-		  assertFalse(tokenDAO.findByToken(token).isPresent());
+		  assertFalse(tokenDAO.findByIdToken(token).isPresent());
 	}
 	
 	@Test
 	public void testDelete() {
 		String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-		UserToken tokenFromDB = tokenDAO.findByToken(token).get();
+		UserToken tokenFromDB = tokenDAO.findByIdToken(token).get();
 		
 		assertNotNull(tokenFromDB);
 		
 		tokenDAO.delete(tokenFromDB);
 		
-		assertFalse(tokenDAO.findByToken(token).isPresent());
+		assertFalse(tokenDAO.findByIdToken(token).isPresent());
 	}
 
 }

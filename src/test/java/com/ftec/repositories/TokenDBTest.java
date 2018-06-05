@@ -37,11 +37,11 @@ public class TokenDBTest {
     @Test
     public void TokenDBtest() {
         String token = service.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-        Optional<UserToken> byId = tokenDAO.findByToken(token);
+        Optional<UserToken> byId = tokenDAO.findByIdToken(token);
         UserToken userToken = byId.get();
 
-        assertTrue(tokenDAO.findByToken(token).get().getToken().equals(token));
-        tokenDAO.deleteByToken(token);
-        assertFalse(tokenDAO.findByToken(token).isPresent());
+        assertTrue(tokenDAO.findByIdToken(token).get().getToken().equals(token));
+        tokenDAO.deleteByIdToken(token);
+        assertFalse(tokenDAO.findByIdToken(token).isPresent());
     }
 }
