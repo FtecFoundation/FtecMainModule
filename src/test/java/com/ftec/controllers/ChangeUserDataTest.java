@@ -1,13 +1,14 @@
 package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.entities.User;
+import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.ChangeSettingsService;
+import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Iterator;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,83 +33,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ChangeUserDataTest {
 
 	@Autowired
-	UserDAO userDAO;
-
-	@Autowired
-	MockMvc mvc;
+	RegistrationService registrationService;
 	
 	@Autowired
-	TokenService service;
-	
-	@Before
-	public void SetUp() {
-		userDAO.deleteAll();
-	}
-	
-	private void printUser() {
-		Iterable<User> allIteration = userDAO.findAll();
-		Iterator<User> iterator = allIteration.iterator();
-		for (User user : allIteration) {
-			System.out.println(user);
-		}
-	}
+	ChangeSettingsService changeSettingsService;
 
-	String username = "user1";
-	String password = "pass1";
-	String email = "email@d.net";
-	TutorialSteps currentStep = TutorialSteps.FIRST;
-	boolean subscribeForNews = false;
-	Boolean twoStepVerification = false;
 
 	@Test
-	public void changeUserDataIntegrationTest() throws Exception {
-		User u =  new User(username, password,
-				email, currentStep, subscribeForNews, twoStepVerification);
-
-		u.setPassword("old_passworD123");
-		u.setEmail("old_email");
-		u.setTwoStepVerification(false);
-		userDAO.save(u);
+	public void changeUserDataIntegrationTest() throws Exception, UserNotExistsException {
+		User u =  EntityGenerator.getNewUser();
+		registrationService.registerUser(u);
 
 		long id = u.getId();
 
 		UserUpdate updatedUserData = new UserUpdate();
 		updatedUserData.setPassword("neWStrong123");
 		updatedUserData.setEmail("new_email@gmail.com");
-		updatedUserData.setTwoFactorEnabled(true);
+
 		
-		String token = service.createSaveAndGetNewToken(id);
-		
-		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(updatedUserData)).contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
-		
-		User userAfterChange = userDAO.findById(id).get();
+		changeSettingsService.updatePreferences(updatedUserData, id);
+		Optional<User> user = userDAO.findById(id);
+		if(!user.isPresent()) throw new NullPointerException();
+		User userAfterChange = user.get();
 		
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
-		assert userAfterChange.getTwoStepVerification();
-
-		userDAO.deleteAll();
+		assert !userAfterChange.getTwoStepVerification();
 	}
 	
 	@Test
-	public void changeNothing() throws Exception {
+	public void changeNothing() throws Exception, UserNotExistsException {
 		User u = EntityGenerator.getNewUser();
 
 		userDAO.save(u);
 
-		String token = service.createSaveAndGetNewToken(u.getId());
+		changeSettingsService.updatePreferences(new UserUpdate(), u.getId());
 
-		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
-				.content( ControllerTest.asJsonString(new UserUpdate())).contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
+		Optional<User> user = userDAO.findById(u.getId());
+		if(!user.isPresent()) throw new NullPointerException();
+		User userAfterChange = user.get();
 
-		userDAO.deleteAll();
+		assert userAfterChange.getPassword().equals(u.getPassword());
+		assert userAfterChange.getEmail().equals("new_email@gmail.com");
+		assert !userAfterChange.getTwoStepVerification();
 	}
 	
 	@Test
