@@ -1,13 +1,13 @@
 package com.ftec.utils;
 
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
 import com.ftec.services.Implementations.RegistrationServiceImpl;
-import com.ftec.services.interfaces.RegistrationService;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Random;
 
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 public class EntityGenerator {
     private static long num = 0;
 
