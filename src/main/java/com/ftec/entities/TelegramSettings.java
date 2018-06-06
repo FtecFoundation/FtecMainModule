@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table
 public class TelegramSettings {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long userId;
     private String accessCode, linkedUsername;
     private long linkedUserChatId;
