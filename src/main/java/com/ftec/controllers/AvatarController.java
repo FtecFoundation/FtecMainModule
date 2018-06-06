@@ -1,11 +1,10 @@
 package com.ftec.controllers;
 
-import com.ftec.resources.models.MvcResponse;
-import com.google.common.io.Files;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
 import com.ftec.utils.Logger;
+import com.google.common.io.Files;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -39,7 +38,7 @@ public class AvatarController {
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
-        final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
+        final File DEFAULT_IMAGE = new ClassPathResource("/static/images/0.jpg").getFile();
         Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
 
         if (user.isPresent()) {
