@@ -12,6 +12,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.services.TokenService;
 
+import java.util.Date;
+
 @Service
 public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
@@ -24,15 +26,25 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+		String token = request.getHeader(TokenService.TOKEN_NAME);
 		try {
-			String token = request.getHeader(TokenService.TOKEN_NAME);
 			tokenService.verifyToken(token);
-			tokenService.deleteExcessiveToken(TokenService.getUserIdFromToken(token));
+			long userId = TokenService.getUserIdFromToken(token);
+			tokenService.deleteExcessiveToken(userId); //TODO refactoring
+
+			tokenService.updateExpirationDate(token);
+
 		} catch(TokenException ex) {
 			response.setStatus(403);
+			System.out.println(ex.getMessage());
+			if(isExpiredException(ex)) tokenService.deleteByToken(token);
 			return false;
 		}
 		return true;
+	}
+
+	public boolean isExpiredException(TokenException ex) {
+		return ex.getClass().equals(TokenExpiredException.class);
 	}
 
 }

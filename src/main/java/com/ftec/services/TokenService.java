@@ -18,13 +18,14 @@ import java.util.Random;
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
     private final TokenDAO tokenDAO;
+    private final static int EXPIRATION_TIME = 86400000;
 
     @Autowired
     public TokenService(TokenDAO tokenDAO) {
         this.tokenDAO = tokenDAO;
     }
 
-    @Scheduled(cron = "0 0 12 * * ?") //TODO test it
+    @Scheduled(cron = "0 0 12 * * ?") //TODO test it x3 how
     public void deleteExpiredToken() {
         tokenDAO.deleteAllExpiredToken();
     }
@@ -62,7 +63,7 @@ public class TokenService {
     }
 
     private void setExpirationTime(Date expiration) {
-        expiration.setTime(expiration.getTime() + 1800000);
+        expiration.setTime(expiration.getTime() + EXPIRATION_TIME);
     }
 
     static String generateToken(Long id) {
@@ -114,5 +115,13 @@ public class TokenService {
     @Transactional
     public void deleteExcessiveToken(long id){
         tokenDAO.deleteExcessiveToken(id);
+    }
+
+    @Transactional
+    public void updateExpirationDate(String token){
+        Date oneDay = new Date();
+        setExpirationTime(oneDay);
+
+        tokenDAO.updateExpirationDate(oneDay,token);
     }
 }
