@@ -14,3 +14,4 @@ hibernate*
 *.iml
 
 application*
+!application-jenkins.properties
