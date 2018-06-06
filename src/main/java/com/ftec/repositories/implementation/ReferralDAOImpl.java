@@ -22,14 +22,13 @@ public class ReferralDAOImpl implements ReferralDAO {
     public void saveReferralLevelOne(ReferralLevelOne referralLevelOne) {
         String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
                 "VALUES (" + referralLevelOne.getUserId() + ", " + referralLevelOne.getReferrerId() + ", " + referralLevelOne.getBalance() + ");";
-//        String query = "";
         entityManager.createNativeQuery(query).executeUpdate();
     }
 
     @Override
     @Transactional
     public void saveReferralLevelTwo(ReferralLevelTwo referralLevelTwo) {
-        String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
+        String query = "INSERT INTO referral_level_two (user_id, referrer_id, balance) " +
                 "VALUES (" + referralLevelTwo.getUserId() + ", " + referralLevelTwo.getReferrerId() + ", " + referralLevelTwo.getBalance() + ");";
         entityManager.createNativeQuery(query).executeUpdate();
     }
@@ -37,15 +36,14 @@ public class ReferralDAOImpl implements ReferralDAO {
     @Override
     @Transactional
     public void saveReferralLevelThree(ReferralLevelThree referralLevelThree) {
-        String query = "INSERT INTO referral_level_one (user_id, referrer_id, balance) " +
+        String query = "INSERT INTO referral_level_three (user_id, referrer_id, balance) " +
                 "VALUES (" + referralLevelThree.getUserId() + ", " + referralLevelThree.getReferrerId() + ", " + referralLevelThree.getBalance() + ");";
         entityManager.createNativeQuery(query).executeUpdate();
     }
 
     @Override
     public long findReferrerForUser(long userId) {
-        //todo find bug in query
-        String query = "SELECT referrer_id FROM referral_level_one  WHERE user_id = " + userId + ";";
+        String query = "SELECT referrerId FROM ReferralLevelOne WHERE userId = " + userId;
         return entityManager.createQuery(query, Long.class).getSingleResult();
     }
 
