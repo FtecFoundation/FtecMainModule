@@ -68,7 +68,7 @@ public class TokenSecurityTest {
                 .andDo(print()).andExpect(status().isForbidden());
     }
 
-    @Test//(expected = TokenExpiredException.class)
+    @Test
     public void tryAccessWithExpiredToken() throws Exception {
         User user = EntityGenerator.getNewUser();
         userDAO.save(user);
@@ -89,8 +89,10 @@ public class TokenSecurityTest {
                 .andDo(print()).andExpect(status().isOk());
 
         Token expiredToken = new Token();
-        expiredToken.setToken("1_dwankdwakj");
-        expiredToken.setExpirationTime(new Date());
+        expiredToken.setToken(id+"_dwankdwakj");
+        Date expiredDate = new Date();
+        expiredDate.setTime(new Date().getTime() - 10000);
+        expiredToken.setExpirationTime(expiredDate);
         tokenDAO.save(expiredToken);
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
@@ -99,5 +101,5 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden());
     }
-    //TODO expired token test
+
 }

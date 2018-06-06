@@ -14,11 +14,16 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"com.ftec.*"})
 @EnableJpaRepositories(value = {"com.ftec.repositories"})
 @EntityScan("com.ftec.entities")
-public class ApplicationConfig extends SpringBootServletInitializer {
+@EnableScheduling
+public class ApplicationConfig extends SpringBootServletInitializer implements  CommandLineRunner{
+    @Autowired
+    TokenService tokenService;//TODO delete
+
 
     //Also added configuration for tomcat starting
     @Override
@@ -50,4 +55,7 @@ public class ApplicationConfig extends SpringBootServletInitializer {
         return messageSource;
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+    }
 }

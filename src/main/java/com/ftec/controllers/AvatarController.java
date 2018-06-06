@@ -40,7 +40,8 @@ public class AvatarController {
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
         final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
-        Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
+        String token = request.getHeader(TokenService.TOKEN_NAME);
+        Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
 
         if (user.isPresent()) {
             long userFromDBId = user.get().getId();
@@ -65,7 +66,8 @@ public class AvatarController {
         }
 
         try {
-            Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
+            String token = request.getHeader(TokenService.TOKEN_NAME);
+            Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
 
             if (user.isPresent()) {
                 long userFromDBId = user.get().getId();

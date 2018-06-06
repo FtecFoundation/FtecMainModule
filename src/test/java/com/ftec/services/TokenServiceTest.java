@@ -9,6 +9,7 @@ import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,11 @@ public class TokenServiceTest {
     @Autowired
     UserDAO userDao;
 
+    @Autowired
+    RegistrationService registrationService;
+
     ObjectMapper objectMapper = new ObjectMapper();
+
     @Test
     public void getValidIdFromTokenTest() {
         assertThat(TokenService.extractUserID("23_NDKJAWNWKAJDNAkWKDNAW"),is("23"));
@@ -121,5 +126,25 @@ public class TokenServiceTest {
         Thread.sleep(500);
         System.out.println("expired date = " + expired);
         TokenService.checkIfTokenExpired(expired);//should throw an exception
+    }
+
+    @Test
+    public void deleteAllByUserIdTest() throws InterruptedException {
+       long userId = 228l;
+
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+       tokenService.createSaveAndGetNewToken(userId);
+
+       assertEquals(7,tokenDAO.findAllByUserId(userId).size());
+
+       tokenService.deleteExcessiveToken(userId);
+
+       assertEquals(5,tokenDAO.findAllByUserId(userId).size());
+
     }
 }

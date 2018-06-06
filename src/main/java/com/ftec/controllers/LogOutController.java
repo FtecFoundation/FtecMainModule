@@ -23,7 +23,7 @@ public class LogOutController {
 	@PostMapping("/logout")
 	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
-			tokenDAO.deleteByToken(TokenService.getToken(request));
+			tokenDAO.deleteByToken(request.getHeader(TokenService.TOKEN_NAME));
 			return "ok";
 		} catch(Exception e) {
 		    response.sendError(400);

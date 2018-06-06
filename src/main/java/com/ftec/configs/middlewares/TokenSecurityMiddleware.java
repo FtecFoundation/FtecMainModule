@@ -3,6 +3,8 @@ package com.ftec.configs.middlewares;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ftec.entities.Token;
+import com.ftec.exceptions.token.TokenExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,15 +23,16 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	}
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		try {
-			tokenService.verifyToken(request.getHeader(TokenService.TOKEN_NAME));
+			String token = request.getHeader(TokenService.TOKEN_NAME);
+			tokenService.verifyToken(token);
+			tokenService.deleteExcessiveToken(TokenService.getUserIdFromToken(token));
 		} catch(TokenException ex) {
 			response.setStatus(403);
 			return false;
 		}
 		return true;
 	}
-	
 
 }
