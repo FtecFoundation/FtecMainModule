@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import static org.junit.Assert.assertNotNull;
 
-@ActiveProfiles(value = "test", inheritProfiles = false)
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationConfig.class)
 public class EmailTest {
