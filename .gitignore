@@ -15,3 +15,4 @@ hibernate*
 
 application*
 !application-jenkins.properties
+!application-jenkins-test.properties
