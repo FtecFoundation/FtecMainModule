@@ -2,9 +2,16 @@ package com.ftec.services.interfaces;
 
 public interface ReferralService {
 
+    void assignReferral(long userId, long referrerId);
+
     long getReferrerForUser(long userId);
 
-    double getTotalBalance(long id);
+    double getTotalBalanceForAllLevels();
 
-    void assignReferral(long userId, long referrerId);
+    double getTotalBalanceForLevelOne();
+
+    double getTotalBalanceForLevelTwo();
+
+    double getTotalBalanceForLevelThree();
+
 }

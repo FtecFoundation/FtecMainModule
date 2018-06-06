@@ -14,5 +14,11 @@ public interface ReferralDAO {
 
     long findReferrerForUser(long userId);
 
-    double findTotalBalance(long user);
+    double findTotalBalanceForAllLevels();
+
+    double findTotalBalanceForLevelOne();
+
+    double findTotalBalanceForLevelTwo();
+
+    double findTotalBalanceForLevelThree();
 }
