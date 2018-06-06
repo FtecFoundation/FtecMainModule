@@ -14,4 +14,6 @@ public interface ReferralService {
 
     double getTotalBalanceForLevelThree();
 
+    double getTotalBalanceFromReferralsForUser(long id);
+
 }

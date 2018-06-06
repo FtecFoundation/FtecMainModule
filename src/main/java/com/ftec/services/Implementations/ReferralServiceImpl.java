@@ -64,5 +64,10 @@ public class ReferralServiceImpl implements ReferralService {
         return referralDAO.findTotalBalanceForLevelThree();
     }
 
+    @Override
+    public double getTotalBalanceFromReferralsForUser(long id) {
+        return referralDAO.findTotalBalanceFromReferralsForUser(id);
+    }
+
 
 }

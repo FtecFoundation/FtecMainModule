@@ -92,4 +92,16 @@ public class ReferralDAOImpl implements ReferralDAO {
             return 0.0;
         }
     }
+
+    @Override
+    public double findTotalBalanceFromReferralsForUser(long id) {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_one one WHERE one.referrer_id = " + id +
+                    " UNION SELECT * FROM referral_level_two two WHERE two.referrer_id =  " + id +
+                    " UNION SELECT * FROM referral_level_three three WHERE three.referrer_id = " + id + ") as TotalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
 }

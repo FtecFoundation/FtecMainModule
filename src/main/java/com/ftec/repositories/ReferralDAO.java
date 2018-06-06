@@ -21,4 +21,6 @@ public interface ReferralDAO {
     double findTotalBalanceForLevelTwo();
 
     double findTotalBalanceForLevelThree();
+
+    double findTotalBalanceFromReferralsForUser(long id);
 }
