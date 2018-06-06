@@ -13,9 +13,9 @@ import javax.persistence.Id;
 @ToString
 public class ReferralLevelThree {
 
+    @Id
     private long userId;
 
-    @Id
     private long referrerId;
 
     private double Balance;

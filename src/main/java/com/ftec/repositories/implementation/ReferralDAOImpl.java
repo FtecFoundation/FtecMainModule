@@ -44,14 +44,15 @@ public class ReferralDAOImpl implements ReferralDAO {
 
     @Override
     public long findReferrerForUser(long userId) {
-        String query = "SELECT referrer_id FROM referral_level_one WHERE user_id = " + userId;
+        //todo find bug in query
+        String query = "SELECT referrer_id FROM referral_level_one  WHERE user_id = " + userId + ";";
         return entityManager.createQuery(query, Long.class).getSingleResult();
     }
 
     @Override
     public double findTotalBalance(long user) {
         String query = "SELECT SUM(balance) FROM (" +
-                "SELECT * FROM referral_level_one one " +
+                "SELECT * FROM rreferral_level_one one " +
                 "UNION SELECT * FROM referral_level_two two " +
                 "UNION SELECT * FROM referral_level_three three " +
                 "WHERE user = " + user + ") AS totalBalance;";
