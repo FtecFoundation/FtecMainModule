@@ -1,7 +1,9 @@
 package com.ftec.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.ChangeSettingController;
 import com.ftec.entities.Token;
 import com.ftec.entities.User;
 import com.ftec.exceptions.token.InvalidTokenException;
@@ -25,9 +27,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,7 +132,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void deleteAllByUserIdTest() throws InterruptedException {
+    public void deleteAllByUserIdTest() {
        long userId = 228l;
 
        tokenService.createSaveAndGetNewToken(userId);
@@ -145,5 +149,27 @@ public class TokenServiceTest {
 
        assertEquals(5,tokenDAO.findAllByUserId(userId).size());
 
+    }
+
+    @Test
+    public void checkIfTokenExpirationTimeExtended() throws Exception {
+        User u = EntityGenerator.getNewUser();
+        registrationService.registerNewUserAccount(u);
+
+        String token = tokenService.createSaveAndGetNewToken(u.getId());
+        Optional<Token> tokenFromDb = tokenService.findByToken(token);
+        Date oldDate = tokenFromDb.get().getExpirationTime();
+
+        Thread.sleep(1500);
+
+        ChangeSettingController.UserUpdate nullChanges = new ChangeSettingController.UserUpdate();
+
+        mvc.perform(post("/changeUserSetting")
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(nullChanges))
+        ).andExpect(status().is(200));
+
+        assertTrue(oldDate.before(tokenService.findByToken(token).get().getExpirationTime()));
     }
 }
