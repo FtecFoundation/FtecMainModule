@@ -1,13 +1,14 @@
 package com.ftec.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.ControllerTest;
-import com.ftec.controllers.RegistrationController;
-import com.ftec.entities.UserToken;
+import com.ftec.entities.Token;
+import com.ftec.entities.User;
 import com.ftec.exceptions.token.InvalidTokenException;
+import com.ftec.exceptions.token.TokenException;
+import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
-import com.ftec.repositories.UserTokenDAO;
-import jdk.nashorn.internal.parser.Token;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
@@ -39,7 +39,7 @@ public class TokenServiceTest {
     public TokenService tokenService;
 
     @Autowired
-    public UserTokenDAO tokenDAO;
+    public TokenDAO tokenDAO;
 
     @Autowired
     MockMvc mvc;
@@ -50,6 +50,7 @@ public class TokenServiceTest {
     @Autowired
     UserDAO userDao;
 
+    ObjectMapper objectMapper = new ObjectMapper();
     @Test
     public void getValidIdFromTokenTest() {
         assertThat(TokenService.extractUserID("23_NDKJAWNWKAJDNAkWKDNAW"),is("23"));
@@ -79,11 +80,11 @@ public class TokenServiceTest {
 
     @Test
     public void testSaveTokenAndUserIntoDBthroughRegistrationController() throws Exception {
-        String userName = "tester2";
-        RegistrationController.UserRegistration u = new RegistrationController.UserRegistration(userName,"Strong_Pass123","email@gmail.com",false);
+        User u = EntityGenerator.getNewUser();
+        String userName = u.getUsername();
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
-                content( ControllerTest.asJsonString(u)).contentType(MediaType.APPLICATION_JSON).
+                content( objectMapper.writeValueAsString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
 
@@ -101,16 +102,23 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void saveTokenIntoDB() throws InterruptedException {
+    public void saveTokenIntoDB() {
         String token = TokenService.generateToken(998L);
         Date current = new Date();
-        UserToken uToken = new UserToken(token, current);
+        Token uToken = new Token(token, current);
 
         tokenDAO.save(uToken);
 
         assertNotNull(tokenDAO.findByToken(token));
 
-
         assertEquals(tokenDAO.findByToken(token).get().getToken(), token);
+    }
+
+    @Test(expected = TokenException.class)
+    public void testExpiration() throws InterruptedException {
+        Date expired = new Date();
+        Thread.sleep(500);
+        System.out.println("expired date = " + expired);
+        TokenService.checkIfTokenExpired(expired);//should throw an exception
     }
 }

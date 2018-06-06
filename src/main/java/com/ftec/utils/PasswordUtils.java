@@ -62,4 +62,16 @@ public class PasswordUtils {
 
         return returnValue;
     }
+
+
+    /**
+     * Takes the users password and encodes it into secured
+     *
+     * @param userPassword - raw Password
+     * @return secured password
+     */
+    public static String encodeUserPassword(String userPassword,String salt) {
+
+        return PasswordUtils.generateSecurePassword(userPassword, salt);
+    }
 }

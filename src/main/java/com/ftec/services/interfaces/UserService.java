@@ -7,8 +7,4 @@ public interface UserService {
 
     User getById(long id);
 
-    User getByUserName(String username);
-
-    void registerNewUserAccount(User user) throws UserExistException;
-
 }

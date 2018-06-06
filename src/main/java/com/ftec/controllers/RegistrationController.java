@@ -6,12 +6,13 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.resources.models.MvcResponse;
+import com.ftec.services.Implementations.RegistrationServiceImpl;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.ReferralService;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 @RestController
 public class RegistrationController {
 
-    private final UserService userService;
     private final TokenService tokenService;
     private final RegistrationService registrationService;
     private final ReferralService referralService;
@@ -43,32 +43,27 @@ public class RegistrationController {
 
             if (br.hasErrors()) {
                 response.setStatus(400);
-                return MvcResponse.getError(400, br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                return MvcResponse.getMvcErrorResponse(400, br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
 
-            User userToSave = registrationService.registerUser(userRegistration);
-            userService.registerNewUserAccount(userToSave);
-            long id = userToSave.getId();
+            User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
+            registrationService.registerNewUserAccount(userToSave);
             long referrerId = userRegistration.getReferrerId();
-
-            if (id == 0) {
-                throw new TokenException("Exception while generating user token: User haven't id or id equals to 0!");
-            }
-
             if (referrerId != 0) {
-                referralService.assignReferral(id, referrerId);
+                referralService.assignReferral(userToSave.getId(), referrerId);
             }
 
             String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
-            return MvcResponse.getError(403, "TokenNotCreated");
+            return MvcResponse.getMvcErrorResponse(403, "TokenNotCreated");
         }
     }
 
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserRegistration {
 
         @NotNull
@@ -89,24 +84,12 @@ public class RegistrationController {
         private boolean subscribeForNews;
 
         private long referrerId;
-
-        public UserRegistration() {
-        }
-
-        public UserRegistration(String username, String password, String email, boolean subscribeForNews) {
-            this.username = username;
-            this.password = password;
-            this.email = email;
-            this.subscribeForNews = subscribeForNews;
-            referrerId = 0;
-        }
     }
 
     @Autowired
-    public RegistrationController(UserService userService, TokenService tokenService, RegistrationService registrationService, ReferralService referralService) {
-        this.userService = userService;
+    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService) {
+        this.referralService = referralService;
         this.tokenService = tokenService;
         this.registrationService = registrationService;
-        this.referralService = referralService;
     }
 }

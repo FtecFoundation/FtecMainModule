@@ -18,7 +18,7 @@ public class UniqueLoginValidator implements ConstraintValidator<UniqueLogin, St
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext constraintValidatorContext) {
-
+        if(username==null) return true;
         return !userDAO.findByUsername(username).isPresent();
     }
 

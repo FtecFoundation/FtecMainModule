@@ -1,6 +1,6 @@
 package com.ftec.controllers;
 
-import com.ftec.repositories.UserTokenDAO;
+import com.ftec.repositories.TokenDAO;
 import com.ftec.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,19 +13,17 @@ import java.io.IOException;
 @RestController
 public class LogOutController {
 
-	private final UserTokenDAO tokenDAO;
+	private final TokenDAO tokenDAO;
 
 	@Autowired
-	public LogOutController(UserTokenDAO tokenDAO) {
+	public LogOutController(TokenDAO tokenDAO) {
 		this.tokenDAO = tokenDAO;
 	}
 
 	@PostMapping("/logout")
 	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
-
-			String token = TokenService.getToken(request);
-			tokenDAO.deleteByToken(token);
+			tokenDAO.deleteByToken(TokenService.getToken(request));
 			return "ok";
 		} catch(Exception e) {
 		    response.sendError(400);

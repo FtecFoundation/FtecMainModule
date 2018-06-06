@@ -4,7 +4,6 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.utils.EntityGenerator;
-import lombok.ToString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +35,11 @@ public class UniqueLoginConstraintTest {
         userDAO.save(user1);
 
         assertFalse(validator.isValid(username,null));
+
+    }
+    @Test
+    public void testNullLogin(){
+        assertTrue(validator.isValid(null,null));
 
     }
 }
