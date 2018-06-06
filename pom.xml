@@ -90,5 +90,13 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>jenkins</id>
+		</profile>
+		<profile>
+			<id>jenkins-tests</id>
+		</profile>
+	</profiles>
 
 </project>
