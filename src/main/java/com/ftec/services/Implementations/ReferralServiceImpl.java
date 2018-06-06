@@ -20,24 +20,6 @@ public class ReferralServiceImpl implements ReferralService {
     }
 
     @Override
-    @Transactional
-    public void saveReferralLevelOne(ReferralLevelOne referralLevelOne) {
-        referralDAO.saveReferralLevelOne(referralLevelOne);
-    }
-
-    @Override
-    @Transactional
-    public void saveReferralLevelTwo(ReferralLevelTwo referralLevelTwo) {
-        referralDAO.saveReferralLevelTwo(referralLevelTwo);
-    }
-
-    @Override
-    @Transactional
-    public void saveReferralLevelThree(ReferralLevelThree referralLevelThree) {
-        referralDAO.saveReferralLevelThree(referralLevelThree);
-    }
-
-    @Override
     public long getReferrerForUser(long userId) {
         return referralDAO.findReferrerForUser(userId);
     }
