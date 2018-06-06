@@ -2,14 +2,13 @@ package com.ftec.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.ControllerTest;
-import com.ftec.entities.User;
 import com.ftec.entities.Token;
+import com.ftec.entities.User;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
-import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.TokenDAO;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.repositories.UserDAO;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,30 +89,30 @@ public class TokenServiceTest {
         String userName = u.getUsername();
 
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
-				content( objectMapper.writeValueAsString(u)).contentType(MediaType.APPLICATION_JSON).
-				accept(MediaType.APPLICATION_JSON))
-		.andDo(print()).andExpect(status().isOk()).andReturn();
+                content( objectMapper.writeValueAsString(u)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(print()).andExpect(status().isOk()).andReturn();
 
-		String mvcResponse = mvcResult.getResponse().getContentAsString();
+        String mvcResponse = mvcResult.getResponse().getContentAsString();
         String token = new JSONObject(mvcResponse).getJSONObject("response").getString("token");
 
         Long id = Long.valueOf(TokenService.extractUserID(token));
 
         assertNotNull(tokenDAO.findByToken(token));
 
-		assertEquals(userDao.findById(id).get().getUsername(),userName);
+        assertEquals(userDao.findById(id).get().getUsername(),userName);
 
-		userDao.deleteById(id);
-		assertFalse(userDao.findById(id).isPresent());
+        userDao.deleteById(id);
+        assertFalse(userDao.findById(id).isPresent());
     }
 
     @Test
     public void saveTokenIntoDB() {
-    	String token = TokenService.generateToken(998L);
-    	Date current = new Date();
-    	Token uToken = new Token(token, current);
-    	
-    	tokenDAO.save(uToken);
+        String token = TokenService.generateToken(998L);
+        Date current = new Date();
+        Token uToken = new Token(token, current);
+
+        tokenDAO.save(uToken);
 
         assertNotNull(tokenDAO.findByToken(token));
 

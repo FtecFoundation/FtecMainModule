@@ -35,7 +35,7 @@ public class ChangeUserDataTest {
 
 	@Autowired
 	RegistrationService registrationService;
-	
+
 	@Autowired
 	ChangeSettingsService changeSettingsService;
 
@@ -66,7 +66,7 @@ public class ChangeUserDataTest {
 		Optional<User> user = userDAO.findById(id);
 		if(!user.isPresent()) throw new NullPointerException();
 		User userAfterChange = user.get();
-		
+
 		assert userAfterChange.getPassword().equals("neWStrong123");
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert !userAfterChange.getTwoStepVerification();
@@ -87,7 +87,7 @@ public class ChangeUserDataTest {
 		assert userAfterChange.getEmail().equals(u.getEmail());
 		assert !userAfterChange.getTwoStepVerification();
 	}
-	
+
 	@Test
 	public void tryChangeToInvalidEmailAndPass() throws Exception {
 
@@ -100,21 +100,21 @@ public class ChangeUserDataTest {
 
 		UserUpdate userUpdate = new UserUpdate();
 		userUpdate.setEmail("invalidEmail");
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isBadRequest());
-		
+				.andDo(print()).andExpect(status().isBadRequest());
+
 		userUpdate.setEmail("validEmail@Gmail.com");
-		
+
 		mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/changeUserSetting")
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isOk());
-		
+				.andDo(print()).andExpect(status().isOk());
+
 		userUpdate.setPassword("invalidpass");
 		userUpdate.setEmail(null);
 
@@ -122,8 +122,8 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-		.andDo(print()).andExpect(status().isBadRequest());
-		
+				.andDo(print()).andExpect(status().isBadRequest());
+
 		userUpdate.setPassword("validPass1231");
 		userUpdate.setEmail(null);
 

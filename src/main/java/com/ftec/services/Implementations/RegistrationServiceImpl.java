@@ -2,7 +2,6 @@ package com.ftec.services.Implementations;
 
 import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.PasswordUtils;

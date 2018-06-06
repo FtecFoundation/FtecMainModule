@@ -27,8 +27,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
     /**
      * @param username - users name
      * @return {@code true} if there is a User present, otherwise {@code false}.
@@ -39,4 +37,3 @@ public class UserServiceImpl implements UserService {
         return userInDb.isPresent();
     }
 }
-

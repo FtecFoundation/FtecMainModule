@@ -8,8 +8,8 @@ import com.ftec.exceptions.token.TokenException;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.Implementations.RegistrationServiceImpl;
 import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.ReferralService;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,28 +32,32 @@ import java.util.stream.Collectors;
 @RestController
 public class RegistrationController {
 
-    private final UserService userService;
     private final TokenService tokenService;
     private final RegistrationService registrationService;
+    private final ReferralService referralService;
 
 
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
         try {
 
-            if(br.hasErrors()) {
+            if (br.hasErrors()) {
                 response.setStatus(400);
-                return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                return MvcResponse.getMvcErrorResponse(400, br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
 
             User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
             registrationService.registerNewUserAccount(userToSave);
+            long referrerId = userRegistration.getReferrerId();
+            if (referrerId != 0) {
+                referralService.assignReferral(userToSave.getId(), referrerId);
+            }
 
             String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
             return new MvcResponse(200, "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
-            return MvcResponse.getMvcErrorResponse(403,"TokenNotCreated");
+            return MvcResponse.getMvcErrorResponse(403, "TokenNotCreated");
         }
     }
 
@@ -78,11 +82,13 @@ public class RegistrationController {
         private String email;
 
         private boolean subscribeForNews;
+
+        private long referrerId;
     }
 
     @Autowired
-    public RegistrationController(UserService userService, TokenService tokenService, RegistrationService registrationService) {
-        this.userService = userService;
+    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService) {
+        this.referralService = referralService;
         this.tokenService = tokenService;
         this.registrationService = registrationService;
     }

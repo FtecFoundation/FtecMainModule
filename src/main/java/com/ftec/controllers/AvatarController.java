@@ -1,11 +1,10 @@
 package com.ftec.controllers;
 
-import com.ftec.resources.models.MvcResponse;
-import com.google.common.io.Files;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.TokenService;
 import com.ftec.utils.Logger;
+import com.google.common.io.Files;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -42,6 +41,7 @@ public class AvatarController {
         final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
+
 
         if (user.isPresent()) {
             long userFromDBId = user.get().getId();
