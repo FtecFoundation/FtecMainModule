@@ -1,241 +1,103 @@
 package com.ftec.resources;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
 
 @Configuration
 @ConfigurationProperties(prefix = "ftec")
 public class Resources {
-    public static final String[] availableLanguages=new String[]{"en", "fr", "de"};
-    public static boolean loggerEnabled;
 
-    public static final double startingBalance=0;
-    public static final String disabledPassword="NONE";
-    public Email email = new Email();
-    public Logger logger = new Logger();
-    public Endpoints endpoints = new Endpoints();
-    public String appName = "ftec";
-    public String base_url="https://ftec.io/";
-    public boolean productionFeatures=false;
-    public int paginationRescordsPerPage =10;
+	public static String UserIdStatic;
+	public static String userSecretStatic;
+	public static String sendFromStatic;
+	public static String sendToStatic;
+	public static boolean emulatedEmail;
+	public static String uploadPathStatic;
+	public static boolean loggerEnabledStatic;
 
-    public boolean emulateEmail = false;
+	private String userid;
 
-    public int trialDaysDuration = 7;
-    public String defaultLanguage="en";
+	private String userSecret;
 
-    public String botToken;
-    public boolean webhookUsed = true;
-    public String botUsername;
+	private String sendFrom;
 
+	private String sendTo;
 
-    public String botsModuleParamName;
-    public String botsModuleAPISecret;
+	private boolean emulateEmail;
 
-    public String getBotToken() {
-        return botToken;
-    }
+	private String uploadPath;
 
-    public void setBotToken(String botToken) {
-        this.botToken = botToken;
-    }
+	private boolean loggerEnabled;
 
-    public boolean isWebhookUsed() {
-        return webhookUsed;
-    }
+	public Test test = new Test(); //does'nt works with mail.test.testdata = test
 
-    public void setWebhookUsed(boolean webhookUsed) {
-        this.webhookUsed = webhookUsed;
-    }
+    @Data
+	public static class Test {
+		private String testdata;
+	}
 
-    public String getBotUsername() {
-        return botUsername;
-    }
+	public String getUserid() {
+		return userid;
+	}
 
-    public void setBotUsername(String botUsername) {
-        this.botUsername = botUsername;
-    }
+	public void setUserid(String userid) {
+		UserIdStatic = userid;
+		this.userid = userid;
+	}
 
-    public static class Endpoints{
-        private String botsModule = "";
-        private String socialModule = "";
+	public String getUserSecret() {
+		return userSecret;
+	}
 
-        public String getSocialModule() {
-            return socialModule;
-        }
+	public void setUserSecret(String userSecret) {
+		userSecretStatic = userSecret;
+    	this.userSecret = userSecret;
+	}
 
-        public void setSocialModule(String socialModule) {
-            this.socialModule = socialModule;
-        }
+	public String getSendFrom() {
+		return sendFrom;
+	}
 
-        public String getBotsModule() {
-            return botsModule;
-        }
+	public void setSendFrom(String sendFrom) {
+		sendFromStatic = sendFrom;
+    	this.sendFrom = sendFrom;
+	}
 
-        public void setBotsModule(String botsModule) {
-            this.botsModule = botsModule;
-        }
-    }
+	public String getSendTo() {
+		return sendTo;
+	}
 
-    public static class Email{
-        public String host_name;
-        public int smtp_port;
-        public boolean tls;
-        public boolean ssl;
-        public boolean authNeeded;
-        public String mailLogin;
-        public String mailPassword;
-        public String fromName;
+	public void setSendTo(String sendTo) {
+		sendToStatic = sendTo;
+		this.sendTo = sendTo;
+	}
 
-        public String getFromName() {
-            return fromName;
-        }
+	public boolean isEmulateEmail() {
+		return emulateEmail;
+	}
 
-        public void setFromName(String fromName) {
-            this.fromName = fromName;
-        }
+	public void setEmulateEmail(boolean emulateEmail) {
+    	emulatedEmail = emulateEmail;
+		this.emulateEmail = emulateEmail;
+	}
 
-        public String getMailLogin() {
-            return mailLogin;
-        }
+	public Test getTest() {
+		return test;
+	}
 
-        public void setMailLogin(String mailLogin) {
-            this.mailLogin = mailLogin;
-        }
+	public void setTest(Test test) {
+		this.test = test;
+	}
 
-        public String getMailPassword() {
-            return mailPassword;
-        }
+	public void setUploadPath(String uploadPath) {
+    	uploadPathStatic = uploadPath;
+		this.uploadPath = uploadPath;
+	}
 
-        public void setMailPassword(String mailPassword) {
-            this.mailPassword = mailPassword;
-        }
-
-        public String getHost_name() {
-            return host_name;
-        }
-
-        public void setHost_name(String host_name) {
-            this.host_name = host_name;
-        }
-
-        public int getSmtp_port() {
-            return smtp_port;
-        }
-
-        public void setSmtp_port(int smtp_port) {
-            this.smtp_port = smtp_port;
-        }
-
-        public boolean isTls() {
-            return tls;
-        }
-
-        public void setTls(boolean tls) {
-            this.tls = tls;
-        }
-
-        public boolean isSsl() {
-            return ssl;
-        }
-
-        public void setSsl(boolean ssl) {
-            this.ssl = ssl;
-        }
-
-        public boolean isAuthNeeded() {
-            return authNeeded;
-        }
-
-        public void setAuthNeeded(boolean authNeeded) {
-            this.authNeeded = authNeeded;
-        }
-    }
-
-    public static class Logger{
-        public boolean enabled;
-        public String path;
-        public int exceptionHeight = 8;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            Resources.loggerEnabled=enabled;
-            this.enabled = enabled;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-    }
-
-    public boolean isProductionFeatures() {
-        return productionFeatures;
-    }
-
-    public void setProductionFeatures(boolean productionFeatures) {
-        this.productionFeatures = productionFeatures;
-    }
-
-    public int getPaginationRescordsPerPage() {
-        return paginationRescordsPerPage;
-    }
-
-    public void setPaginationRescordsPerPage(int paginationRescordsPerPage) {
-        this.paginationRescordsPerPage = paginationRescordsPerPage;
-    }
-
-    public int getTrialDaysDuration() {
-        return trialDaysDuration;
-    }
-
-    public void setTrialDaysDuration(int trialDaysDuration) {
-        this.trialDaysDuration = trialDaysDuration;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
-
-    public void setEmail(Email email) {
-        this.email = email;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getBase_url() {
-        return base_url;
-    }
-
-    public void setBase_url(String base_url) {
-        this.base_url = base_url;
-    }
-
-    public String getDefaultLanguage() {
-        return defaultLanguage;
-    }
-
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = defaultLanguage;
-    }
+	public void setLoggerEnabled(boolean loggerEnabled) {
+		loggerEnabledStatic = loggerEnabled;
+		this.loggerEnabled = loggerEnabled;
+	}
 }

@@ -1,24 +1,10 @@
 package com.ftec.modules;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ftec.exceptions.NotEnoughCreditsException;
-import com.ftec.utils.Logger;
-import com.ftec.resources.Resources;
-import com.ftec.resources.Stocks;
-import com.ftec.utils.RequestsHelper;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ArbitrageModule {
-    private final Resources resources;
+   /* private final Resources resources;
 
     private final double serviceFee = 0.25;
 
@@ -229,4 +215,5 @@ public class ArbitrageModule {
             return Objects.hash(pairName, stockToBuy, stockToSell);
         }
     }
+    */
 }

@@ -1,6 +1,6 @@
 package com.ftec.services;
 
-import com.ftec.resources.MailResources;
+import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.utils.Logger;
 import com.sendpulse.restapi.Sendpulse;
@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 @Service
 public class MailService {
     private final MessageSource messageSource;
-    private MailResources mailRes;
+    private Resources mailRes;
     private final Sendpulse sendpulse;
 
     @Autowired
-    public MailService(MessageSource messageSource, MailResources mailRes) {
+    public MailService(MessageSource messageSource, Resources mailRes) {
         this.messageSource = messageSource;
         this.mailRes = mailRes;
         sendpulse = new Sendpulse(mailRes.getUserid(), mailRes.getUserSecret());

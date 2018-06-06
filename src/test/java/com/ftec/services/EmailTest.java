@@ -1,7 +1,7 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.resources.MailResources;
+import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.services.MailService.Email_BotTradesUser;
 import com.ftec.services.MailService.Emails;
@@ -32,7 +32,7 @@ public class EmailTest {
     @Test
     public void sendEmails() throws AddressException, EmailException {
         List<String> users = new ArrayList<String>(){{
-            add(MailResources.sendToStatic);
+            add(Resources.sendToStatic);
         }};
         
         emailService.sendToMany(users, "Super subject", "Hello! You received this letter since you have been used the services of COINBOT trading modules.<br>" +
@@ -78,15 +78,15 @@ public class EmailTest {
     public void sendUniqueEmails() throws AddressException, EmailException {
         List<Email_BotTradesUser> users = new ArrayList<Email_BotTradesUser>(){{
 
-            add(new Email_BotTradesUser(MailResources.sendToStatic, true, new Locale("en"), "pair", "logs",Stocks.Binance));
+            add(new Email_BotTradesUser(Resources.sendToStatic, true, new Locale("en"), "pair", "logs",Stocks.Binance));
 
         }};
         emailService.sendEmail(users, Emails.AutomaticTradesStarted);
-        assertNotNull(MailResources.sendToStatic);
+        assertNotNull(Resources.sendToStatic);
     }
 
     @Test
     public void sendSimpleEmail() {
-        emailService.sendSimpleMessageWithText(MailResources.sendToStatic, "Test subject", "Test text");
+        emailService.sendSimpleMessageWithText(Resources.sendToStatic, "Test subject", "Test text");
     }
 }
