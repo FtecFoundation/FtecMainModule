@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -59,9 +60,11 @@ public class LoginController {
 	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException{
 		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(EMPTY_2FA_CODE_MESSAGE);
 	
-		if(this.environment.getActiveProfiles()[0].equals("test")) return;
+		for(String profile: this.environment.getActiveProfiles()){
+			if(profile.equals("test")) return;
+		}
 		
-		else throw new AuthorizationException("Test profile not selected!");
+		throw new NotImplementedException();
 
 	}
 }
