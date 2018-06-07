@@ -2,15 +2,14 @@ package com.ftec.services;
 
 import com.ftec.entities.Token;
 import com.ftec.exceptions.token.InvalidTokenException;
-import com.ftec.exceptions.token.NullTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.TokenDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
@@ -19,17 +18,19 @@ import java.util.Random;
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
     private final TokenDAO tokenDAO;
+    private final static int EXPIRATION_TIME = 86400000;
 
     @Autowired
     public TokenService(TokenDAO tokenDAO) {
         this.tokenDAO = tokenDAO;
     }
 
-    public static Long getUserIdFromToken(HttpServletRequest request) {
-        return getUserIdFromToken(getToken(request));
+    @Scheduled(cron = "0 0 12 * * ?") //TODO test it x3 how
+    public void deleteExpiredToken() {
+        tokenDAO.deleteAllExpiredToken();
     }
 
-    private static Long getUserIdFromToken(String token) throws InvalidTokenException {
+    public static Long getUserIdFromToken(String token) throws InvalidTokenException {
         checkTokenFormat(token);
         return Long.valueOf(extractUserID(token));
     }
@@ -51,26 +52,18 @@ public class TokenService {
         return token.substring(0, token.indexOf("_"));
     }
 
-    public static String getToken(HttpServletRequest request) throws NullTokenException {
-        String token = request.getHeader(TOKEN_NAME);
-
-        if(token == null) throw new NullTokenException("No token in the header!");
-
-        return token;
-    }
-
     public String createSaveAndGetNewToken(Long id) {
         String token = generateToken(id);
         Date expiration = new Date();
 
         setExpirationTime(expiration);
-        tokenDAO.save(new Token(token, expiration));
+        tokenDAO.save(new Token(token, expiration, id));
 
         return token;
     }
 
     private void setExpirationTime(Date expiration) {
-        expiration.setTime(expiration.getTime() + 1800000);
+        expiration.setTime(expiration.getTime() + EXPIRATION_TIME);
     }
 
     static String generateToken(Long id) {
@@ -92,7 +85,7 @@ public class TokenService {
     }
 
     public void verifyToken(String token) throws TokenException{
-        Token tokenEntity = getUserTokenFromRequest(token);
+        Token tokenEntity = getTokenFromDB(token);
 
         Date expirationTime = tokenEntity.getExpirationTime();
 
@@ -103,7 +96,7 @@ public class TokenService {
         if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
     }
 
-    private Token getUserTokenFromRequest(String token) throws TokenException{
+    private Token getTokenFromDB(String token) throws TokenException{
         Optional<Token> userToken = tokenDAO.findByToken(token);
 
         if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
@@ -119,7 +112,16 @@ public class TokenService {
         return tokenDAO.findByToken(token);
     }
 
-    public void deleteAll() {
-        tokenDAO.deleteAll();
+    @Transactional
+    public void deleteExcessiveToken(long id){
+        tokenDAO.deleteExcessiveToken(id);
+    }
+
+    @Transactional
+    public void updateExpirationDate(String token){
+        Date oneDay = new Date();
+        setExpirationTime(oneDay);
+
+        tokenDAO.updateExpirationDate(oneDay,token);
     }
 }

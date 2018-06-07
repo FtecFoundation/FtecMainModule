@@ -20,12 +20,12 @@ public class TutorialController {
 
 	@PostMapping("/cabinet/tutorial/nextStep")
 	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException, TutorialCompletedException {
-		return tutorialService.proceedToNextStep(TokenService.getUserIdFromToken(request));
+		return tutorialService.proceedToNextStep(TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 	}
 
 	@GetMapping("/cabinet/tutorial/getCurrentStep")
 	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
-		return tutorialService.getCurrentStep(TokenService.getUserIdFromToken(request));
+		return tutorialService.getCurrentStep(TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 	}
 
 }

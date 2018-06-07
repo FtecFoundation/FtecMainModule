@@ -2,6 +2,7 @@ package com.ftec.controllers;
 
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.TokenService;
 import com.ftec.utils.Logger;
 import com.google.common.io.Files;
@@ -33,13 +34,15 @@ public class AvatarController {
         this.userDAO = userDao;
     }
 
-    private static String UPLOADED_FOLDER = "C://Images//";
+    private static String UPLOADED_FOLDER = Resources.uploadPathStatic;
 
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
-        final File DEFAULT_IMAGE = new ClassPathResource("/static/images/0.jpg").getFile();
-        Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
+        final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
+        String token = request.getHeader(TokenService.TOKEN_NAME);
+        Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
+
 
         if (user.isPresent()) {
             long userFromDBId = user.get().getId();
@@ -64,7 +67,8 @@ public class AvatarController {
         }
 
         try {
-            Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(request));
+            String token = request.getHeader(TokenService.TOKEN_NAME);
+            Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
 
             if (user.isPresent()) {
                 long userFromDBId = user.get().getId();

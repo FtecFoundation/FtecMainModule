@@ -32,6 +32,9 @@ public class TutorialTest {
 
     @Test
     public void testRegisteredStep() {
+        Double b = new Double("7891233333333333333333333342148412");
+        System.out.println(b);
+        System.out.println("printed");
         User u = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(u);
         assertEquals(tutorialService.getCurrentStep(u.getId()),(TutorialSteps.FIRST));
@@ -52,5 +55,8 @@ public class TutorialTest {
         u.setCurrentStep(TutorialSteps.THIRD);
         registrationService.registerNewUserAccount(u);
         tutorialService.proceedToNextStep(u.getId());
+
+
+
     }
 }

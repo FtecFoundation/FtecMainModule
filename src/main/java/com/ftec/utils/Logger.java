@@ -11,7 +11,7 @@ public class Logger {
     public static void log(String message){
         String callerName = Thread.currentThread().getStackTrace()[1].getClassName();
         String messageCompleted = new Date()+"["+callerName+"]"+message;
-        if(!Resources.loggerEnabled){
+        if(!Resources.loggerEnabledStatic){
             System.out.println(messageCompleted);
             return;
         }
@@ -22,7 +22,7 @@ public class Logger {
         }
     }
     public static void logException(String location, Exception e, boolean printStackTrace){
-        if(!Resources.loggerEnabled){
+        if(!Resources.loggerEnabledStatic){
             e.printStackTrace();
             return;
         }

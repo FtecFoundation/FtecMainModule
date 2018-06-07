@@ -39,7 +39,8 @@ public class ChangeSettingController {
 		    return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
 		}
 		try {
-			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request));
+
+			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 		}catch (UserNotExistsException ex){
 			response.setStatus(400);
 			return MvcResponse.getMvcErrorResponse(400, "NoUserExists");
