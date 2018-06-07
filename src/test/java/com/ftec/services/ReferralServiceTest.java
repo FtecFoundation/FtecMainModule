@@ -8,6 +8,7 @@ import com.ftec.repositories.ReferralDAO;
 import com.ftec.services.interfaces.ReferralService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.UserService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,37 +43,39 @@ public class ReferralServiceTest {
 
     @Test
     public void assignReferralLevelOneTest() throws Exception {
-        long userId = 3;
+
+        long userId = 2;
         long referrerId = 1;
-        referralService.assignReferral(userId, referrerId); //Should be in level one 3, 1, 0
+        referralService.assignReferral(userId, referrerId); //Should be in level one 2, 1, 0
         assertEquals(referralService.getReferrerForUser(userId), referrerId);
     }
 
     @Test
     public void getReferrerForUserTest() throws Exception {
-        long userId = 4;
-        long referrerId = 2;
-        referralService.assignReferral(userId, referrerId); //Should be in level one 4, 2, 0
 
-        long referrerForUser = referralService.getReferrerForUser(referrerId); //Should be 0, because 2 has no referrer
+        long userId = 4;
+        long referrerId = 3;
+        referralService.assignReferral(userId, referrerId); //Should be in level one 4, 3, 0
+
+        long referrerForUser = referralService.getReferrerForUser(referrerId); //Should be 0, because 3 has no referrer
         assertEquals(referrerForUser, 0);
     }
 
     @Test
     public void getTotalBalanceTest() throws Exception {
 
-        long userId = 4;
-        long referrerId = 1;
+        long userId = 6;
+        long referrerId = 5;
         double balance1 = 1.1;
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId, referrerId, balance1));
 
-        long userId2 = 5;
-        long referrerId2 = 2;
+        long userId2 = 8;
+        long referrerId2 = 7;
         double balance2 = 2.2;
         referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId2, referrerId2, balance2));
 
-        long userId3 = 6;
-        long referrerId3 = 3;
+        long userId3 = 10;
+        long referrerId3 = 9;
         double balance3 = 3.3;
         referralDAO.saveReferralLevelThree(new ReferralLevelThree(userId3, referrerId3, balance3));
 
@@ -83,13 +86,13 @@ public class ReferralServiceTest {
     @Test
     public void getTotalBalanceForLevelOneTest() throws Exception {
 
-        long userId = 3;
-        long referrerId = 1;
+        long userId = 12;
+        long referrerId = 11;
         double balance1 = 111.1111;
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId, referrerId, balance1));
 
-        long userId2 = 4;
-        long referrerId2 = 2;
+        long userId2 = 14;
+        long referrerId2 = 13;
         double balance2 = 112.2222;
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId2, referrerId2, balance2));
 
@@ -100,13 +103,13 @@ public class ReferralServiceTest {
     @Test
     public void getTotalBalanceForLevelTwoTest() throws Exception {
 
-        long userId = 3;
-        long referrerId = 1;
+        long userId = 16;
+        long referrerId = 15;
         double balance1 = 1.1;
         referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId, referrerId, balance1));
 
-        long userId2 = 4;
-        long referrerId2 = 2;
+        long userId2 = 18;
+        long referrerId2 = 17;
         double balance2 = 2.2;
         referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId2, referrerId2, balance2));
 
@@ -116,13 +119,14 @@ public class ReferralServiceTest {
 
     @Test
     public void getTotalBalanceForLevelThreeTest() throws Exception {
-        long userId = 3;
-        long referrerId = 1;
+
+        long userId = 20;
+        long referrerId = 19;
         double balance1 = 1.1;
         referralDAO.saveReferralLevelThree(new ReferralLevelThree(userId, referrerId, balance1));
 
-        long userId2 = 4;
-        long referrerId2 = 2;
+        long userId2 = 22;
+        long referrerId2 = 21;
         double balance2 = 2.2;
         referralDAO.saveReferralLevelThree(new ReferralLevelThree(userId2, referrerId2, balance2));
 
@@ -132,16 +136,18 @@ public class ReferralServiceTest {
 
     @Test
     public void getTotalBalanceFromReferralsForUser() throws Exception {
-        long userId = 4;
-        long referrerId = 1;
+
+        long referrerId = 23;
+
+        long userId = 24;
         double balance1 = 1.1;
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId, referrerId, balance1));
 
-        long userId2 = 5;
+        long userId2 = 25;
         double balance2 = 2.2;
         referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId2, referrerId, balance2));
 
-        long userId3 = 6;
+        long userId3 = 26;
         double balance3 = 3.3;
         referralDAO.saveReferralLevelThree(new ReferralLevelThree(userId3, referrerId, balance3));
 

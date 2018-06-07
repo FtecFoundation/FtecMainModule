@@ -104,4 +104,12 @@ public class ReferralDAOImpl implements ReferralDAO {
             return 0.0;
         }
     }
+
+    @Override
+    public void deleteAll() {
+        String query = "DELETE FROM referral_level_one; " +
+                "DELETE FROM referral_level_two; " +
+                "DELETE FROM referral_level_three";
+        entityManager.createNativeQuery(query);
+    }
 }
