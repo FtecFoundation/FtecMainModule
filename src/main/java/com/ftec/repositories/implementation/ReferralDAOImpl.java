@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
 
 @Repository
 public class ReferralDAOImpl implements ReferralDAO {
@@ -43,17 +45,104 @@ public class ReferralDAOImpl implements ReferralDAO {
 
     @Override
     public long findReferrerForUser(long userId) {
-        String query = "SELECT referrerId FROM ReferralLevelOne WHERE userId = " + userId;
-        return entityManager.createQuery(query, Long.class).getSingleResult();
+        try {
+            String query = "SELECT referrer_id FROM referral_level_one WHERE user_id = " + userId;
+            return ((BigInteger) entityManager.createNativeQuery(query).getSingleResult()).longValue();
+        } catch (NoResultException e) {
+            return 0;
+        }
     }
 
     @Override
-    public double findTotalBalance(long user) {
-        String query = "SELECT SUM(balance) FROM (" +
-                "SELECT * FROM rreferral_level_one one " +
-                "UNION SELECT * FROM referral_level_two two " +
-                "UNION SELECT * FROM referral_level_three three " +
-                "WHERE user = " + user + ") AS totalBalance;";
-        return entityManager.createQuery(query, Double.class).getSingleResult();
+    public double findTotalBalanceForAllLevels() {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_one UNION SELECT * FROM referral_level_two UNION SELECT * FROM referral_level_three) AS totalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double findTotalBalanceForLevelOne() {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_one) AS totalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double findTotalBalanceForLevelTwo() {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_two) AS totalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double findTotalBalanceForLevelThree() {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_three) AS totalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public double findTotalBalanceFromReferralsForUser(long id) {
+        try {
+            String query = "SELECT SUM(balance) FROM (SELECT * FROM referral_level_one one WHERE one.referrer_id = " + id +
+                    " UNION SELECT * FROM referral_level_two two WHERE two.referrer_id =  " + id +
+                    " UNION SELECT * FROM referral_level_three three WHERE three.referrer_id = " + id + ") as TotalBalance";
+            return (double) entityManager.createNativeQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            return 0.0;
+        }
+    }
+
+    @Override
+    public ReferralLevelOne findReferralLevelOneForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_one WHERE user_id = " + id;
+            return (ReferralLevelOne) entityManager.createNativeQuery(query, ReferralLevelOne.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ReferralLevelTwo findReferralLevelTwoForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_two WHERE user_id = " + id;
+            return (ReferralLevelTwo) entityManager.createNativeQuery(query, ReferralLevelTwo.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ReferralLevelThree findReferralLevelThreeForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_three WHERE user_id = " + id;
+            return (ReferralLevelThree) entityManager.createNativeQuery(query, ReferralLevelThree.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteAll() {
+        String query1 = "DELETE FROM referral_level_one";
+        String query2 = "DELETE FROM referral_level_two";
+        String query3 = "DELETE FROM referral_level_three";
+        entityManager.createNativeQuery(query1).executeUpdate();
+        entityManager.createNativeQuery(query2).executeUpdate();
+        entityManager.createNativeQuery(query3).executeUpdate();
     }
 }

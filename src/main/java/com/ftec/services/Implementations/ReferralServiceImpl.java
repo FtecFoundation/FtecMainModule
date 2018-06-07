@@ -21,34 +21,6 @@ public class ReferralServiceImpl implements ReferralService {
 
     @Override
     @Transactional
-    public void saveReferralLevelOne(ReferralLevelOne referralLevelOne) {
-        referralDAO.saveReferralLevelOne(referralLevelOne);
-    }
-
-    @Override
-    @Transactional
-    public void saveReferralLevelTwo(ReferralLevelTwo referralLevelTwo) {
-        referralDAO.saveReferralLevelTwo(referralLevelTwo);
-    }
-
-    @Override
-    @Transactional
-    public void saveReferralLevelThree(ReferralLevelThree referralLevelThree) {
-        referralDAO.saveReferralLevelThree(referralLevelThree);
-    }
-
-    @Override
-    public long getReferrerForUser(long userId) {
-        return referralDAO.findReferrerForUser(userId);
-    }
-
-    @Override
-    public double getTotalBalance(long id) {
-        return referralDAO.findTotalBalance(id);
-    }
-
-    @Override
-    @Transactional
     public void assignReferral(long userId, long referrerId) {
         //1 Save userId in level one
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId, referrerId, 0));
@@ -58,7 +30,6 @@ public class ReferralServiceImpl implements ReferralService {
         if (referrerForReferrer != 0) {
             // 2.2 Save userId in level two
             referralDAO.saveReferralLevelTwo(new ReferralLevelTwo(userId, referrerForReferrer, 0));
-
             // 3 Check who invited invitedForInvitedId
             long referrerForReferrerForReferrer = referralDAO.findReferrerForUser(referrerForReferrer);
             if (referrerForReferrerForReferrer != 0) {
@@ -67,4 +38,36 @@ public class ReferralServiceImpl implements ReferralService {
             }
         }
     }
+
+    @Override
+    public long getReferrerForUser(long userId) {
+        return referralDAO.findReferrerForUser(userId);
+    }
+
+    @Override
+    public double getTotalBalanceForAllLevels() {
+        return referralDAO.findTotalBalanceForAllLevels();
+    }
+
+    @Override
+    public double getTotalBalanceForLevelOne() {
+        return referralDAO.findTotalBalanceForLevelOne();
+    }
+
+    @Override
+    public double getTotalBalanceForLevelTwo() {
+        return referralDAO.findTotalBalanceForLevelTwo();
+    }
+
+    @Override
+    public double getTotalBalanceForLevelThree() {
+        return referralDAO.findTotalBalanceForLevelThree();
+    }
+
+    @Override
+    public double getTotalBalanceFromReferralsForUser(long id) {
+        return referralDAO.findTotalBalanceFromReferralsForUser(id);
+    }
+
+
 }
