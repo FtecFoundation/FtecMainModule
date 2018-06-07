@@ -78,8 +78,8 @@ public class AvatarControllerTest {
 
         File file = new ClassPathResource("/images/0.jpg").getFile();
         byte[] bytesFromFile = Files.toByteArray(file);
-        JSONObject object = new JSONObject();
         String str = new String(bytesFromFile);
+        JSONObject object = new JSONObject();
         object.put("file", str);
 
         MockMultipartFile mockedFile = new MockMultipartFile("file", bytesFromFile);
