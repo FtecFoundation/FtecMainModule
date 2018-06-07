@@ -35,7 +35,7 @@ public class LoginController {
 			this.environment = environment;
 		}
 	
-	@PostMapping("/login")
+	@PostMapping(value = "/login", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response,
 									 @RequestParam("username") String username,
 									 @RequestParam("password") String password,
