@@ -100,7 +100,6 @@ public class AuthorizationTest {
 
 		payload.put("username",username);
 		payload.put("password",password);
-		
         MvcResult resultLogin = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString())).andExpect(status().is(200)).andReturn();
