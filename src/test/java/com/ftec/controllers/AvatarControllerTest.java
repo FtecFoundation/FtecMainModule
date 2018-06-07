@@ -7,6 +7,8 @@ import com.ftec.repositories.TokenDAO;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.google.common.io.Files;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +55,11 @@ public class AvatarControllerTest {
 
     @Test
     public void getImageTest() throws Exception {
+
+
+        //todo try to make defaultImage in MediaType.IMAGE_JPEG_VALUE
+        File defaultImage = new ClassPathResource("/images/0.jpg").getFile();
+        byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(defaultImage));
 
         User user = EntityGenerator.getNewUser();
 
