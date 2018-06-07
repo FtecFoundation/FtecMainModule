@@ -43,7 +43,7 @@ public class LoginController {
 		try {
 			Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
-				if(userOpt.get().getTwoStepVerification()) check2FaCode(userAuth.code);
+				if(userOpt.get().getTwoStepVerification()) check2FaCode(userAuth.code, userOpt.get());
 				return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 			} 
 			else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
@@ -56,7 +56,7 @@ public class LoginController {
 		
 	}
 
-	private void check2FaCode(String twoStepVerCode) throws AuthorizationException{
+	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException{
 		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(EMPTY_2FA_CODE_MESSAGE);
 	
 		for(String profile: this.environment.getActiveProfiles()){
