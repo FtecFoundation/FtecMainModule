@@ -106,10 +106,43 @@ public class ReferralDAOImpl implements ReferralDAO {
     }
 
     @Override
+    public ReferralLevelOne findReferralLevelOneForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_one WHERE user_id = " + id;
+            return (ReferralLevelOne) entityManager.createNativeQuery(query, ReferralLevelOne.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ReferralLevelTwo findReferralLevelTwoForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_two WHERE user_id = " + id;
+            return (ReferralLevelTwo) entityManager.createNativeQuery(query, ReferralLevelTwo.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public ReferralLevelThree findReferralLevelThreeForUser(long id) {
+        try {
+            String query = "SELECT * FROM referral_level_three WHERE user_id = " + id;
+            return (ReferralLevelThree) entityManager.createNativeQuery(query, ReferralLevelThree.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
     public void deleteAll() {
-        String query = "DELETE FROM referral_level_one; " +
-                "DELETE FROM referral_level_two; " +
-                "DELETE FROM referral_level_three";
-        entityManager.createNativeQuery(query);
+        String query1 = "DELETE FROM referral_level_one";
+        String query2 = "DELETE FROM referral_level_two";
+        String query3 = "DELETE FROM referral_level_three";
+        entityManager.createNativeQuery(query1).executeUpdate();
+        entityManager.createNativeQuery(query2).executeUpdate();
+        entityManager.createNativeQuery(query3).executeUpdate();
     }
 }
