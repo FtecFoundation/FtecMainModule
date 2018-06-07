@@ -6,6 +6,4 @@ public interface RestoreDataService {
      void sendRestorePassUrl(String identifier) throws Exception;
 
      void checkAndChange(String hash, String new_pass) throws RestoreException;
-
-     void deleteByHash(String hash);
 }

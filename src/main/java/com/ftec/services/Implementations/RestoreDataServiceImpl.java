@@ -40,6 +40,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         this.tokenDAO = tokenDAO;
     }
 
+    @Transactional
     @Override
     public void sendRestorePassUrl(String data) throws UserNotExistsException {
         if(userDAO.findByEmail(data).isPresent()){
@@ -76,6 +77,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         return new Date(new Date().getTime() + ULR_EXPIRED_TIME);
     }
 
+    @Transactional
     @Override
     public void checkAndChange(String hash, String new_pass) throws RestoreException {
         verifyHash(hash);
@@ -97,9 +99,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
             throw new RestoreException("Invalid hash!");
         }
     }
-    @Transactional
-    @Override
-    public void deleteByHash(String hash){
+    private void deleteByHash(String hash){
         restoreDataDAO.deleteByHash(hash);
     }
 }
