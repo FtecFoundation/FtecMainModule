@@ -1,6 +1,5 @@
 package com.ftec.resources;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,13 +29,6 @@ public class Resources {
 	private String uploadPath;
 
 	private boolean loggerEnabled;
-
-	public Test test = new Test(); //does'nt works with mail.test.testdata = test
-
-    @Data
-	public static class Test {
-		private String testdata;
-	}
 
 	public String getUserid() {
 		return userid;
@@ -81,14 +73,6 @@ public class Resources {
 	public void setEmulateEmail(boolean emulateEmail) {
     	emulatedEmail = emulateEmail;
 		this.emulateEmail = emulateEmail;
-	}
-
-	public Test getTest() {
-		return test;
-	}
-
-	public void setTest(Test test) {
-		this.test = test;
 	}
 
 	public void setUploadPath(String uploadPath) {
