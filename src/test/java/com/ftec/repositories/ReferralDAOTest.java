@@ -106,7 +106,7 @@ public class ReferralDAOTest {
     }
 
     @Test
-    public void findReferrerForReferrerTest() throws Exception {
+    public void findReferrerForUserTest() throws Exception {
         long userId1 = 16;
         long referrerId1 = 15;
         referralDAO.saveReferralLevelOne(new ReferralLevelOne(userId1, referrerId1, 21.21));
