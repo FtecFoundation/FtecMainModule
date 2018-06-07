@@ -2,6 +2,7 @@ package com.ftec.controllers;
 
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.TokenService;
 import com.ftec.utils.Logger;
 import com.google.common.io.Files;
@@ -33,7 +34,7 @@ public class AvatarController {
         this.userDAO = userDao;
     }
 
-    private static String UPLOADED_FOLDER = "C://Images//";
+    private static String UPLOADED_FOLDER = Resources.uploadPathStatic;
 
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
