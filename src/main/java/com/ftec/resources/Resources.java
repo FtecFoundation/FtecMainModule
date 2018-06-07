@@ -91,6 +91,10 @@ public class Resources {
 		this.test = test;
 	}
 
+	public String getUploadPath() {
+		return uploadPath;
+	}
+
 	public void setUploadPath(String uploadPath) {
     	uploadPathStatic = uploadPath;
 		this.uploadPath = uploadPath;
@@ -100,4 +104,6 @@ public class Resources {
 		loggerEnabledStatic = loggerEnabled;
 		this.loggerEnabled = loggerEnabled;
 	}
+
+
 }

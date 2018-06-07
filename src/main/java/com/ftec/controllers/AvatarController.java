@@ -34,12 +34,12 @@ public class AvatarController {
         this.userDAO = userDao;
     }
 
-    private static String UPLOADED_FOLDER = Resources.uploadPathStatic;
+    private static String UPLOADED_FOLDER;
+    private static File DEFAULT_IMAGE;
 
 
     @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
-        final File DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> user = userDAO.findById(TokenService.getUserIdFromToken(token));
 
@@ -47,11 +47,13 @@ public class AvatarController {
         if (user.isPresent()) {
             long userFromDBId = user.get().getId();
             String fileName = userFromDBId + ".jpg";
+            UPLOADED_FOLDER = Resources.uploadPathStatic;
             File file = new File(UPLOADED_FOLDER + fileName);
 
             if (file.exists()) {
                 return com.google.common.io.Files.toByteArray(file);
             } else {
+                DEFAULT_IMAGE = new ClassPathResource("/images/0.jpg").getFile();
                 return com.google.common.io.Files.toByteArray(DEFAULT_IMAGE);
             }
         } else {
@@ -82,6 +84,7 @@ public class AvatarController {
     }
 
     private void saveUploadedFiles(MultipartFile file, long userId) throws IOException {
+        UPLOADED_FOLDER = Resources.uploadPathStatic;
         String filename = String.valueOf(userId) + "." + FilenameUtils.getExtension(String.valueOf(file.getOriginalFilename()));
         byte[] bytes = file.getBytes();
         Path path = Paths.get(UPLOADED_FOLDER + filename);
