@@ -24,7 +24,7 @@ public class MailService {
     public MailService(MessageSource messageSource, Resources mailRes) {
         this.messageSource = messageSource;
         this.mailRes = mailRes;
-        sendpulse = new Sendpulse(mailRes.getUserid(), mailRes.getUserSecret());
+        sendpulse = new Sendpulse(mailRes.getUserId(), mailRes.getUserSecret());
     }
 
     public void sendEmail(List<? extends EmailUser> users, Emails emailType){
@@ -82,10 +82,10 @@ public class MailService {
     }
 
     public void sendToMany(List<String> emails, String subject, String text){
-
+        if(mailRes.isEmulateEmail()) return;
 
         String sendFromEmail = mailRes.getSendFrom();
-        String userId = mailRes.getUserid();
+        String userId = mailRes.getUserId();
         String userSecret = mailRes.getUserSecret();
 
         Sendpulse sendpulse = new Sendpulse(userId, userSecret);
@@ -364,6 +364,7 @@ public class MailService {
      * @param text letter message
      */
     public void sendSimpleMessageWithText(String to, String subject, String text) {
+        if(mailRes.isEmulateEmail()) return;
         try {
             Map<String, Object> emaildata = new HashMap<String, Object>();
 

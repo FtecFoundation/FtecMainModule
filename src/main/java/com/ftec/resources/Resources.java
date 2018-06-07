@@ -17,7 +17,7 @@ public class Resources {
 	public static boolean loggerEnabledStatic;
     public static String domainUrlStatic;
 
-    private String userid;
+    private String userId;
 
 	private String userSecret;
 
@@ -44,12 +44,12 @@ public class Resources {
     }
 
     public String getUserId() {
-		return userid;
+		return userId;
 	}
 
-	public void setUserid(String userid) {
-		UserIdStatic = userid;
-		this.userid = userid;
+	public void setUserId(String userId) {
+		UserIdStatic = userId;
+		this.userId = userId;
 	}
 
 	public String getUserSecret() {
