@@ -31,18 +31,18 @@ public class User {
 
     private TutorialSteps currentStep;
 
-    private boolean subscribeForNews;
+    private boolean subscribeForEmail;
 
     private String salt;
 
     private Boolean twoStepVerification;
 
-    public User(@NotNull @Size(min = 3) String username, @NotNull @Size(min = 4) String password, @NotNull String email, TutorialSteps currentStep, @NotNull boolean subscribeForNews, @NotNull Boolean twoStepVerification) {
+    public User(@NotNull @Size(min = 3) String username, @NotNull @Size(min = 4) String password, @NotNull String email, TutorialSteps currentStep, @NotNull boolean subscribeForEmail, @NotNull Boolean twoStepVerification) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.currentStep = currentStep;
-        this.subscribeForNews = subscribeForNews;
+        this.subscribeForEmail = subscribeForEmail;
         this.twoStepVerification = twoStepVerification;
     }
 
@@ -51,7 +51,7 @@ public class User {
         this.username = userRegistration.getUsername();
         this.password = userRegistration.getPassword();
         this.email = userRegistration.getEmail();
-        this.subscribeForNews = userRegistration.isSubscribeForNews();
+        this.subscribeForEmail = userRegistration.isSubscribeForEmail();
     }
 
     public User(){}
@@ -60,7 +60,7 @@ public class User {
         if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
         if(userUpdate.getPassword() != null) this.password = userUpdate.getPassword();
         if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
-        if(userUpdate.getSubscribeForNews() != null) this.subscribeForNews = userUpdate.getSubscribeForNews();
+        if(userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
 
     }
 

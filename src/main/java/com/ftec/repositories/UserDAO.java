@@ -26,7 +26,7 @@ public interface UserDAO extends JpaRepository<User, Long> {
     
     Optional<User> findByCurrentStep(TutorialSteps currentStep);
     
-    Optional<User> findBySubscribeForNews(boolean subscribeForNews);
+    Optional<User> findBySubscribeForEmail(boolean subscribeForNews);
 
     @Modifying
     @Query("update User u set u.currentStep=?2 where u.id=?1")
@@ -35,4 +35,13 @@ public interface UserDAO extends JpaRepository<User, Long> {
 
     @Query("select u.currentStep from User u where u.id=?1")
     TutorialSteps getTutorialStep(long userId);
+
+    @Query(value = "select id from user where username = ?1",nativeQuery = true)
+    long findIdByUsername(String username);
+
+    @Query(value = "select id from user where email = ?1",nativeQuery = true)
+    long findIdByEmail(String email);
+
+    @Query(value = "select email from user where username = ?1",nativeQuery = true)
+    String findEmailByUsername(String username);
 }

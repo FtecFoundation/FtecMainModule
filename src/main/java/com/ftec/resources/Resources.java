@@ -16,8 +16,9 @@ public class Resources {
 	public static boolean emulatedEmail;
 	public static String uploadPathStatic;
 	public static boolean loggerEnabledStatic;
+    public static String domainUrlStatic;
 
-	private String userid;
+    private String userid;
 
 	private String userSecret;
 
@@ -31,14 +32,19 @@ public class Resources {
 
 	private boolean loggerEnabled;
 
-	public Test test = new Test(); //does'nt works with mail.test.testdata = test
+	private String domainUrl;
 
-    @Data
-	public static class Test {
-		private String testdata;
-	}
+    public void setLoggerEnabled(boolean loggerEnabled) {
+        loggerEnabledStatic = loggerEnabled;
+        this.loggerEnabled = loggerEnabled;
+    }
 
-	public String getUserid() {
+    public void setDomainUrl(String domainUrl) {
+        domainUrlStatic = domainUrl;
+        this.domainUrl = domainUrl;
+    }
+
+    public String getUserid() {
 		return userid;
 	}
 
@@ -83,21 +89,9 @@ public class Resources {
 		this.emulateEmail = emulateEmail;
 	}
 
-	public Test getTest() {
-		return test;
-	}
-
-	public void setTest(Test test) {
-		this.test = test;
-	}
-
 	public void setUploadPath(String uploadPath) {
     	uploadPathStatic = uploadPath;
 		this.uploadPath = uploadPath;
 	}
 
-	public void setLoggerEnabled(boolean loggerEnabled) {
-		loggerEnabledStatic = loggerEnabled;
-		this.loggerEnabled = loggerEnabled;
-	}
 }

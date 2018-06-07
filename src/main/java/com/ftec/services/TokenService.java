@@ -5,6 +5,7 @@ import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.utils.RandomHashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -67,22 +68,10 @@ public class TokenService {
     }
 
     static String generateToken(Long id) {
-        return id.toString() + "_" + generateRandomString();
+        return id.toString() + "_" + RandomHashGenerator.generateRandomString();
     }
 
-    private static String generateRandomString() {
-        int leftLimit = 97;
-        int rightLimit = 122;
-        int targetStringLength = 18;
-        Random random = new Random();
-        StringBuilder buffer = new StringBuilder(targetStringLength);
-        for (int i = 0; i < targetStringLength; i++) {
-            int randomLimitedInt = leftLimit + (int)
-                    (random.nextFloat() * (rightLimit - leftLimit + 1));
-            buffer.append((char) randomLimitedInt);
-        }
-        return buffer.toString();
-    }
+
 
     public void verifyToken(String token) throws TokenException{
         Token tokenEntity = getTokenFromDB(token);

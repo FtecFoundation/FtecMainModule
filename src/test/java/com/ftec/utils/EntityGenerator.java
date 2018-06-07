@@ -27,7 +27,7 @@ public class EntityGenerator {
         num++;
         String password = "Strong_Password_";
         String username = "user_";
-        String email1 = "email_";
+        String email1 = "ad_";
         String email2 = "@gmail.com";
         long referrerId = 0;
         return new RegistrationController.UserRegistration(username + num,

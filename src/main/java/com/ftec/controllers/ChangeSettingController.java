@@ -1,18 +1,6 @@
 package com.ftec.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.ftec.constratints.Patterns;
 import com.ftec.constratints.UniqueEmail;
 import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.resources.models.MvcResponse;
@@ -20,7 +8,18 @@ import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.ChangeSettingsService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,7 +52,7 @@ public class ChangeSettingController {
 	@NoArgsConstructor
 	public static class UserUpdate {
 		//each field could be null
-		@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
+		@Pattern(regexp = Patterns.PASSWORD_PATTERN)
         @Size(max = 20)
 		private String password;
 
@@ -64,7 +63,7 @@ public class ChangeSettingController {
 
 		private Boolean twoFactorEnabled;
 
-		private Boolean subscribeForNews;
+		private Boolean subscribeForEmail;
 	}
 	
 }
