@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertNotNull;
-
-@ActiveProfiles("test")
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationConfig.class)
 public class EmailTest {
@@ -82,7 +80,6 @@ public class EmailTest {
 
         }};
         emailService.sendEmail(users, Emails.AutomaticTradesStarted);
-        assertNotNull(Resources.sendToStatic);
     }
 
     @Test

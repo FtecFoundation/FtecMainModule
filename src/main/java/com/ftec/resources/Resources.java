@@ -1,6 +1,5 @@
 package com.ftec.resources;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,7 +43,7 @@ public class Resources {
         this.domainUrl = domainUrl;
     }
 
-    public String getUserid() {
+    public String getUserId() {
 		return userid;
 	}
 
@@ -71,7 +70,7 @@ public class Resources {
     	this.sendFrom = sendFrom;
 	}
 
-	public String getSendTo() {
+	public String getSendTo(){
 		return sendTo;
 	}
 
