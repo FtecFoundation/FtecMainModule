@@ -1,15 +1,11 @@
 package com.ftec.services.interfaces;
 
-import com.ftec.exceptions.EmailNotExistException;
-import com.ftec.exceptions.UserNotExistsException;
-
-import java.io.IOException;
+import com.ftec.exceptions.RestoreException;
 
 public interface RestoreDataService {
-     void sendRestorePassUrlByUsername(String username) throws UserNotExistsException;
-     void sendRestorePassUrlByEmail(String email) throws EmailNotExistException;
+     void sendRestorePassUrl(String identifier) throws Exception;
 
-     void changePass(long userId, String restore_url, String new_pass) throws IOException;
+     void checkAndChange(String hash, String new_pass) throws RestoreException;
 
-     boolean isHashValid(String hash);
+     void deleteByHash(String hash);
 }

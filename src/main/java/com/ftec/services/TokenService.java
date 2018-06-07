@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
+//TODO add interface here and to email
 @Service
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
@@ -112,5 +112,9 @@ public class TokenService {
         setExpirationTime(oneDay);
 
         tokenDAO.updateExpirationDate(oneDay,token);
+    }
+    @Transactional
+    public void deleteByUserId(long id){
+        tokenDAO.deleteByUserId(id);
     }
 }

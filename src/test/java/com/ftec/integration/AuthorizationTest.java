@@ -143,6 +143,7 @@ public class AuthorizationTest {
                 .param("password", password)
                 .param("code","123sad"))
                 .andExpect(status().is(200));
+
 	}
 
 }

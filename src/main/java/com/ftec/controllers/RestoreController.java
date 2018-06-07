@@ -1,7 +1,11 @@
 package com.ftec.controllers;
 
+import com.ftec.exceptions.RestoreException;
+import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.repositories.RestoreDataDAO;
+import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.RestoreDataService;
+import com.ftec.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,36 +16,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RestoreController {
 
-    @Autowired
+    final
     RestoreDataService restoreDataService;
 
-    @Autowired
+    final
     RestoreDataDAO restoreDataDAO;
 
+    @Autowired
+    public RestoreController(RestoreDataService restoreDataService, RestoreDataDAO restoreDataDAO) {
+        this.restoreDataService = restoreDataService;
+        this.restoreDataDAO = restoreDataDAO;
+    }
+
     @PostMapping("/sendRestoreUrl")
-    public ResponseEntity<String> getRestoreUrlToEmail(@RequestParam(name = "username",required = false) String username,
-                                             @RequestParam(name = "email"   ,required = false) String email) {
-
-        if(username == null && email == null) return new ResponseEntity<>("Login and Email is empty!",HttpStatus.BAD_REQUEST);
-
+    public MvcResponse getRestoreUrlToEmail(@RequestParam(name = "data") String data) {
         try {
-            if (username != null) restoreDataService.sendRestorePassUrlByUsername(username);
-            if (email != null) restoreDataService.sendRestorePassUrlByEmail(email);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            restoreDataService.sendRestorePassUrl(data);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        catch (UserNotExistsException e){
+            return new MvcResponse(400, e.getMessage());
+        }
+        catch (Exception e) {
+            Logger.logException("while serving send restore url", e, true);
+            return new MvcResponse(400,"Unexpected error");
+        }
+        return new MvcResponse(200);
     }
 
     @PostMapping("/changePass")
-    public ResponseEntity<String> changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass) {
+    public MvcResponse changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass) {
         try {
-            if(!restoreDataService.isHashValid(hash)) return new ResponseEntity<>("Invalid hash!", HttpStatus.BAD_REQUEST);
-
-            restoreDataService.changePass(restoreDataDAO.findIdByHash(hash), hash, new_pass);
-        } catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            restoreDataService.checkAndChange(hash, new_pass);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        catch (RestoreException e){
+            return new MvcResponse(400, e.getMessage());
+        }
+        catch (Exception e){
+            Logger.logException("while serving send restore url", e, true);
+            return new MvcResponse(400,"Unexpected error");
+        }
+
+        return new MvcResponse(200);
     }
 }

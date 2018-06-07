@@ -58,7 +58,7 @@ public class RestorePassTest {
 
         mvc.perform(post("/sendRestoreUrl")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("email", u.getEmail()))
+                .param("data", u.getEmail()))
                 .andExpect(status().is(200));
 
         assertTrue(restoreDataDAO.findById(u.getId()).isPresent());

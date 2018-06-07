@@ -34,4 +34,7 @@ public interface TokenDAO extends CrudRepository<Token, String> {
     @Modifying
     @Query(value = "UPDATE Token t set t.expirationTime = ?1 where t.token = ?2")
     void updateExpirationDate(Date newDate, String token);
+
+    @Modifying
+    void deleteByUserId(long userId);
 }
