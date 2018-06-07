@@ -1,5 +1,6 @@
 package com.ftec.controllers;
 
+import com.ftec.constratints.Patterns;
 import com.ftec.constratints.UniqueEmail;
 import com.ftec.constratints.UniqueLogin;
 import com.ftec.entities.User;
@@ -73,7 +74,7 @@ public class RegistrationController {
 
         @NotNull
         @Size(max = 20)
-        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$")
+        @Pattern(regexp = Patterns.PASSWORD_PATTERN)
         private String password;
 
         @NotNull
@@ -81,7 +82,7 @@ public class RegistrationController {
         @Size(max = 20)
         private String email;
 
-        private boolean subscribeForNews;
+        private boolean subscribeForEmail;
 
         private long referrerId;
     }

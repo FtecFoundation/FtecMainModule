@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
-@ActiveProfiles("test")
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @SpringBootTest(classes = ApplicationConfig.class)
 @RunWith(SpringRunner.class)
 public class UniqueLoginConstraintTest {

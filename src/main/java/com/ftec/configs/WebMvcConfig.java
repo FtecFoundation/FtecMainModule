@@ -1,5 +1,6 @@
 package com.ftec.configs;
 
+import com.ftec.configs.middlewares.CORSMiddleware;
 import com.ftec.configs.middlewares.TokenSecurityMiddleware;
 import com.ftec.configs.middlewares.TutorialMiddleware;
 import com.ftec.services.TokenService;
@@ -23,5 +24,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/cabinet","/cabinet/**","/changeUserSetting","/logout");
 //        registry.addInterceptor(new BanMiddleware()).addPathPatterns("/","/*","/**").excludePathPatterns("/API/**","/API/*","/error/banned");
 		registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet","/cabinet/**").excludePathPatterns("/cabinet/tutorial","/cabinet/tutorial/*");
+		registry.addInterceptor(new CORSMiddleware()).addPathPatterns("/**");
 	}
 }
