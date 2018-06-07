@@ -1,5 +1,6 @@
 package com.ftec.controllers;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.repositories.UserDAO;
@@ -9,7 +10,7 @@ import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -37,14 +38,12 @@ public class LoginController {
 	
 	@PostMapping(value = "/login", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response,
-									 @RequestParam("username") String username,
-									 @RequestParam("password") String password,
-									 @RequestParam(value = "code", required = false, defaultValue = "") String twoStepVerCode) {
+									 @RequestBody UserAuth userAuth) {
 		
 		try {
-			Optional<User> userOpt = userDAO.findByUsername(username);	
-			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
-				if(userOpt.get().getTwoStepVerification()) check2FaCode(twoStepVerCode, userOpt.get());
+			Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
+			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
+				if(userOpt.get().getTwoStepVerification()) check2FaCode(userAuth.code, userOpt.get());
 				return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 			} 
 			else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
@@ -66,5 +65,39 @@ public class LoginController {
 		
 		throw new NotImplementedException();
 
+	}
+
+	private static class UserAuth{
+		private String username;
+		private String password;
+		@JsonProperty(defaultValue = "")
+		private String code;
+
+		public UserAuth() {
+		}
+
+		public String getUsername() {
+			return username;
+		}
+
+		public void setUsername(String username) {
+			this.username = username;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+		public void setPassword(String password) {
+			this.password = password;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
+		}
 	}
 }
