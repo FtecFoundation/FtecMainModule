@@ -44,4 +44,7 @@ public interface UserDAO extends JpaRepository<User, Long> {
 
     @Query(value = "select email from user where username = ?1",nativeQuery = true)
     String findEmailByUsername(String username);
+
+    @Query(value = "select username from user where email = ?1",nativeQuery = true)
+    String findUsernameByEmail(String email);
 }

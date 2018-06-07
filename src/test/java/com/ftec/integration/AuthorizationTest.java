@@ -142,6 +142,7 @@ public class AuthorizationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString()))
                 .andExpect(status().is(200));
+
 	}
 
 }
