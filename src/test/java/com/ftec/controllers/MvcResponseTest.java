@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.Assert.assertEquals;
 
 
-@ActiveProfiles("test")
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc

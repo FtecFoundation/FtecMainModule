@@ -2,10 +2,12 @@ package com.ftec.utils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 public class PasswordUtilsTest {
     @Test

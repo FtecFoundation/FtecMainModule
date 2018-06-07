@@ -21,16 +21,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.w3c.dom.UserDataHandler;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
@@ -89,19 +86,23 @@ public class AuthorizationTest {
 
 		assertEquals("ok", logoutResult);
 
+		JSONObject payload = new JSONObject();
+		payload.put("username",invalidLogin);
+		payload.put("password",invalidPassword);
+
 		String invalidCredentialsAnswer = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-				.param("username",invalidLogin)
-				.param("password", invalidPassword)).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
+				.content(payload.toString())).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
         JSONObject mvcResponseString = new JSONObject(invalidCredentialsAnswer);
 
         assertEquals(mvcResponseString.getInt("status"),403);
 
+		payload.put("username",username);
+		payload.put("password",password);
         MvcResult resultLogin = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("username", username)
-                .param("password", password)).andExpect(status().is(200)).andReturn();
+                .content(payload.toString())).andExpect(status().is(200)).andReturn();
 
         String tokenAfterLogin = new JSONObject(resultLogin.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
@@ -125,23 +126,21 @@ public class AuthorizationTest {
         //null 2fa
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("username", username)
-                .param("password", password)).andExpect(status().is(403));
+                .content(payload.toString())).andExpect(status().is(403));
 
+        payload.put("code","");
         //empty 2fa
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("username", username)
-                .param("password", password)
-                .param("code",""))
+                .content(payload.toString()))
                 .andExpect(status().is(403));
+
+		payload.put("code","123sad");
 
         //any 2fa (should works with profile test
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("username", username)
-                .param("password", password)
-                .param("code","123sad"))
+                .content(payload.toString()))
                 .andExpect(status().is(200));
 	}
 
