@@ -79,12 +79,11 @@ public class AvatarControllerTest {
 //        assertEquals(contentInBytesEncoded, encoded);
     }
 
-    @Test
+    /*@Test
     public void uploadFileTest() throws Exception {
+
         User user = EntityGenerator.getNewUser();
-
         userDAO.save(user);
-
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
         File defaultImage = new ClassPathResource("/images/0.jpg").getFile();
@@ -102,6 +101,6 @@ public class AvatarControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
+    }*/
 
 }
