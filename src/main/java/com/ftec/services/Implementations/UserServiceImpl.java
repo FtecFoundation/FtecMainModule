@@ -23,6 +23,11 @@ public class UserServiceImpl implements UserService {
         return userDAO.findById(id);
     }
 
+    @Override
+    public Optional<User> findById(Long id) {
+        return userDAO.findById(id);
+    }
+
 
     /**
      * @param username - users name
