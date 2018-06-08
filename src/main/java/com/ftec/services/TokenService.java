@@ -5,6 +5,7 @@ import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.utils.RandomHashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.Random;
 
+//TODO add interface here and to email
 @Service
 public class TokenService {
     public static final String TOKEN_NAME = "TOKEN-X-AUTH";
@@ -23,6 +24,14 @@ public class TokenService {
     @Autowired
     public TokenService(TokenDAO tokenDAO) {
         this.tokenDAO = tokenDAO;
+    }
+
+    public void processToken(String token)  throws TokenException{
+        verifyToken(token);
+        long userId = TokenService.getUserIdFromToken(token);
+        deleteExcessiveToken(userId);
+
+        updateExpirationDate(token);
     }
 
     @Scheduled(cron = "0 0 12 * * ?") //TODO test it x3 how
@@ -67,22 +76,10 @@ public class TokenService {
     }
 
     static String generateToken(Long id) {
-        return id.toString() + "_" + generateRandomString();
+        return id.toString() + "_" + RandomHashGenerator.generateRandomString();
     }
 
-    private static String generateRandomString() {
-        int leftLimit = 97;
-        int rightLimit = 122;
-        int targetStringLength = 18;
-        Random random = new Random();
-        StringBuilder buffer = new StringBuilder(targetStringLength);
-        for (int i = 0; i < targetStringLength; i++) {
-            int randomLimitedInt = leftLimit + (int)
-                    (random.nextFloat() * (rightLimit - leftLimit + 1));
-            buffer.append((char) randomLimitedInt);
-        }
-        return buffer.toString();
-    }
+
 
     public void verifyToken(String token) throws TokenException{
         Token tokenEntity = getTokenFromDB(token);
@@ -123,5 +120,9 @@ public class TokenService {
         setExpirationTime(oneDay);
 
         tokenDAO.updateExpirationDate(oneDay,token);
+    }
+    @Transactional
+    public void deleteByUserId(long id){
+        tokenDAO.deleteByUserId(id);
     }
 }

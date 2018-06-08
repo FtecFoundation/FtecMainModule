@@ -1,6 +1,5 @@
 package com.ftec.resources;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,8 +15,9 @@ public class Resources {
 	public static boolean emulatedEmail;
 	public static String uploadPathStatic;
 	public static boolean loggerEnabledStatic;
+	public static String domainUrlStatic;
 
-	private String userid;
+	private String userId;
 
 	private String userSecret;
 
@@ -31,20 +31,25 @@ public class Resources {
 
 	private boolean loggerEnabled;
 
-	public Test test = new Test(); //does'nt works with mail.test.testdata = test
+	private String domainUrl;
 
-    @Data
-	public static class Test {
-		private String testdata;
+	public void setLoggerEnabled(boolean loggerEnabled) {
+		loggerEnabledStatic = loggerEnabled;
+		this.loggerEnabled = loggerEnabled;
 	}
 
-	public String getUserid() {
-		return userid;
+	public void setDomainUrl(String domainUrl) {
+		domainUrlStatic = domainUrl;
+		this.domainUrl = domainUrl;
 	}
 
-	public void setUserid(String userid) {
-		UserIdStatic = userid;
-		this.userid = userid;
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		UserIdStatic = userId;
+		this.userId = userId;
 	}
 
 	public String getUserSecret() {
@@ -53,7 +58,7 @@ public class Resources {
 
 	public void setUserSecret(String userSecret) {
 		userSecretStatic = userSecret;
-    	this.userSecret = userSecret;
+		this.userSecret = userSecret;
 	}
 
 	public String getSendFrom() {
@@ -62,10 +67,10 @@ public class Resources {
 
 	public void setSendFrom(String sendFrom) {
 		sendFromStatic = sendFrom;
-    	this.sendFrom = sendFrom;
+		this.sendFrom = sendFrom;
 	}
 
-	public String getSendTo() {
+	public String getSendTo(){
 		return sendTo;
 	}
 
@@ -79,16 +84,8 @@ public class Resources {
 	}
 
 	public void setEmulateEmail(boolean emulateEmail) {
-    	emulatedEmail = emulateEmail;
+		emulatedEmail = emulateEmail;
 		this.emulateEmail = emulateEmail;
-	}
-
-	public Test getTest() {
-		return test;
-	}
-
-	public void setTest(Test test) {
-		this.test = test;
 	}
 
 	public String getUploadPath() {
@@ -96,14 +93,8 @@ public class Resources {
 	}
 
 	public void setUploadPath(String uploadPath) {
-    	uploadPathStatic = uploadPath;
+		uploadPathStatic = uploadPath;
 		this.uploadPath = uploadPath;
 	}
-
-	public void setLoggerEnabled(boolean loggerEnabled) {
-		loggerEnabledStatic = loggerEnabled;
-		this.loggerEnabled = loggerEnabled;
-	}
-
 
 }

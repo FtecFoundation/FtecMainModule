@@ -1,16 +1,14 @@
 package com.ftec.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.repositories.UserDAO;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +22,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
+@ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
@@ -53,7 +50,6 @@ public class LoginControllerTest {
     @Autowired
     RegistrationService registrationService;
 
-
     @Test
     public void authorization() throws Exception {
 
@@ -68,21 +64,27 @@ public class LoginControllerTest {
 
         assertEquals(userDAO.findByUsername(username).get().getEmail(), email);
 
+        JSONObject payload = new JSONObject();
+        payload.put("username", username);
+        payload.put("password", pass);
+
         mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .param("username", username)
-                .param("password", pass)).andExpect(status().is(200));
+                .content(payload.toString())).andExpect(status().is(200));
+
+        payload.put("password", "invalidPass");
 
         MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
-                .param("username", username)
-                .param("password", "invalidPass")
+                .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden()).andReturn();
 
+        payload.put("username", "invalidLog");
+        payload.put("password", pass);
+
         MvcResult mvcResult2 = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
-                .param("username", "invalidLog")
-                .param("password", pass)
+                .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden()).andReturn();
@@ -102,9 +104,12 @@ public class LoginControllerTest {
 
         registrationService.registerNewUserAccount(user);
 
+        JSONObject payload = new JSONObject();
+        payload.put("username", username);
+        payload.put("password", pass);
+
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
-                .param("username", username)
-                .param("password", pass)
+                .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isForbidden()).andReturn();
@@ -121,10 +126,13 @@ public class LoginControllerTest {
 
         registrationService.registerNewUserAccount(user);
 
+        JSONObject payload = new JSONObject();
+        payload.put("username", userName);
+        payload.put("password", pass);
+        payload.put("code", "with_test_pofile_its_ok");
+
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
-                .param("username", userName)
-                .param("password", pass)
-                .param("code", "with_test_pofile_its_ok")
+                .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print()).andExpect(status().isOk()).andReturn();

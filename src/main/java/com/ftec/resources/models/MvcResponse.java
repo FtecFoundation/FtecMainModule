@@ -29,6 +29,11 @@ public class MvcResponse {
         response.put(paramName, object);
     }
 
+    public MvcResponse(int status, String error){
+        this.status = status;
+        this.error = error;
+    }
+
     public MvcResponse(int status, Object... objects){
         this.status = status;
         response = new HashMap<>();
