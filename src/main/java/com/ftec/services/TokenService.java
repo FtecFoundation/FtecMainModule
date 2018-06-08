@@ -26,6 +26,14 @@ public class TokenService {
         this.tokenDAO = tokenDAO;
     }
 
+    public void processToken(String token)  throws TokenException{
+        verifyToken(token);
+        long userId = TokenService.getUserIdFromToken(token);
+        deleteExcessiveToken(userId);
+
+        updateExpirationDate(token);
+    }
+
     @Scheduled(cron = "0 0 12 * * ?") //TODO test it x3 how
     public void deleteExpiredToken() {
         tokenDAO.deleteAllExpiredToken();
