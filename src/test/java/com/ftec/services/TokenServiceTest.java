@@ -1,6 +1,5 @@
 package com.ftec.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ChangeSettingController;
@@ -9,8 +8,9 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.repositories.TokenDAO;
-import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
+import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
@@ -95,7 +96,7 @@ public class TokenServiceTest {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content( objectMapper.writeValueAsString(u)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
 
         String mvcResponse = mvcResult.getResponse().getContentAsString();
         String token = new JSONObject(mvcResponse).getJSONObject("response").getString("token");

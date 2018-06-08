@@ -1,8 +1,6 @@
 package com.ftec.controllers;
 
-import com.ftec.constratints.Patterns;
-import com.ftec.constratints.UniqueEmail;
-import com.ftec.constratints.UniqueLogin;
+import com.ftec.constratints.*;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
@@ -17,10 +15,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -36,7 +31,8 @@ public class RegistrationController {
     private final TokenService tokenService;
     private final RegistrationService registrationService;
     private final ReferralService referralService;
-
+    private final UniqueLoginValidator uniqueLoginValidator;
+    private final UniqueEmailValidator uniqueEmailValidator;
 
     @RequestMapping(path = "/registration", method = RequestMethod.POST)
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
@@ -61,6 +57,27 @@ public class RegistrationController {
             return MvcResponse.getMvcErrorResponse(403, "TokenNotCreated");
         }
     }
+
+    @GetMapping("/checkUniqueLogin")
+    public MvcResponse checkUniqueLogin(@RequestParam("login") String login, HttpServletResponse response){
+        if(!uniqueLoginValidator.isValid(login,null)){
+            response.setStatus(400);
+            return new MvcResponse(400);
+        }
+        System.out.println("valid");
+        return new MvcResponse(200);
+    }
+
+    @GetMapping("/checkUniqueEmail")
+    public MvcResponse checkUniqueEmail(@RequestParam("email") String email, HttpServletResponse response){
+        if(!uniqueEmailValidator.isValid(email,null)){
+            response.setStatus(400);
+            return new MvcResponse(400);
+        }
+
+        return new MvcResponse(200);
+    }
+
 
     @Data
     @AllArgsConstructor
@@ -88,9 +105,11 @@ public class RegistrationController {
     }
 
     @Autowired
-    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService) {
+    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService, UniqueLoginValidator uniqueLoginValidator, UniqueEmailValidator uniqueEmailValidator) {
         this.referralService = referralService;
         this.tokenService = tokenService;
         this.registrationService = registrationService;
+        this.uniqueLoginValidator = uniqueLoginValidator;
+        this.uniqueEmailValidator = uniqueEmailValidator;
     }
 }

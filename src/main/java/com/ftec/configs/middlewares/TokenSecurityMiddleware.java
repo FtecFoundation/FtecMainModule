@@ -28,16 +28,13 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 		String token = request.getHeader(TokenService.TOKEN_NAME);
 		try {
-			tokenService.verifyToken(token);
-			long userId = TokenService.getUserIdFromToken(token);
-			tokenService.deleteExcessiveToken(userId); //TODO refactoring
-
-			tokenService.updateExpirationDate(token);
-
+			tokenService.processToken(token);
 		} catch(TokenException ex) {
 			response.setStatus(403);
-			System.out.println(ex.getMessage());
 			if(isExpiredException(ex)) tokenService.deleteByToken(token);
+			return false;
+		} catch (Exception e){
+			System.out.println(e);//change to log mb
 			return false;
 		}
 		return true;

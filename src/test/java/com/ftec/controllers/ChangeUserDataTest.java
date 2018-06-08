@@ -6,6 +6,7 @@ import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.ChangeSettingsService;
 import com.ftec.services.interfaces.RegistrationService;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
@@ -105,7 +107,7 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-				.andDo(print()).andExpect(status().isBadRequest());
+				.andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
 
 		userUpdate.setEmail("validEmail@Gmail.com");
 
@@ -113,7 +115,7 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-				.andDo(print()).andExpect(status().isOk());
+				.andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
 		userUpdate.setPassword("invalidpass");
 		userUpdate.setEmail(null);
@@ -122,7 +124,7 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-				.andDo(print()).andExpect(status().isBadRequest());
+				.andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
 
 		userUpdate.setPassword("validPass1231");
 		userUpdate.setEmail(null);
@@ -131,7 +133,7 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-				.andDo(print()).andExpect(status().isOk());
+				.andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
 		userDAO.deleteAll();
 	}
@@ -156,7 +158,7 @@ public class ChangeUserDataTest {
 				.content( objectMapper.writeValueAsString(userUpdate)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.header(TokenService.TOKEN_NAME, token))
-				.andDo(print()).andExpect(status().isBadRequest());
+				.andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
 
 		userDAO.deleteAll();
 	}

@@ -82,8 +82,8 @@ public class RestoreDataServiceImpl implements RestoreDataService {
     public void checkAndChange(String hash, String new_pass) throws RestoreException {
         verifyHash(hash);
         changePass(restoreDataDAO.findIdByHash(hash), hash,new_pass);
-        deleteByHash(hash);
         tokenDAO.deleteByUserId(restoreDataDAO.findIdByHash(hash));
+        deleteByHash(hash);
     }
 
     private void changePass(long userId, String hash, String new_pass)  throws RestoreException {

@@ -1,13 +1,10 @@
 package com.ftec.services.Implementations;
 
 import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.UserService;
-import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,8 +19,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(long id) {
-        return userDAO.findById(id).get();
+    public Optional<User> getById(long id) {
+        return userDAO.findById(id);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userDAO.findById(id);
     }
 
 
