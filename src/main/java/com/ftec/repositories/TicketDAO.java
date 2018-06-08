@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TicketDAO extends CrudRepository<Ticket, Integer> {
+public interface TicketDAO extends CrudRepository<Ticket, Long> {
 
     List<Ticket> findAll();
 }
