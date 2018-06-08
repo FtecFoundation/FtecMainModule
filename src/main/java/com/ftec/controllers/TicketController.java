@@ -60,4 +60,11 @@ public class TicketController {
         this.commentService = commentService;
         this.userService = userService;
     }
+
+    @PostMapping("/setSupportedIdForToken")
+    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") String ticket_id, @RequestParam("supported_id") String supporter_id){
+
+
+        return new MvcResponse(200);
+    }
 }

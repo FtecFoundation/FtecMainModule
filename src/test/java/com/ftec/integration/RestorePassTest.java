@@ -51,7 +51,7 @@ public class RestorePassTest {
     @Test
     public void fullTest() throws Exception {
         User u = EntityGenerator.getNewUser();
-        u.setEmail(Resources.sendToStatic);
+        u.setEmail(Resources.sendToStatic != null ? Resources.sendToStatic : "ndmawjkdnawjk@gmail.com");
         registrationService.registerNewUserAccount(u);
 
         assertFalse(restoreDataDAO.findById(u.getId()).isPresent());

@@ -111,21 +111,23 @@ public class TicketTest {
 
     @Test
     public void createControllerTest() throws Exception {
-        Ticket t = EntityGenerator.getNewTicket();
+        Ticket ticket = EntityGenerator.getNewTicket();
 
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/createTicket")
-                .content(mapper.writeValueAsString(t))
+                .content(mapper.writeValueAsString(ticket))
                 .header(TokenService.TOKEN_NAME,token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
-        //ddd
-        System.out.println("test");
-        assertEquals(ticketService.findByUserId(user.getId()).get().getUserId(), user.getId());
+        assertEquals(ticket.getSubject(), ticketService.findByUserId(user.getId()).get().getSubject());
+
+        assertEquals(ticketService.findByUserId(user.getId()).get().getSupporter_id(), 0);
+
+
     }
 }
