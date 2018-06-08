@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -31,4 +32,9 @@ public class Ticket {
 
     @NotNull
     private TicketStatus status = TicketStatus.NEW;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ticket", cascade = CascadeType.ALL)
+    private List<Comment> commentList;
+
+    private Date creationDate;
 }
