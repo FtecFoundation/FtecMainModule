@@ -31,4 +31,5 @@ public class Comment {
 
     private Date creationDate;
 
+    private long userId;
 }
