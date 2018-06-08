@@ -70,7 +70,7 @@ public class Resources {
 		this.sendFrom = sendFrom;
 	}
 
-	public String getSendTo(){
+	public String getSendTo() {
 		return sendTo;
 	}
 
@@ -96,5 +96,4 @@ public class Resources {
 		uploadPathStatic = uploadPath;
 		this.uploadPath = uploadPath;
 	}
-
 }
