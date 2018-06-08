@@ -1,10 +1,11 @@
 package com.ftec.services.interfaces;
 
 import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
+
+import java.util.Optional;
 
 public interface UserService {
 
-    User getById(long id);
+    Optional<User> getById(long id);
 
 }
