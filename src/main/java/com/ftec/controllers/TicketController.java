@@ -42,22 +42,22 @@ public class TicketController {
         return MvcResponse.getMvcErrorResponse(400, "User not found");
     }
 
+    @PostMapping("/createTicket")
+    public MvcResponse addTicket(@RequestBody Ticket ticket, HttpServletRequest request) {
+        try {
+            ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
+        } catch (TicketException e) {
+            return new MvcResponse(200, e.getMessage());
+        } catch (Exception e) {
+            return new MvcResponse(200, "Unexpected error");
+        }
+        return new MvcResponse(200);
+    }
+
     @Autowired
     public TicketController(TicketService ticketService, CommentService commentService, UserService userService) {
         this.ticketService = ticketService;
         this.commentService = commentService;
         this.userService = userService;
-    }
-
-    @PostMapping("/createTicket")
-    public MvcResponse addTicket(@RequestBody Ticket ticket, HttpServletRequest request){
-        try {
-            ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
-        } catch (TicketException e){
-            return new MvcResponse(200,e.getMessage());
-        } catch (Exception e){
-            return new MvcResponse(200,"Unexpected error");
-        }
-        return new MvcResponse(200);
     }
 }
