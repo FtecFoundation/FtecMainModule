@@ -15,9 +15,9 @@ public class Resources {
 	public static boolean emulatedEmail;
 	public static String uploadPathStatic;
 	public static boolean loggerEnabledStatic;
-    public static String domainUrlStatic;
+	public static String domainUrlStatic;
 
-    private String userId;
+	private String userId;
 
 	private String userSecret;
 
@@ -33,17 +33,17 @@ public class Resources {
 
 	private String domainUrl;
 
-    public void setLoggerEnabled(boolean loggerEnabled) {
-        loggerEnabledStatic = loggerEnabled;
-        this.loggerEnabled = loggerEnabled;
-    }
+	public void setLoggerEnabled(boolean loggerEnabled) {
+		loggerEnabledStatic = loggerEnabled;
+		this.loggerEnabled = loggerEnabled;
+	}
 
-    public void setDomainUrl(String domainUrl) {
-        domainUrlStatic = domainUrl;
-        this.domainUrl = domainUrl;
-    }
+	public void setDomainUrl(String domainUrl) {
+		domainUrlStatic = domainUrl;
+		this.domainUrl = domainUrl;
+	}
 
-    public String getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
@@ -58,7 +58,7 @@ public class Resources {
 
 	public void setUserSecret(String userSecret) {
 		userSecretStatic = userSecret;
-    	this.userSecret = userSecret;
+		this.userSecret = userSecret;
 	}
 
 	public String getSendFrom() {
@@ -67,7 +67,7 @@ public class Resources {
 
 	public void setSendFrom(String sendFrom) {
 		sendFromStatic = sendFrom;
-    	this.sendFrom = sendFrom;
+		this.sendFrom = sendFrom;
 	}
 
 	public String getSendTo(){
@@ -84,12 +84,16 @@ public class Resources {
 	}
 
 	public void setEmulateEmail(boolean emulateEmail) {
-    	emulatedEmail = emulateEmail;
+		emulatedEmail = emulateEmail;
 		this.emulateEmail = emulateEmail;
 	}
 
+	public String getUploadPath() {
+		return uploadPath;
+	}
+
 	public void setUploadPath(String uploadPath) {
-    	uploadPathStatic = uploadPath;
+		uploadPathStatic = uploadPath;
 		this.uploadPath = uploadPath;
 	}
 

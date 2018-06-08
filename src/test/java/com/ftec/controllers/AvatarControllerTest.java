@@ -22,10 +22,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,23 +59,24 @@ public class AvatarControllerTest {
     @Test
     public void getImageTest() throws Exception {
 
-
         //todo try to make defaultImage in MediaType.IMAGE_JPEG_VALUE
         File defaultImage = new ClassPathResource("/images/0.jpg").getFile();
         byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(defaultImage));
 
         User user = EntityGenerator.getNewUser();
-
         userDAO.save(user);
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
-        mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/getImage")
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/getImage")
                 .header(TokenService.TOKEN_NAME, token)
-                .contentType(MediaType.ALL_VALUE)
+                .contentType(MediaType.IMAGE_JPEG_VALUE)
                 .accept(MediaType.ALL_VALUE))
-                .andDo(print()).andExpect(status().isOk());
+                .andDo(print()).andExpect(status().isOk()).andReturn();
 
+//        String content = mvcResult.getResponse().getContentAsString();
+//        byte[] contentInBytesEncoded = Base64.encodeBase64(content.getBytes());
+//        assertEquals(contentInBytesEncoded, encoded);
     }
 
     @Test
@@ -83,10 +87,10 @@ public class AvatarControllerTest {
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
-        File file = new ClassPathResource("/images/0.jpg").getFile();
-        byte[] bytesFromFile = Files.toByteArray(file);
-        JSONObject object = new JSONObject();
+        File defaultImage = new ClassPathResource("/images/0.jpg").getFile();
+        byte[] bytesFromFile = Files.toByteArray(defaultImage);
         String str = new String(bytesFromFile);
+        JSONObject object = new JSONObject();
         object.put("file", str);
 
         MockMultipartFile mockedFile = new MockMultipartFile("file", bytesFromFile);
