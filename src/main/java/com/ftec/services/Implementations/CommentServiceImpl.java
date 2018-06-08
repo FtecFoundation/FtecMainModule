@@ -28,11 +28,6 @@ public class CommentServiceImpl implements CommentService {
         commentDAO.saveCommentToTicket(ticketId, creationDate, message, userId);
     }
 
-    @Override
-    public void delete(Comment comment) {
-        commentDAO.delete(comment);
-    }
-
     private String formatFromJsonToString(String jsonMessage) {
         JSONObject object = new JSONObject(jsonMessage);
         return object.getString("comment");
