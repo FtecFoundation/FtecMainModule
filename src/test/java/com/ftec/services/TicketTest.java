@@ -90,9 +90,9 @@ public class TicketTest {
         JSONObject response = new JSONObject(content);
         JSONObject resp = (JSONObject) response.get("response");
         JSONArray j = resp.getJSONArray("java.util.ArrayList");
+
         JSONObject o = (JSONObject)j.get(1);
 
-        String subject = (String) o.get("subject");
 
         String val = o.toString();
         Ticket ticket = mapper.readValue(val, Ticket.class);
