@@ -16,6 +16,7 @@ public class Resources {
 	public static String uploadPathStatic;
 	public static boolean loggerEnabledStatic;
 	public static String domainUrlStatic;
+	public static boolean doPrintStatic;
 
 	private String userId;
 
@@ -32,6 +33,14 @@ public class Resources {
 	private boolean loggerEnabled;
 
 	private String domainUrl;
+
+	private boolean doPrint;
+
+	public void setDoPrint(boolean doPrint) {
+		doPrintStatic = doPrint;
+		this.doPrint = doPrint;
+	}
+
 
 	public void setLoggerEnabled(boolean loggerEnabled) {
 		loggerEnabledStatic = loggerEnabled;

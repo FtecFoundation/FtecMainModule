@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
-import com.ftec.resources.enums.TicketCategory;
-import com.ftec.resources.enums.TicketStatus;
+import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.utils.EntityGenerator;
@@ -21,14 +20,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,7 +67,6 @@ public class TicketTest {
 
 
     }
-
     @Test
     public void getAllTickets() throws Exception {
         ticketService.deleteAll();
@@ -85,11 +82,12 @@ public class TicketTest {
         subjects.add(t.getSubject());
         subjects.add(t2.getSubject());
 
+        boolean tr = true;
 
         MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/support/getAllTickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+                .andDo(Resources.doPrintStatic ? Resources.doPrintStatic ? print() : (ResultHandler) result -> {} : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
 
         String content = mvcResult1.getResponse().getContentAsString();
 
@@ -124,7 +122,7 @@ public class TicketTest {
                 .header(TokenService.TOKEN_NAME,token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
         //ddd
         System.out.println("test");

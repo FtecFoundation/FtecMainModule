@@ -3,11 +3,11 @@ package com.ftec.constratints;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
+import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,7 +40,7 @@ public class ConstraintsController {
         mvc.perform(MockMvcRequestBuilders.get("/checkUniqueLogin?login=" + log)
                 .contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(200));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
 
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
@@ -48,7 +49,7 @@ public class ConstraintsController {
         mvc.perform(MockMvcRequestBuilders.get("/checkUniqueLogin?login=" + user.getUsername())
                 .contentType(MediaType.APPLICATION_JSON).
                         accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(400));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(400));
     }
 
     @Test
@@ -58,7 +59,7 @@ public class ConstraintsController {
         mvc.perform(MockMvcRequestBuilders.get("/checkUniqueEmail?email=" + email)
                 .contentType(MediaType.APPLICATION_JSON).
                         accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(200));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
 
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
@@ -66,6 +67,6 @@ public class ConstraintsController {
         mvc.perform(MockMvcRequestBuilders.get("/checkUniqueEmail?email=" + user.getEmail())
                 .contentType(MediaType.APPLICATION_JSON).
                         accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(400));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(400));
     }
 }

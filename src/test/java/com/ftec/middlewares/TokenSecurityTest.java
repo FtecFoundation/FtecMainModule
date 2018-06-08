@@ -1,10 +1,12 @@
 
 package com.ftec.middlewares;
+
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Token;
 import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
@@ -53,7 +56,7 @@ public class TokenSecurityTest {
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
         tokenDAO.deleteByToken(token);
         assertFalse(tokenDAO.findByToken(token).isPresent());
@@ -65,7 +68,7 @@ public class TokenSecurityTest {
                 .header(TokenService.TOKEN_NAME, "123_UNVALIDTOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isForbidden());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden());
     }
 
     @Test
@@ -86,7 +89,7 @@ public class TokenSecurityTest {
                 .header(TokenService.TOKEN_NAME, id+"_"+"wdawdawdafa")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
         Token expiredToken = new Token();
         expiredToken.setToken(id+"_dwankdwakj");
@@ -99,7 +102,7 @@ public class TokenSecurityTest {
                 .header(TokenService.TOKEN_NAME, id+"_"+"dwankdwakj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isForbidden());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden());
     }
 
 }

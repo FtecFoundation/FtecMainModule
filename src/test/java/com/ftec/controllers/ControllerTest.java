@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.assertFalse;
@@ -46,7 +48,7 @@ public class ControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("/registration").
                 content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(200));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
 
         assertTrue(userDAO.findByUsername(userRegistration.getUsername()).isPresent());
     }
@@ -59,13 +61,13 @@ public class ControllerTest {
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().is(200));
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
 
         //should be status BadRequest
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
                 content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
                 accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isBadRequest());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
 
         assertTrue(userService.isDuplicateUserName(userName));
     }

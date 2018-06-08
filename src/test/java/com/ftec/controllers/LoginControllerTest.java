@@ -4,6 +4,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
 import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.Implementations.UserServiceImpl;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
@@ -19,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.Assert.assertEquals;
@@ -78,7 +80,7 @@ public class LoginControllerTest {
                 .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isForbidden()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
         payload.put("username", "invalidLog");
         payload.put("password", pass);
@@ -87,7 +89,7 @@ public class LoginControllerTest {
                 .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isForbidden()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
         assertEquals(new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("error"), LoginController.INVALID_USERNAME_OR_PASSWORD);
 
@@ -112,7 +114,7 @@ public class LoginControllerTest {
                 .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isForbidden()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
         assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), LoginController.EMPTY_2FA_CODE_MESSAGE);
     }
@@ -135,7 +137,7 @@ public class LoginControllerTest {
                 .content(payload.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
 
 
     }

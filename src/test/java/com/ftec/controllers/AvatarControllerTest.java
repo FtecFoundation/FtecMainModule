@@ -2,8 +2,9 @@ package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
-import com.ftec.repositories.UserDAO;
 import com.ftec.repositories.TokenDAO;
+import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.services.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.google.common.io.Files;
@@ -23,12 +24,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,7 +72,7 @@ public class AvatarControllerTest {
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.IMAGE_JPEG_VALUE)
                 .accept(MediaType.ALL_VALUE))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
 
 //        String content = mvcResult.getResponse().getContentAsString();
 //        byte[] contentInBytesEncoded = Base64.encodeBase64(content.getBytes());
