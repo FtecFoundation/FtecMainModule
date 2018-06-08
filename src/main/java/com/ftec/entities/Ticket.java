@@ -1,9 +1,11 @@
 package com.ftec.entities;
 
+import com.ftec.resources.enums.TicketCategory;
 import com.ftec.resources.enums.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
+@ToString
 public class Ticket {
 
     @Id
@@ -41,4 +44,6 @@ public class Ticket {
     private Date creationDate;
 
     private long supporter_id;
+
+    private TicketCategory category;
 }

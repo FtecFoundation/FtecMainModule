@@ -2,6 +2,7 @@ package com.ftec.controllers;
 
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.exceptions.TicketException;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.CommentService;
@@ -46,5 +47,17 @@ public class TicketController {
         this.ticketService = ticketService;
         this.commentService = commentService;
         this.userService = userService;
+    }
+
+    @PostMapping("/createTicket")
+    public MvcResponse addTicket(@RequestBody Ticket ticket, HttpServletRequest request){
+        try {
+            ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
+        } catch (TicketException e){
+            return new MvcResponse(200,e.getMessage());
+        } catch (Exception e){
+            return new MvcResponse(200,"Unexpected error");
+        }
+        return new MvcResponse(200);
     }
 }

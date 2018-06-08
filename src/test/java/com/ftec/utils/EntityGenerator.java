@@ -1,10 +1,14 @@
 package com.ftec.utils;
 
 import com.ftec.controllers.RegistrationController;
+import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.resources.enums.TicketCategory;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.services.Implementations.RegistrationServiceImpl;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Date;
 import java.util.Random;
 
 @ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
@@ -32,5 +36,17 @@ public class EntityGenerator {
         long referrerId = 0;
         return new RegistrationController.UserRegistration(username + num,
                 password + num, email1 + num + email2, new Random().nextBoolean(), referrerId);
+    }
+
+    public static Ticket getNewTicket(){
+
+        Ticket t = new Ticket();
+        t.setCategory(TicketCategory.Registration);
+        t.setSubject("Subject_"+num);
+        t.setStatus(TicketStatus.NEW);
+        t.setCreationDate(new Date());
+        t.setMessage("Message_"+num);
+        num++;
+        return  t;
     }
 }
