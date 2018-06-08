@@ -19,7 +19,9 @@ public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private long id;
+
+    private long userId;
 
     @NotNull
     @Size(max = 100)
@@ -31,4 +33,7 @@ public class Ticket {
 
     @NotNull
     private TicketStatus status = TicketStatus.NEW;
+
+    private long supporter_id;
+
 }

@@ -3,6 +3,7 @@ package com.ftec.entities;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
+import com.ftec.resources.enums.UserRole;
 import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,8 @@ public class User {
 
     private Boolean twoStepVerification;
 
+    private UserRole userRole;
+
     public User(@NotNull @Size(min = 3) String username, @NotNull @Size(min = 4) String password, @NotNull String email, TutorialSteps currentStep, @NotNull boolean subscribeForEmail, @NotNull Boolean twoStepVerification) {
         this.username = username;
         this.password = password;
@@ -68,6 +71,7 @@ public class User {
         this.currentStep = TutorialSteps.FIRST;
         this.twoStepVerification = false;
         this.salt = PasswordUtils.getSalt(10);
+        this.userRole = UserRole.USER;
     }
 
 
