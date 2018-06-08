@@ -45,13 +45,13 @@ public class TicketController {
     @PostMapping("/createTicket")
     public MvcResponse addTicket(@RequestBody Ticket ticket, HttpServletRequest request) {
         try {
-            ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
+            Long ticket_id = ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
+            return new MvcResponse(200, "ticket_id", ticket_id);
         } catch (TicketException e) {
             return new MvcResponse(200, e.getMessage());
         } catch (Exception e) {
             return new MvcResponse(200, "Unexpected error");
         }
-        return new MvcResponse(200);
     }
 
     @Autowired
@@ -62,9 +62,9 @@ public class TicketController {
     }
 
     @PostMapping("/setSupportedIdForToken")
-    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") String ticket_id, @RequestParam("supported_id") String supporter_id){
-
-
+    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id){
+        //should I do any check?
+        ticketService.setTicketSupport(ticket_id, supporter_id);
         return new MvcResponse(200);
     }
 }
