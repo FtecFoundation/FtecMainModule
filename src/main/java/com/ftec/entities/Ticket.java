@@ -18,6 +18,8 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    @NotNull
+    @Size(max = 100)
     private String subject;
 
     @NotNull
