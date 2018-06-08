@@ -26,7 +26,7 @@ public class TicketController {
     @GetMapping("support/getAllTickets")
     public MvcResponse getAllTickets() {
         List<Ticket> allTicketsFromDB = ticketService.getAll();
-        return new MvcResponse(200, allTicketsFromDB);
+        return new MvcResponse(200, "Tickets", allTicketsFromDB);
     }
 
     @PostMapping("support/addComment/{ticketId}")

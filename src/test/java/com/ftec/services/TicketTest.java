@@ -23,6 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -51,10 +54,7 @@ public class TicketTest {
 
     @Test
     public void ticketSetSupporterId(){
-        Ticket t = new Ticket();
-        t.setMessage("Message");
-        t.setStatus(TicketStatus.NEW);
-        t.setSubject("subject");
+        Ticket t = EntityGenerator.getNewTicket();
 
         ticketService.save(t);
 
@@ -80,6 +80,12 @@ public class TicketTest {
         Ticket t2 = EntityGenerator.getNewTicket();
         ticketService.save(t2);
 
+
+        List<String> subjects = new ArrayList<>();
+        subjects.add(t.getSubject());
+        subjects.add(t2.getSubject());
+
+
         MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/support/getAllTickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -89,15 +95,20 @@ public class TicketTest {
 
         JSONObject response = new JSONObject(content);
         JSONObject resp = (JSONObject) response.get("response");
-        JSONArray j = resp.getJSONArray("java.util.ArrayList");
-        JSONObject o = (JSONObject)j.get(1);
+        JSONArray j = resp.getJSONArray("Tickets");
 
-        String subject = (String) o.get("subject");
+        int corresponding = 2;
+        int correspond = 0;
 
-        String val = o.toString();
-        Ticket ticket = mapper.readValue(val, Ticket.class);
+        for(int i = 0; i < j.length(); i++){
+            String val = j.get(i).toString();
+            Ticket ticket = mapper.readValue(val, Ticket.class);
+            if(subjects.contains(ticket.getSubject()))correspond++;
+        }
 
-        assertEquals(t2.getSubject(), ticket.getSubject());
+
+        assertEquals(correspond,corresponding);
+
     }
 
     @Test

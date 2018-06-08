@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = UniqueLoginValidator.class)
-@Target( { ElementType.FIELD })
+@Target( { ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueLogin {
     String message() default "Unique login constraint fails";
