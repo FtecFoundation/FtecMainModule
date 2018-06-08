@@ -33,6 +33,9 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 			response.setStatus(403);
 			if(isExpiredException(ex)) tokenService.deleteByToken(token);
 			return false;
+		} catch (Exception e){
+			System.out.println(e);//change to log mb
+			return false;
 		}
 		return true;
 	}
