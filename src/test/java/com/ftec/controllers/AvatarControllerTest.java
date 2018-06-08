@@ -59,7 +59,7 @@ public class AvatarControllerTest {
     @Test
     public void getImageTest() throws Exception {
 
-        //todo try to make defaultImage in MediaType.IMAGE_JPEG_VALUE
+        // try to make defaultImage in MediaType.IMAGE_JPEG_VALUE
         File defaultImage = new ClassPathResource("/images/0.jpg").getFile();
         byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(defaultImage));
 
