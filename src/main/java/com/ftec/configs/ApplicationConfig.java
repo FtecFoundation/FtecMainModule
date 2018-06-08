@@ -1,5 +1,8 @@
 package com.ftec.configs;
 
+import com.ftec.entities.Ticket;
+import com.ftec.repositories.TicketDAO;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -22,7 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ApplicationConfig extends SpringBootServletInitializer implements  CommandLineRunner{
     @Autowired
-    TokenService tokenService;//TODO delete
+    TicketDAO ticketDAO;//TODO delete
 
 
     //Also added configuration for tomcat starting
@@ -57,5 +60,6 @@ public class ApplicationConfig extends SpringBootServletInitializer implements  
 
     @Override
     public void run(String... args) throws Exception {
+
     }
 }
