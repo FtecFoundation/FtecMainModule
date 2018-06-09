@@ -2,11 +2,10 @@ package com.ftec.integration;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
-import com.ftec.repositories.RestoreDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
-import com.ftec.services.Implementations.RestoreDataServiceImpl;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.RestoreDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.ftec.utils.PasswordUtils;
@@ -31,10 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RestorePassTest {
 
     @Autowired
-    RestoreDataDAO restoreDataDAO;
-
-    @Autowired
-    RestoreDataServiceImpl restoreDataService;
+    RestoreDataService restoreDataService;
 
     @Autowired
     RegistrationService registrationService;
@@ -54,17 +50,17 @@ public class RestorePassTest {
         u.setEmail(Resources.sendToStatic != null ? Resources.sendToStatic : "ndmawjkdnawjk@gmail.com");
         registrationService.registerNewUserAccount(u);
 
-        assertFalse(restoreDataDAO.findById(u.getId()).isPresent());
+        assertFalse(restoreDataService.findById(u.getId()).isPresent());
 
         mvc.perform(post("/sendRestoreUrl")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", u.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(restoreDataDAO.findById(u.getId()).isPresent());
+        assertTrue(restoreDataService.findById(u.getId()).isPresent());
 
         String old_pass = u.getPassword();
-        String hash = restoreDataDAO.findById(u.getId()).get().getHash();
+        String hash = restoreDataService.findById(u.getId()).get().getHash();
 
         String new_clean_pass = "newStrongPass123";
         mvc.perform(post("/changePass")

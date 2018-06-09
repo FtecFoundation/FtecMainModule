@@ -27,7 +27,7 @@ public class ChangeSettingsServiceImpl implements ChangeSettingsService {
             throw new UserNotExistsException();
         }
         User u = userFromDB.get();
-        u.apllyChangeSettings(userUpdate);
+        u.applyChangeSettings(userUpdate);
         userDAO.save(u);
     }
 }

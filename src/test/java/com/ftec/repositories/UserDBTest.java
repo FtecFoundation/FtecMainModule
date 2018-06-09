@@ -1,8 +1,8 @@
 package com.ftec.repositories;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)

@@ -1,12 +1,13 @@
 package com.ftec.repositories;
 
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.entities.User;
+import com.ftec.resources.enums.TutorialSteps;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Repository
@@ -17,7 +18,7 @@ public interface UserDAO extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String Username);
     
     Optional<User> findByEmail(String email);
-    
+
     void deleteByEmail(String email);
     
     void deleteById(Long id);
@@ -47,4 +48,10 @@ public interface UserDAO extends JpaRepository<User, Long> {
 
     @Query(value = "select username from user where email = ?1",nativeQuery = true)
     String findUsernameByEmail(String email);
+
+    @Query(value = "select locale from user where email = ?1",nativeQuery = true)
+    Locale findLocaleByEmail(String email);
+
+
+
 }

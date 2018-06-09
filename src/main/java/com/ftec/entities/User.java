@@ -1,8 +1,8 @@
 package com.ftec.entities;
 
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
+import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.resources.enums.UserRole;
 import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Locale;
 
 @Data
 @AllArgsConstructor
@@ -42,6 +43,10 @@ public class User {
 
     private boolean banned;
 
+    private Locale locale;
+
+    public User(){}
+
     public User(@NotNull @Size(min = 3) String username, @NotNull @Size(min = 4) String password, @NotNull String email, TutorialSteps currentStep, @NotNull boolean subscribeForEmail, @NotNull Boolean twoStepVerification) {
         this.username = username;
         this.password = password;
@@ -59,9 +64,7 @@ public class User {
         this.subscribeForEmail = userRegistration.isSubscribeForEmail();
     }
 
-    public User(){}
-
-    public void apllyChangeSettings(UserUpdate userUpdate) {
+    public void applyChangeSettings(UserUpdate userUpdate) {
         if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
         if(userUpdate.getPassword() != null) this.password = userUpdate.getPassword();
         if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
@@ -75,6 +78,7 @@ public class User {
         this.salt = PasswordUtils.getSalt(10);
         this.userRole = UserRole.USER;
         this.banned = false;
+        if(locale == null) locale = new Locale("en");
     }
 
 

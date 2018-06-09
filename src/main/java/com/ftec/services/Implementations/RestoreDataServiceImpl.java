@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class RestoreDataServiceImpl implements RestoreDataService {
@@ -53,10 +54,11 @@ public class RestoreDataServiceImpl implements RestoreDataService {
     }
 
     private void sendRestoreUrl(String hash, String email) {
-        //TODO add locale
+        Locale locale = userDAO.findLocaleByEmail(email); // this way or not?
+
         ArrayList<MailService.Email_Link> list = new ArrayList<MailService.Email_Link>() ;
 
-        list.add(new MailService.Email_Link(email, true, new Locale("en"), RESTORE_URL + hash, "link", userDAO.findUsernameByEmail(email)));
+        list.add(new MailService.Email_Link(email, true, locale, RESTORE_URL + hash, "link", userDAO.findUsernameByEmail(email)));
         mailService.sendEmail(list, MailService.Emails.ForgotPassword);
         }
 
@@ -84,6 +86,11 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         deleteByHash(hash);
     }
 
+    @Override
+    public Optional<RestoreData> findById(long id) {
+        return restoreDataDAO.findById(id);
+    }
+
     private void changePass(long userId, String hash, String new_pass)  throws RestoreException {
         Patterns.validatePass(new_pass);
         User user = userDAO.findById(userId).get();
@@ -97,6 +104,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
             throw new RestoreException("Invalid hash!");
         }
     }
+
     private void deleteByHash(String hash){
         restoreDataDAO.deleteByHash(hash);
     }

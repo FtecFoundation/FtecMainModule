@@ -25,6 +25,7 @@ public class TokenServiceImpl implements TokenService {
         this.tokenDAO = tokenDAO;
     }
 
+    @Transactional
     public void processToken(String token)  throws TokenException{
         verifyToken(token);
         long userId = TokenService.getUserIdFromToken(token);
