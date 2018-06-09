@@ -1,8 +1,8 @@
 package com.ftec.controllers;
 
-import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.exceptions.TutorialCompletedException;
-import com.ftec.services.TokenService;
+import com.ftec.resources.enums.TutorialSteps;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.services.interfaces.TutorialService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -2,15 +2,12 @@ package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
-import com.google.common.io.Files;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,9 +38,6 @@ public class AvatarControllerTest {
     MockMvc mvc;
 
     @Autowired
-    TokenDAO tokenDAO;
-
-    @Autowired
     TokenService tokenService;
 
     @Autowired
@@ -53,7 +46,7 @@ public class AvatarControllerTest {
     @Before
     public void setUp() {
         userDAO.deleteAll();
-        tokenDAO.deleteAll();
+        tokenService.deleteAll();
     }
 
     @Test

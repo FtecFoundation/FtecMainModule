@@ -1,4 +1,4 @@
-package com.sendpulse.restapi;
+package com.ftec.utils.local_sendpulse.restapi;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.ailis.pherialize.Pherialize;
+import com.ftec.utils.local_sendpulse.restapi.pherialize.Pherialize;
 public class Sendpulse implements SendpulseInterface{
 	 private String apiUrl = "https://api.sendpulse.com";
      private String userId = null;

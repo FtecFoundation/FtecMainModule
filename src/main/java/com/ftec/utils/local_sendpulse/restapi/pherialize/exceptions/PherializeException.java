@@ -21,7 +21,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.ailis.pherialize.exceptions;
+package com.ftec.utils.local_sendpulse.restapi.pherialize.exceptions;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.sendpulse.restapi;
+package com.ftec.utils.local_sendpulse.restapi;
 
 import java.util.Map;
 

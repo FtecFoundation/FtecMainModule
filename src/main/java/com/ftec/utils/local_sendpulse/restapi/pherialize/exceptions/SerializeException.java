@@ -21,28 +21,28 @@
  * IN THE SOFTWARE.
  */
 
-package de.ailis.pherialize.exceptions;
+package com.ftec.utils.local_sendpulse.restapi.pherialize.exceptions;
 
 
 
 /**
- * Exception thrown when someting goes wrong while unserializing.
+ * Exception thrown when someting goes wrong while serializing.
  * 
  * @author Klaus Reimer (k@ailis.de)
  * @version $Revision$
  */
 
-public class UnserializeException extends PherializeException
+public class SerializeException extends PherializeException
 {
     /** Serial version UID */
-    private static final long serialVersionUID = -7127648595193318947L;
+    private static final long serialVersionUID = 5304443329670892370L;
 
 
     /**
      * Constructor
      */
 
-    public UnserializeException()
+    public SerializeException()
     {
         super();
     }
@@ -55,7 +55,7 @@ public class UnserializeException extends PherializeException
      *            The exception message
      */
 
-    public UnserializeException(final String message)
+    public SerializeException(final String message)
     {
         super(message);
     }
@@ -70,7 +70,7 @@ public class UnserializeException extends PherializeException
      *            The root cause
      */
 
-    public UnserializeException(final String message, final Throwable cause)
+    public SerializeException(final String message, final Throwable cause)
     {
         super(message, cause);
     }
@@ -83,7 +83,7 @@ public class UnserializeException extends PherializeException
      *            The root cause
      */
 
-    public UnserializeException(final Throwable cause)
+    public SerializeException(final Throwable cause)
     {
         super(cause);
     }

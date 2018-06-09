@@ -7,6 +7,7 @@ import com.ftec.entities.User;
 import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface TokenDAO extends CrudRepository<Token, String> {
-	Optional<Token> findByToken(String token);//TODO try optimize
+	Optional<Token> findByToken(String token);
+
 	@Modifying
-	@Transactional //TODO delete when migrate in test from TokenDAO to TokenServoce
 	void deleteByToken(String token);
 
     @Modifying

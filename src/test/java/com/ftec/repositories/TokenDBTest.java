@@ -2,7 +2,7 @@ package com.ftec.repositories;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Token;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,25 +22,23 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 public class TokenDBTest {
 
-    @Autowired
-    TokenDAO tokenDAO;
 
     @Autowired
-    TokenService service;
+    TokenService tokenService;
 
     @Before
     public void setUp(){
-        tokenDAO.deleteAll();
+        tokenService.deleteAll();
     }
 
     @Test
     public void TokenDBtest() {
-        String token = service.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-        Optional<Token> byId = tokenDAO.findByToken(token);
+        String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
+        Optional<Token> byId = tokenService.findByToken(token);
         Token userToken = byId.get();
 
-        assertTrue(tokenDAO.findByToken(token).get().getToken().equals(token));
-        tokenDAO.deleteByToken(token);
-        assertFalse(tokenDAO.findByToken(token).isPresent());
+        assertTrue(tokenService.findByToken(token).get().getToken().equals(token));
+        tokenService.deleteByToken(token);
+        assertFalse(tokenService.findByToken(token).isPresent());
     }
 }

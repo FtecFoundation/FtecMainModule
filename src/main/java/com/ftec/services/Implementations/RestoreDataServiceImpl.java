@@ -6,11 +6,11 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.RestoreException;
 import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.repositories.RestoreDataDAO;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.MailService;
 import com.ftec.services.interfaces.RestoreDataService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.PasswordUtils;
 import com.ftec.utils.RandomHashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 public class RestoreDataServiceImpl implements RestoreDataService {
@@ -28,27 +27,27 @@ public class RestoreDataServiceImpl implements RestoreDataService {
     final private RestoreDataDAO restoreDataDAO;
     final private UserDAO userDAO;
     final private MailService mailService;
-    final private TokenDAO tokenDAO;
+    final private TokenService tokenService;
     final public static String RESTORE_URL = Resources.domainUrlStatic + "/restorePass?hash=";
     final public static long ULR_EXPIRED_TIME = 7200000;
 
     @Autowired
-    public RestoreDataServiceImpl(RestoreDataDAO restoreDataDAO, UserDAO userDAO, MailService mailService, TokenDAO tokenDAO) {
+    public RestoreDataServiceImpl(RestoreDataDAO restoreDataDAO, UserDAO userDAO, MailService mailService, TokenService tokenService) {
         this.restoreDataDAO = restoreDataDAO;
         this.userDAO = userDAO;
         this.mailService = mailService;
-        this.tokenDAO = tokenDAO;
+        this.tokenService = tokenService;
     }
 
     @Transactional
     @Override
     public void sendRestorePassUrl(String data) throws UserNotExistsException {
         if(userDAO.findByEmail(data).isPresent()){
-            sendRestoreUrl(generateNewHashForUser(userDAO.findUsernameByEmail(data)), data);
+            sendRestoreUrl(getNewHashForUser(userDAO.findUsernameByEmail(data)), data);
             return;
         }
         if(userDAO.findByUsername(data).isPresent()){
-            sendRestoreUrl(generateNewHashForUser(data), userDAO.findEmailByUsername(data));
+            sendRestoreUrl(getNewHashForUser(data), userDAO.findEmailByUsername(data));
         }
         else throw new UserNotExistsException("User with this email or login does not exist!");
     }
@@ -61,15 +60,14 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         mailService.sendEmail(list, MailService.Emails.ForgotPassword);
         }
 
-        private String generateNewHashForUser(String username) {
+        private String getNewHashForUser(String username) {
         String new_hash = RandomHashGenerator.generateRandomString();
         updateHash(userDAO.findIdByUsername(username), new_hash);
         return new_hash;
     }
 
     private void updateHash(long userId, String new_hash) {
-        Optional<RestoreData> dataOptional = restoreDataDAO.findById(userId);
-        if(dataOptional.isPresent())restoreDataDAO.deleteById(userId);
+        if(restoreDataDAO.findById(userId).isPresent()) restoreDataDAO.deleteById(userId);
         restoreDataDAO.save(new RestoreData(userId,new_hash,getExpiredTime()));
     }
 
@@ -82,7 +80,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
     public void checkAndChange(String hash, String new_pass) throws RestoreException {
         verifyHash(hash);
         changePass(restoreDataDAO.findIdByHash(hash), hash,new_pass);
-        tokenDAO.deleteByUserId(restoreDataDAO.findIdByHash(hash));
+        tokenService.deleteByUserId(restoreDataDAO.findIdByHash(hash));
         deleteByHash(hash);
     }
 

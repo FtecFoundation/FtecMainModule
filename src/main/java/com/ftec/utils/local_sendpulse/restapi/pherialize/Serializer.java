@@ -21,7 +21,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.ailis.pherialize;
+package com.ftec.utils.local_sendpulse.restapi.pherialize;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import de.ailis.pherialize.exceptions.SerializeException;
+import com.ftec.utils.local_sendpulse.restapi.pherialize.exceptions.SerializeException;
 
 
 /**

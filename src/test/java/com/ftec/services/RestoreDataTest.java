@@ -5,6 +5,7 @@ import com.ftec.repositories.RestoreDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.Implementations.RestoreDataServiceImpl;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.TokenService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

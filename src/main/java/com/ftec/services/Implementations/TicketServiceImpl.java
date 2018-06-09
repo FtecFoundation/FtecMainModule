@@ -4,8 +4,8 @@ import com.ftec.entities.Ticket;
 import com.ftec.exceptions.TicketException;
 import com.ftec.repositories.TicketDAO;
 import com.ftec.repositories.UserDAO;
-import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.TicketService;
+import com.ftec.services.interfaces.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

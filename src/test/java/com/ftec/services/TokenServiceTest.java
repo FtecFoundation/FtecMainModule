@@ -7,10 +7,10 @@ import com.ftec.entities.Token;
 import com.ftec.entities.User;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TokenServiceTest {
     @Autowired
     public TokenService tokenService;
-
-    @Autowired
-    public TokenDAO tokenDAO;
 
     @Autowired
     MockMvc mvc;
@@ -103,7 +100,7 @@ public class TokenServiceTest {
 
         Long id = Long.valueOf(TokenService.extractUserID(token));
 
-        assertNotNull(tokenDAO.findByToken(token));
+        assertNotNull(tokenService.findByToken(token));
 
         assertEquals(userDao.findById(id).get().getUsername(),userName);
 
@@ -117,11 +114,11 @@ public class TokenServiceTest {
         Date current = new Date();
         Token uToken = new Token(token, current);
 
-        tokenDAO.save(uToken);
+        tokenService.save(uToken);
 
-        assertNotNull(tokenDAO.findByToken(token));
+        assertNotNull(tokenService.findByToken(token));
 
-        assertEquals(tokenDAO.findByToken(token).get().getToken(), token);
+        assertEquals(tokenService.findByToken(token).get().getToken(), token);
     }
 
     @Test(expected = TokenException.class)
@@ -144,11 +141,12 @@ public class TokenServiceTest {
        tokenService.createSaveAndGetNewToken(userId);
        tokenService.createSaveAndGetNewToken(userId);
 
-       assertEquals(7,tokenDAO.findAllByUserId(userId).size());
+        tokenService.findAllByUserId(userId);
+       assertEquals(7, tokenService.findAllByUserId(userId).size());
 
        tokenService.deleteExcessiveToken(userId);
 
-       assertEquals(5,tokenDAO.findAllByUserId(userId).size());
+       assertEquals(5, tokenService.findAllByUserId(userId).size());
 
     }
 

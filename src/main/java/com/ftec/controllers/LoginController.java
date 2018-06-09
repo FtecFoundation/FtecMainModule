@@ -5,7 +5,7 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.models.MvcResponse;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

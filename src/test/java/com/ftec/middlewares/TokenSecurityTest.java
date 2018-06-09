@@ -4,10 +4,9 @@ package com.ftec.middlewares;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Token;
 import com.ftec.entities.User;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +38,6 @@ public class TokenSecurityTest {
     MockMvc mvc;
 
     @Autowired
-    TokenDAO tokenDAO;
-
-    @Autowired
     TokenService tokenService;
 
     @Autowired
@@ -50,7 +46,7 @@ public class TokenSecurityTest {
     @Test
     public void securityAccess() throws Exception {
         String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-        assertTrue(tokenDAO.findByToken(token).isPresent());
+        assertTrue(tokenService.findByToken(token).isPresent());
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
                 .header(TokenService.TOKEN_NAME, token)
@@ -58,8 +54,8 @@ public class TokenSecurityTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
-        tokenDAO.deleteByToken(token);
-        assertFalse(tokenDAO.findByToken(token).isPresent());
+        tokenService.deleteByToken(token);
+        assertFalse(tokenService.findByToken(token).isPresent());
     }
 
     @Test
@@ -83,7 +79,7 @@ public class TokenSecurityTest {
         Date normalTime = new Date();
         normalTime.setTime(new Date().getTime() + 180000);
         token.setExpirationTime(normalTime);
-        tokenDAO.save(token);
+        tokenService.save(token);
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
                 .header(TokenService.TOKEN_NAME, id+"_"+"wdawdawdafa")
@@ -96,7 +92,7 @@ public class TokenSecurityTest {
         Date expiredDate = new Date();
         expiredDate.setTime(new Date().getTime() - 10000);
         expiredToken.setExpirationTime(expiredDate);
-        tokenDAO.save(expiredToken);
+        tokenService.save(expiredToken);
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
                 .header(TokenService.TOKEN_NAME, id+"_"+"dwankdwakj")

@@ -4,8 +4,8 @@ import com.ftec.constratints.Patterns;
 import com.ftec.constratints.UniqueEmail;
 import com.ftec.exceptions.UserNotExistsException;
 import com.ftec.resources.models.MvcResponse;
-import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.ChangeSettingsService;
+import com.ftec.services.interfaces.TokenService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -38,9 +38,8 @@ public class ChangeSettingController {
 		    return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
 		}
 		try {
-
 			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
-		}catch (UserNotExistsException ex){
+		} catch (UserNotExistsException ex){
 			response.setStatus(400);
 			return MvcResponse.getMvcErrorResponse(400, "NoUserExists");
 		}

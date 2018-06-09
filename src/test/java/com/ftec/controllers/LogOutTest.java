@@ -1,13 +1,11 @@
 package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.entities.User;
 import com.ftec.entities.Token;
+import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
-import com.ftec.repositories.TokenDAO;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
@@ -33,9 +29,6 @@ public class LogOutTest {
 
 	@Autowired
 	MockMvc mvc;
-
-	@Autowired
-    TokenDAO tokenDAO;
 
 	@Autowired
 	UserDAO userDAO;
@@ -54,7 +47,7 @@ public class LogOutTest {
 
 		String token = tokenService.createSaveAndGetNewToken(u.getId());
 
-		assertTrue(tokenDAO.findByToken(token).isPresent());
+		assertTrue(tokenService.findByToken(token).isPresent());
 		
 		  mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
 	                .header(TokenService.TOKEN_NAME, token)
@@ -62,19 +55,19 @@ public class LogOutTest {
 	                .accept(MediaType.APPLICATION_JSON))
 	                .andExpect(status().isOk());
 
-		assertFalse (tokenDAO.findByToken(token).isPresent());
+		assertFalse (tokenService.findByToken(token).isPresent());
 	}
 	
 	@Test
 	public void deleteTokenFromDB() {
 		String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
-		Token tokenFromDB = tokenDAO.findByToken(token).get();
+		Token tokenFromDB = tokenService.findByToken(token).get();
 		
 		assertNotNull(tokenFromDB);
 		
-		tokenDAO.deleteByToken(token);
+		tokenService.deleteByToken(token);
 		
-		assertFalse(tokenDAO.findByToken(token).isPresent());
+		assertFalse(tokenService.findByToken(token).isPresent());
 	}
 
 }

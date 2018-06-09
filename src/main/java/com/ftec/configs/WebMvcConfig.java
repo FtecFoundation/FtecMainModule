@@ -4,7 +4,7 @@ import com.ftec.configs.middlewares.CORSMiddleware;
 import com.ftec.configs.middlewares.TokenSecurityMiddleware;
 import com.ftec.configs.middlewares.TutorialMiddleware;
 import com.ftec.resources.Resources;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

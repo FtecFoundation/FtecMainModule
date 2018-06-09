@@ -1,7 +1,6 @@
 package com.ftec.services.interfaces;
 
 import com.ftec.entities.User;
-import de.ailis.pherialize.MixedArray;
 
 import java.util.Optional;
 

@@ -3,8 +3,6 @@ package com.ftec.services;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
-import com.ftec.services.MailService.Email_BotTradesUser;
-import com.ftec.services.MailService.Emails;
 import org.apache.commons.mail.EmailException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,12 +72,12 @@ public class EmailTest {
 
     @Test
     public void sendUniqueEmails() throws AddressException, EmailException {
-        List<Email_BotTradesUser> users = new ArrayList<Email_BotTradesUser>(){{
+        List<MailService.Email_BotTradesUser> users = new ArrayList<MailService.Email_BotTradesUser>(){{
 
-            add(new Email_BotTradesUser(Resources.sendToStatic, true, new Locale("en"), "pair", "logs",Stocks.Binance));
+            add(new MailService.Email_BotTradesUser(Resources.sendToStatic, true, new Locale("en"), "pair", "logs",Stocks.Binance));
 
         }};
-        emailService.sendEmail(users, Emails.AutomaticTradesStarted);
+        emailService.sendEmail(users, MailService.Emails.AutomaticTradesStarted);
     }
 
     @Test

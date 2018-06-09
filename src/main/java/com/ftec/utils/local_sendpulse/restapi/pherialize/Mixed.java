@@ -21,7 +21,7 @@
  * IN THE SOFTWARE.
  */
 
-package de.ailis.pherialize;
+package com.ftec.utils.local_sendpulse.restapi.pherialize;
 
 import java.io.Serializable;
 import java.util.List;

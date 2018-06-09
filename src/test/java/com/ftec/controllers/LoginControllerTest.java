@@ -2,12 +2,11 @@ package com.ftec.controllers;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.User;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.Implementations.UserServiceImpl;
-import com.ftec.services.TokenService;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -42,9 +41,6 @@ public class LoginControllerTest {
 
     @Autowired
     UserServiceImpl userService;
-
-    @Autowired
-    TokenDAO tokenDAO;
 
     @Autowired
     TokenService tokenService;

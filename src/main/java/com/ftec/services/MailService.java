@@ -3,7 +3,7 @@ package com.ftec.services;
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
 import com.ftec.utils.Logger;
-import com.sendpulse.restapi.Sendpulse;
+import com.ftec.utils.local_sendpulse.restapi.Sendpulse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ClassPathResource;
@@ -15,7 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MailService {
+public class MailService  {
     private final MessageSource messageSource;
     private Resources mailRes;
     private final Sendpulse sendpulse;
@@ -27,8 +27,8 @@ public class MailService {
         sendpulse = new Sendpulse(mailRes.getUserId(), mailRes.getUserSecret());
     }
 
-    public void sendEmail(List<? extends EmailUser> users, Emails emailType){
-         if(mailRes.isEmulateEmail()) return;
+    public void sendEmail(List<? extends MailService.EmailUser> users, MailService.Emails emailType){
+        if(mailRes.isEmulateEmail()) return;
         try {
             List<Locale> uniqueLocales = new ArrayList<>();
             users.forEach(emailUser -> {
@@ -46,7 +46,7 @@ public class MailService {
             Map<Locale, String> footers = prepareFooters(uniqueLocales);
             Map<Locale, String> templates = prepareTemplates(uniqueLocales, emailType);
 
-            for (EmailUser user : users) {
+            for (MailService.EmailUser user : users) {
 
                 if (!user.subscribedToEmail) continue;
 
@@ -61,7 +61,7 @@ public class MailService {
         }
     }
 
-    private void sendOneEmail(Sendpulse sendpulse, Map<String, Object> from, String subject, String header, String footer, String template, EmailUser user) {
+    private void sendOneEmail(Sendpulse sendpulse, Map<String, Object> from, String subject, String header, String footer, String template, MailService.EmailUser user) {
         Map<String, Object> emaildata = new HashMap<String, Object>();
 
         List<Map> to =  new ArrayList<Map>();
@@ -128,7 +128,7 @@ public class MailService {
         abstract Map<String, String> createParams();
     }
 
-    public static class Email_BotTradesUser extends EmailUser{
+    public static class Email_BotTradesUser extends MailService.EmailUser {
         String pair;
         String login;
         Stocks stock;
@@ -156,7 +156,7 @@ public class MailService {
         }
 
     }
-    public static class Email_TradeMissed extends EmailUser{
+    public static class Email_TradeMissed extends MailService.EmailUser {
         private String login;
         private Stocks stock;
 
@@ -179,7 +179,7 @@ public class MailService {
             return params;
         }
     }
-    public static class Email_UsernameOnly extends EmailUser{
+    public static class Email_UsernameOnly extends MailService.EmailUser {
         String login;
 
         public Email_UsernameOnly(String email, boolean subscribedToEmail, Locale language, String login) {
@@ -209,7 +209,7 @@ public class MailService {
         }
     }
 
-    public static class Email_Balance extends EmailUser{
+    public static class Email_Balance extends MailService.EmailUser {
         String login;
         public double currentBalance;
 
@@ -232,7 +232,7 @@ public class MailService {
             return params;
         }
     }
-    public static class Email_BotDisabled extends EmailUser{
+    public static class Email_BotDisabled extends MailService.EmailUser {
         private String login;
         private Stocks stock;
 
@@ -255,7 +255,7 @@ public class MailService {
             return params;
         }
     }
-    public static class Email_Link extends EmailUser{
+    public static class Email_Link extends MailService.EmailUser {
         String link;
         String linkName;
         String login;
@@ -283,7 +283,7 @@ public class MailService {
         }
     }
     private String createInfoBody(Locale locale, String text) {
-        String answer = prepareTemplates(locale, Emails.InfoEmail);
+        String answer = prepareTemplates(locale, MailService.Emails.InfoEmail);
         answer = answer.replace("$Text$", text);
         return answer;
     }
@@ -323,25 +323,25 @@ public class MailService {
         return loadFile(prefixPathToHeader+"_"+locale.getLanguage()+".html");
     }
 
-    private Map<Locale, String> prepareTemplates(List<Locale> uniqueLocales, Emails emailType){
+    private Map<Locale, String> prepareTemplates(List<Locale> uniqueLocales, MailService.Emails emailType){
         Map<Locale, String> templates = new HashMap<>();
         for(Locale locale:uniqueLocales){
             templates.put(locale, loadFile(emailType.getPath()+"_"+locale.getLanguage()+".html"));
         }
         return templates;
     }
-    private String prepareTemplates(Locale locale, Emails emailType){
+    private String prepareTemplates(Locale locale, MailService.Emails emailType){
         return loadFile(emailType.getPath()+"_"+locale.getLanguage()+".html");
     }
 
-    private Map<Locale, String> prepareSubjects(List<Locale> uniqueLocales, Emails emailType){
+    private Map<Locale, String> prepareSubjects(List<Locale> uniqueLocales, MailService.Emails emailType){
         Map<Locale, String> themes = new HashMap<>();
         for(Locale locale:uniqueLocales){
             themes.put(locale, messageSource.getMessage("letters."+emailType.filePrefix+".subject", new String[]{}, locale));
         }
         return themes;
     }
-    private String prepareSubjects(Locale locale, Emails emailType){
+    private String prepareSubjects(Locale locale, MailService.Emails emailType){
         return messageSource.getMessage("letters."+emailType.filePrefix+".subject", new String[]{}, locale);
     }
 
@@ -393,15 +393,15 @@ public class MailService {
 
     //Temporary disable unused messages
     public enum Emails{
-        BotDisabled(Email_BotDisabled.class, "BotDisabled"),
-        ManualTrades(EmailUser.class, "ManualTrades"),
-        AutomaticTradesStarted(Email_BotTradesUser.class, "AutomaticStarted"),
-        AutomaticTradesFinished(Email_BotTradesUser.class, "AutomaticFinished"),
-        TrialEnded(Email_UsernameOnly.class, "TrialEnded"),
-        ForgotPassword(Email_Link.class, "ForgotPassword"),
-        BalanceRefilled(Email_Balance.class, "BalanceRefilled"),
-        TradesMissed(Email_TradeMissed.class, "TradesMissed"),
-        SocialAssistant(Email_UsernameOnly.class, "SocialAssistant"),
+        BotDisabled(MailService.Email_BotDisabled.class, "BotDisabled"),
+        ManualTrades(MailService.EmailUser.class, "ManualTrades"),
+        AutomaticTradesStarted(MailService.Email_BotTradesUser.class, "AutomaticStarted"),
+        AutomaticTradesFinished(MailService.Email_BotTradesUser.class, "AutomaticFinished"),
+        TrialEnded(MailService.Email_UsernameOnly.class, "TrialEnded"),
+        ForgotPassword(MailService.Email_Link.class, "ForgotPassword"),
+        BalanceRefilled(MailService.Email_Balance.class, "BalanceRefilled"),
+        TradesMissed(MailService.Email_TradeMissed.class, "TradesMissed"),
+        SocialAssistant(MailService.Email_UsernameOnly.class, "SocialAssistant"),
         InfoEmail(null, "InfoTemplate");
 
         private String filePrefix;
@@ -414,5 +414,4 @@ public class MailService {
             return "static/emails/" +filePrefix+"/main";
         }
     }
-
 }

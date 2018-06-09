@@ -4,7 +4,7 @@ import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.models.MvcResponse;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.google.common.io.Files;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;

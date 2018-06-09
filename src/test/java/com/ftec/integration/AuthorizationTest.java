@@ -4,10 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.RegistrationController;
-import com.ftec.repositories.TokenDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.TutorialSteps;
-import com.ftec.services.TokenService;
+import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +39,7 @@ public class AuthorizationTest {
     UserDAO userDAO;
 
 	@Autowired
-    TokenDAO tokenDAO;
+    TokenService tokenService;
 
 	@Test
 	public void authorization() throws Exception {
@@ -121,7 +120,7 @@ public class AuthorizationTest {
 
         mvc.perform(post("/logout").header(TokenService.TOKEN_NAME, tokenAfterLogin))
                 .andExpect(status().is(200));
-        assertFalse(tokenDAO.findByToken(tokenAfterLogin).isPresent());
+        assertFalse(tokenService.findByToken(tokenAfterLogin).isPresent());
 
         //null 2fa
         mvc.perform(post("/login")
