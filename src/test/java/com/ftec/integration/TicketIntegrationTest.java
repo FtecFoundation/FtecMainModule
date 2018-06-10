@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.resources.enums.UserRole;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
@@ -20,8 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,7 +53,7 @@ public class TicketIntegrationTest {
         long id = user.getId();
         String token = tokenService.createSaveAndGetNewToken(id);
 
-        assertFalse(ticketService.findByUserId(id).isPresent());
+        assertEquals(0,ticketService.findAllByUserId(id).size());
 
         Ticket ticket = EntityGenerator.getNewTicket();
 
@@ -62,29 +62,72 @@ public class TicketIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(ticket)))
                 .andExpect(status().is(200)).andDo(print()).andReturn();
-        Integer ticket_id = (Integer)((JSONObject)new JSONObject(mvcResult1.getResponse().getContentAsString()).get("response")).get("ticket_id");
 
-        System.out.println(ticket_id);
-        assertTrue(ticketService.findByUserId(id).isPresent());
+        long ticket_id = ((Integer)((JSONObject)new JSONObject(mvcResult1.getResponse().getContentAsString()).get("response")).get("ticket_id")).longValue();
 
-          mvc.perform(post("/createTicket")
+        addTwoTickets(id, token);
+
+        testInvalidTicket(token);
+
+        addSupporterToTicket(token, ticket_id, mvcResult1);
+
+
+        String comment = "some_comment!";
+        mvc.perform(post("/support/addComment/" + ticket_id)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
+                .content(mapper.writeValueAsString(comment)))
                 .andExpect(status().is(200)).andDo(print()).andReturn();
+    }
 
-          mvc.perform(post("/createTicket")
+    private void addSupporterToTicket(String token, Long ticket_id, MvcResult mvcResult1) throws Exception {
+
+        User support = EntityGenerator.getNewUser();
+        support.setUserRole(UserRole.Support);
+        registrationService.registerNewUserAccount(support);
+
+
+        assertEquals(0, ticketService.findSupportedIdById(ticket_id).intValue());
+
+        mvc.perform(post("/setSupporterIdForTicket")
+                .header(TokenService.TOKEN_NAME, token)
+                .param("ticket_id", ticket_id.toString())
+                .param("supported_id", String.valueOf(support.getId()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(200)).andDo(print());
+
+        assertEquals(support.getId(), ticketService.findSupportedIdById(ticket_id.longValue()).intValue());
+
+    }
+
+
+    private void addTwoTickets(Long id, String token) throws Exception {
+        assertEquals(1,ticketService.findAllByUserId(id).size());
+
+        mvc.perform(post("/createTicket")
+              .header(TokenService.TOKEN_NAME, token)
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
+              .andExpect(status().is(200)).andDo(print()).andReturn();
+
+        mvc.perform(post("/createTicket")
+              .header(TokenService.TOKEN_NAME, token)
+              .contentType(MediaType.APPLICATION_JSON_VALUE)
+              .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
+              .andExpect(status().is(200)).andDo(print()).andReturn();
+
+        assertEquals(3,ticketService.findAllByUserId(id).size());
+
+    }
+
+    private void testInvalidTicket(String token) throws Exception {
+        Ticket t = EntityGenerator.getNewTicket();
+        t.setMessage(null);
+
+        mvc.perform(post("/createTicket")
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
-                .andExpect(status().is(200)).andDo(print()).andReturn();
-
-
-        registrationService.registerNewUserAccount(EntityGenerator.getNewUser());
-        registrationService.registerNewUserAccount(EntityGenerator.getNewUser());
-       // assertEquals();
-///setSupportedIdForToken
-
-
+                .content(mapper.writeValueAsString(t)))
+                .andExpect(status().is(400));
     }
 }

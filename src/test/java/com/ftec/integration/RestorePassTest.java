@@ -69,6 +69,8 @@ public class RestorePassTest {
                 .param("new_pass", new_clean_pass))
                 .andExpect(status().is(200));
 
+        assertFalse(restoreDataService.findById(u.getId()).isPresent()); // after changed pass hash should be deleted
+
         String new_pass = userDAO.findById(u.getId()).get().getPassword();
 
         assertNotEquals(old_pass,new_pass);

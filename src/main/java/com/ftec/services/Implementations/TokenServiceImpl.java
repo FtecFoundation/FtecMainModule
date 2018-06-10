@@ -34,8 +34,9 @@ public class TokenServiceImpl implements TokenService {
         updateExpirationDate(token);
     }
 
-    @Scheduled(cron = "0 0 12 * * ?") //TODO test it and change to private
-    public void deleteExpiredToken() {
+    @Scheduled(cron = "0 0 12 * * ?")
+    @Transactional
+    public void deleteExpiredTokens() {
         tokenDAO.deleteAllExpiredToken();
     }
 
@@ -110,5 +111,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public List<Token> findAllByUserId(long userId) {
         return tokenDAO.findAllByUserId(userId);
+    }
+
+    @Override
+    public List<Token> getAll() {
+        return tokenDAO.getAll();
     }
 }

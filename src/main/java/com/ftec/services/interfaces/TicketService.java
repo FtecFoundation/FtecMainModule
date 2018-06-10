@@ -20,5 +20,7 @@ public interface TicketService {
 
     long addTicket(Ticket ticket, String token) throws TicketException;
 
-    Optional<Ticket> findByUserId(long id);
+    List<Ticket> findAllByUserId(long id);
+
+    Long findSupportedIdById(Long ticket_id);
 }

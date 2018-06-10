@@ -28,11 +28,11 @@ public class Ticket {
     private long userId;
 
     @NotNull
-    @Size(max = 100)
+    @Size(min = 3, max = 100)
     private String subject;
 
     @NotNull
-    @Size(max = 2000)
+    @Size(min = 5, max = 2000)
     private String message;
 
     @NotNull

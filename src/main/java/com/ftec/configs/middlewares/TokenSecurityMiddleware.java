@@ -3,6 +3,7 @@ package com.ftec.configs.middlewares;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.services.interfaces.TokenService;
+import com.ftec.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -30,7 +31,8 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 			if(isExpiredException(ex)) tokenService.deleteByToken(token);
 			return false;
 		} catch (Exception e){
-			System.out.println(e);//change to log mb
+			response.setStatus(403);
+			Logger.logException("Unexpected exception in token security middleware!", e, true);
 			return false;
 		}
 		return true;

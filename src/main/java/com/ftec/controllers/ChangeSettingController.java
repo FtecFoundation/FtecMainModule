@@ -31,7 +31,7 @@ public class ChangeSettingController {
 	}
 
 
-	@PostMapping("/changeUserSetting")
+	@PostMapping(value = "/changeUserSetting", produces = "application/json")
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 		if(br.hasErrors()) {
 		    response.setStatus(400);

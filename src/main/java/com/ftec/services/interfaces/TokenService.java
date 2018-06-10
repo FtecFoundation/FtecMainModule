@@ -62,4 +62,6 @@ public interface TokenService {
     void save(Token token);
 
     List<Token> findAllByUserId(long userId);
+
+    List<Token> getAll();
 }

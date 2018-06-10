@@ -125,9 +125,9 @@ public class TicketTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
 
-        assertEquals(ticket.getSubject(), ticketService.findByUserId(user.getId()).get().getSubject());
+        assertEquals(ticket.getSubject(), ticketService.findAllByUserId(user.getId()).get(0).getSubject());
 
-        assertEquals(ticketService.findByUserId(user.getId()).get().getSupporter_id(), 0);
+        assertEquals(ticketService.findAllByUserId(user.getId()).get(0).getSupporter_id(), 0);
 
 
     }

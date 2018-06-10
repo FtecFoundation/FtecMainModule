@@ -9,6 +9,7 @@ import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
+import com.ftec.services.Implementations.TokenServiceImpl;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
@@ -55,6 +56,9 @@ public class TokenServiceTest {
 
     @Autowired
     RegistrationService registrationService;
+
+    @Autowired
+    TokenServiceImpl tokenServiceImpl;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -171,4 +175,35 @@ public class TokenServiceTest {
 
         assertTrue(oldDate.before(tokenService.findByToken(token).get().getExpirationTime()));
     }
+
+    @Test
+    public void deleteAllExpired() throws InterruptedException {
+        tokenService.deleteAll();
+        assertEquals(0, tokenService.getAll().size());
+
+        tokenService.createSaveAndGetNewToken(1L);
+        tokenService.createSaveAndGetNewToken(1L);
+        tokenService.createSaveAndGetNewToken(1L);
+
+        assertEquals(3, tokenService.getAll().size());
+
+        tokenServiceImpl.deleteExpiredTokens();
+        assertEquals(3, tokenService.getAll().size());
+
+        Token t1 = new Token("12_dwwad", new Date());
+        Token t2 = new Token("11_wadwda", new Date());
+
+        tokenService.save(t1);
+        tokenService.save(t2);
+        Thread.sleep(2000);
+
+        assertEquals(5, tokenService.getAll().size());
+
+        tokenServiceImpl.deleteExpiredTokens();
+
+        //it can not works if database`s date is not configured!!
+        assertEquals(3, tokenService.getAll().size());
+
+    }
+
 }
