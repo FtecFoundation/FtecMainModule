@@ -23,8 +23,7 @@ public interface TokenDAO extends CrudRepository<Token, String> {
     void deleteExcessiveToken(long userId);
 
     @Modifying
-    @Query(value = "DELETE FROM token_table where token in" +
-            " (select * from (select token_table.token FROM token_table where token_table.expiration_time < CURDATE()) as t)",nativeQuery = true)
+    @Query(value = "DELETE FROM token_table where token_table.expiration_time < CURDATE()",nativeQuery = true)
 
     void deleteAllExpiredToken();
 
@@ -36,4 +35,7 @@ public interface TokenDAO extends CrudRepository<Token, String> {
 
     @Modifying
     void deleteByUserId(long userId);
+
+    @Query(value = "select * from token_table", nativeQuery = true)
+    List<Token> getAll();
 }

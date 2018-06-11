@@ -1,7 +1,5 @@
 package com.ftec.configs;
 
-import com.ftec.repositories.TicketDAO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,8 +19,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan("com.ftec.entities")
 @EnableScheduling
 public class ApplicationConfig extends SpringBootServletInitializer implements  CommandLineRunner{
-    @Autowired
-    TicketDAO ticketDAO;//TODO delete
 
 
     //Also added configuration for tomcat starting

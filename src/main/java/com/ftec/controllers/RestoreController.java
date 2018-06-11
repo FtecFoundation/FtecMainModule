@@ -24,7 +24,7 @@ public class RestoreController {
         this.restoreDataService = restoreDataService;
     }
 
-    @PostMapping("/sendRestoreUrl")
+    @PostMapping(value = "/sendRestoreUrl", consumes = "application/json")
     public MvcResponse getRestoreUrlToEmail(@RequestParam(name = "data") String data, HttpServletResponse response) {
         try {
             restoreDataService.sendRestorePassUrl(data);
@@ -46,7 +46,7 @@ public class RestoreController {
         response.setStatus(400);
     }
 
-    @PostMapping("/changePass")
+    @PostMapping(value = "/changePass", consumes = "application/json")
     public MvcResponse changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass, HttpServletResponse response) {
         try {
             restoreDataService.checkAndChange(hash, new_pass);

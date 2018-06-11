@@ -59,7 +59,7 @@ public class RegistrationController {
         }
     }
 
-    @GetMapping("/checkUniqueLogin")
+    @GetMapping(value = "/checkUniqueLogin", consumes = "application/json", produces = "application/json")
     public MvcResponse checkUniqueLogin(@RequestParam("login") String login, HttpServletResponse response){
         if(!uniqueLoginValidator.isValid(login,null)){
             response.setStatus(400);
@@ -68,7 +68,7 @@ public class RegistrationController {
         return new MvcResponse(Statuses.Ok.getStatus(),"available", true);
     }
 
-    @GetMapping("/checkUniqueEmail")
+    @GetMapping(value = "/checkUniqueEmail", consumes = "application/json", produces = "application/json")
     public MvcResponse checkUniqueEmail(@RequestParam("email") String email, HttpServletResponse response){
         if(!uniqueEmailValidator.isValid(email,null)){
             response.setStatus(400);

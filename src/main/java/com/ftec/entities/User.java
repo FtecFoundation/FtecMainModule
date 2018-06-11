@@ -74,10 +74,11 @@ public class User {
 
     public void fillEmptyFields() {
         this.currentStep = TutorialSteps.FIRST;
-        this.twoStepVerification = false;
         this.salt = PasswordUtils.getSalt(10);
-        this.userRole = UserRole.USER;
         this.banned = false;
+
+        if(this.userRole == null) this.twoStepVerification = false;
+        if(this.userRole == null) this.userRole = UserRole.USER;
         if(locale == null) locale = new Locale("en");
     }
 
