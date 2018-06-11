@@ -8,5 +8,6 @@ public interface UserService {
 
     Optional<User> getById(long id);
 
-    Optional<User> findById(Long id);
+    Optional<User> getByUsername(String username);
+
 }
