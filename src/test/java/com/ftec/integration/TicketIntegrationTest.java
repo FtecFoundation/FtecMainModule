@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.enums.UserRole;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
@@ -71,12 +72,28 @@ public class TicketIntegrationTest {
 
         addSupporterToTicket(token, ticket_id, mvcResult1);
 
+        addComment(token, ticket_id);
 
+        //////
+        changeTicketStatus(token, ticket_id);
+    }
+
+    private void changeTicketStatus(String token, long ticket_id) throws Exception {
+        TicketStatus status = TicketStatus.DONE;
+
+        mvc.perform(post("/createTicket")
+                .header(TokenService.TOKEN_NAME, token)
+                .param("status", mapper.writeValueAsString(status))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(200));
+    }
+
+    private void addComment(String token, long ticket_id) throws Exception {
         String comment = "some_comment!";
         mvc.perform(post("/support/addComment/" + ticket_id)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapper.writeValueAsString(comment)))
+                .content(comment))
                 .andExpect(status().is(200)).andDo(print()).andReturn();
     }
 

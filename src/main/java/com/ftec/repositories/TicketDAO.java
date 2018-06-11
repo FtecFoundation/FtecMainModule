@@ -1,6 +1,7 @@
 package com.ftec.repositories;
 
 import com.ftec.entities.Ticket;
+import com.ftec.resources.enums.TicketStatus;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -21,4 +22,7 @@ public interface TicketDAO extends CrudRepository<Ticket, Long> {
 
     @Query(value = "select supporter_id from ticket where id = ?1", nativeQuery = true)
     Long findSupportedIdById(Long ticket_id);
+
+    @Query(value = "update ticket set status = ?2 where id = ?1", nativeQuery = true)
+    void changeTicketStatus(long ticket_id, TicketStatus status);
 }

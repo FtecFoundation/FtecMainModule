@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.exceptions.TicketException;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.CommentService;
 import com.ftec.services.interfaces.TicketService;
@@ -25,6 +26,13 @@ public class TicketController {
     private final TicketService ticketService;
     private final CommentService commentService;
     private final UserService userService;
+
+    @Autowired
+    public TicketController(TicketService ticketService, CommentService commentService, UserService userService) {
+        this.ticketService = ticketService;
+        this.commentService = commentService;
+        this.userService = userService;
+    }
 
     @GetMapping("support/getAllTickets")
     public MvcResponse getAllTickets() {
@@ -64,16 +72,21 @@ public class TicketController {
         }
     }
 
-    @Autowired
-    public TicketController(TicketService ticketService, CommentService commentService, UserService userService) {
-        this.ticketService = ticketService;
-        this.commentService = commentService;
-        this.userService = userService;
-    }
 
     @PostMapping("/setSupporterIdForTicket")
     public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id){
         ticketService.setTicketSupport(ticket_id, supporter_id);
+        return new MvcResponse(200);
+    }
+
+    @PostMapping("/changeTicketStatus/{ticket_id}")
+    public MvcResponse changeTicketStatus(@RequestParam("new_status") TicketStatus status, @PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
+        try {
+            ticketService.changeTicketStatus(ticket_id, status);
+        } catch (TicketException e){
+            response.setStatus(400);
+            return new MvcResponse(400, e.getMessage());
+        }
         return new MvcResponse(200);
     }
 }
