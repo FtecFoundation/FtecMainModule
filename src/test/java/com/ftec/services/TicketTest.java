@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
 public class TicketTest {
     @Autowired
@@ -52,7 +52,7 @@ public class TicketTest {
     TokenService tokenService;
 
     @Test
-    public void ticketSetSupporterId(){
+    public void ticketSetSupporterId() {
         Ticket t = EntityGenerator.getNewTicket();
 
         ticketService.save(t);
@@ -68,6 +68,7 @@ public class TicketTest {
 
 
     }
+
     @Test
     public void getAllTickets() throws Exception {
         ticketService.deleteAll();
@@ -88,7 +89,9 @@ public class TicketTest {
         MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/support/getAllTickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(Resources.doPrintStatic ? Resources.doPrintStatic ? print() : (ResultHandler) result -> {} : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
+                .andDo(Resources.doPrintStatic ? Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                } : (ResultHandler) result -> {
+                }).andExpect(status().isOk()).andReturn();
 
         String content = mvcResult1.getResponse().getContentAsString();
 
@@ -99,14 +102,14 @@ public class TicketTest {
         int corresponding = 2;
         int correspond = 0;
 
-        for(int i = 0; i < j.length(); i++){
+        for (int i = 0; i < j.length(); i++) {
             String val = j.get(i).toString();
             Ticket ticket = mapper.readValue(val, Ticket.class);
-            if(subjects.contains(ticket.getSubject()))correspond++;
+            if (subjects.contains(ticket.getSubject())) correspond++;
         }
 
 
-        assertEquals(correspond,corresponding);
+        assertEquals(correspond, corresponding);
 
     }
 
@@ -120,15 +123,14 @@ public class TicketTest {
 
         mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/createTicket")
                 .content(mapper.writeValueAsString(ticket))
-                .header(TokenService.TOKEN_NAME,token)
+                .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().isOk());
 
         assertEquals(ticket.getSubject(), ticketService.findAllByUserId(user.getId()).get(0).getSubject());
 
         assertEquals(ticketService.findAllByUserId(user.getId()).get(0).getSupporter_id(), 0);
-
-
     }
 }
