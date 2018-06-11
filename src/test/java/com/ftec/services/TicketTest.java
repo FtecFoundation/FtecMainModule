@@ -85,7 +85,7 @@ public class TicketTest {
 
         boolean tr = true;
 
-        MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/support/getAllTickets")
+        MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.get("/support/getAllTickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? Resources.doPrintStatic ? print() : (ResultHandler) result -> {} : (ResultHandler) result -> {}).andExpect(status().isOk()).andReturn();
@@ -118,7 +118,7 @@ public class TicketTest {
         registrationService.registerNewUserAccount(user);
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/createTicket")
+        mvc.perform(MockMvcRequestBuilders.post("/createTicket")
                 .content(mapper.writeValueAsString(ticket))
                 .header(TokenService.TOKEN_NAME,token)
                 .contentType(MediaType.APPLICATION_JSON)

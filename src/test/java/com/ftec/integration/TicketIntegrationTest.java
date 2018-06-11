@@ -2,6 +2,7 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.TicketController;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.resources.enums.TicketStatus;
@@ -22,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +51,8 @@ public class TicketIntegrationTest {
     @Test
     public void test() throws Exception {
         User user = EntityGenerator.getNewUser();
+        user.setUserRole(UserRole.SUPPORT);
+
         registrationService.registerNewUserAccount(user);
         long id = user.getId();
         String token = tokenService.createSaveAndGetNewToken(id);
@@ -70,22 +73,67 @@ public class TicketIntegrationTest {
 
         testInvalidTicket(token);
 
-        addSupporterToTicket(token, ticket_id, mvcResult1);
+        securityTest(ticket_id, token);
+
+        addSupporterToTicket(token, ticket_id);
 
         addComment(token, ticket_id);
 
-        //////
         changeTicketStatus(token, ticket_id);
+
+        deleteTicket(token, ticket_id);
+
+    }
+
+    private void securityTest(Long ticket_id, String supportToken) throws Exception {
+        User not_support = EntityGenerator.getNewUser();
+        registrationService.registerNewUserAccount(not_support);
+
+        String not_support_token = tokenService.createSaveAndGetNewToken(not_support.getId());
+
+        mvc.perform(post(TicketController.ADM_PREF + "/setSupporterIdForTicket")
+                .header(TokenService.TOKEN_NAME, not_support_token)
+                .param("ticket_id", ticket_id.toString())
+                .param("supported_id", String.valueOf(not_support.getId()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(403)).andDo(print());
+
+        mvc.perform(post(TicketController.ADM_PREF + "/setSupporterIdForTicket")
+                .header(TokenService.TOKEN_NAME, supportToken)
+                .param("ticket_id", ticket_id.toString())
+                .param("supported_id", String.valueOf(not_support.getId()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(200)).andDo(print());
+
+        mvc.perform(post(TicketController.ADM_PREF + "/changeTicketStatus/" + ticket_id)
+                .header(TokenService.TOKEN_NAME, not_support_token)
+                .content( mapper.writeValueAsString(TicketStatus.ABORTED))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(403));
+
+    }
+
+    private void deleteTicket(String token, long ticket_id) throws Exception {
+        assertTrue(ticketService.findById(ticket_id).isPresent());
+        mvc.perform(post(TicketController.ADM_PREF + "/deleteTicket/" + ticket_id)
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(200)).andDo(print()).andReturn();
+        assertFalse(ticketService.findById(ticket_id).isPresent());
     }
 
     private void changeTicketStatus(String token, long ticket_id) throws Exception {
+        assertEquals(0, ticketService.findById(ticket_id).get().getStatus().ordinal());
         TicketStatus status = TicketStatus.DONE;
 
-        mvc.perform(post("/createTicket")
+        mvc.perform(post(TicketController.ADM_PREF + "/changeTicketStatus/" + ticket_id)
                 .header(TokenService.TOKEN_NAME, token)
-                .param("status", mapper.writeValueAsString(status))
+                .content( mapper.writeValueAsString(status))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200));
+
+        assertEquals(TicketStatus.DONE.ordinal(), ticketService.findById(ticket_id).get().getStatus().ordinal());
+
     }
 
     private void addComment(String token, long ticket_id) throws Exception {
@@ -94,26 +142,27 @@ public class TicketIntegrationTest {
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(comment))
-                .andExpect(status().is(200)).andDo(print()).andReturn();
+                .andExpect(status().is(200)).andDo(print());
     }
 
-    private void addSupporterToTicket(String token, Long ticket_id, MvcResult mvcResult1) throws Exception {
+    private void addSupporterToTicket(String token, Long ticket_id) throws Exception {
 
         User support = EntityGenerator.getNewUser();
-        support.setUserRole(UserRole.Support);
+        support.setUserRole(UserRole.SUPPORT);
         registrationService.registerNewUserAccount(support);
 
 
-        assertEquals(0, ticketService.findSupportedIdById(ticket_id).intValue());
+        long support_id_before = ticketService.findById(ticket_id).get().getSupporter_id();
+        assertNotEquals(support_id_before, support.getId());
 
-        mvc.perform(post("/setSupporterIdForTicket")
+        mvc.perform(post(TicketController.ADM_PREF + "/setSupporterIdForTicket")
                 .header(TokenService.TOKEN_NAME, token)
                 .param("ticket_id", ticket_id.toString())
                 .param("supported_id", String.valueOf(support.getId()))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200)).andDo(print());
 
-        assertEquals(support.getId(), ticketService.findSupportedIdById(ticket_id.longValue()).intValue());
+        assertEquals(support.getId(), ticketService.findSupportedIdById(ticket_id).longValue());
 
     }
 
