@@ -105,17 +105,11 @@ public class TicketIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200)).andDo(print());
 
-        mvc.perform(post(TicketController.ADM_PREF + "/changeTicketStatus/" + ticket_id)
-                .header(TokenService.TOKEN_NAME, not_support_token)
-                .content( mapper.writeValueAsString(TicketStatus.ABORTED))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().is(403));
-
     }
 
     private void deleteTicket(String token, long ticket_id) throws Exception {
         assertTrue(ticketService.findById(ticket_id).isPresent());
-        mvc.perform(post(TicketController.ADM_PREF + "/deleteTicket/" + ticket_id)
+        mvc.perform(post( "/deleteTicket/" + ticket_id)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200)).andDo(print()).andReturn();
@@ -126,7 +120,7 @@ public class TicketIntegrationTest {
         assertEquals(0, ticketService.findById(ticket_id).get().getStatus().ordinal());
         TicketStatus status = TicketStatus.DONE;
 
-        mvc.perform(post(TicketController.ADM_PREF + "/changeTicketStatus/" + ticket_id)
+        mvc.perform(post( "/changeTicketStatus/" + ticket_id)
                 .header(TokenService.TOKEN_NAME, token)
                 .content( mapper.writeValueAsString(status))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -155,7 +149,7 @@ public class TicketIntegrationTest {
         long support_id_before = ticketService.findById(ticket_id).get().getSupporter_id();
         assertNotEquals(support_id_before, support.getId());
 
-        mvc.perform(post(TicketController.ADM_PREF + "/setSupporterIdForTicket")
+        mvc.perform(post( TicketController.ADM_PREF + "/setSupporterIdForTicket")
                 .header(TokenService.TOKEN_NAME, token)
                 .param("ticket_id", ticket_id.toString())
                 .param("supported_id", String.valueOf(support.getId()))

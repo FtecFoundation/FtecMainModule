@@ -81,7 +81,7 @@ public class TicketController {
         return new MvcResponse(200);
     }
 
-    @PostMapping(value = ADM_PREF + "/changeTicketStatus/{ticket_id}", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/changeTicketStatus/{ticket_id}", consumes = "application/json", produces = "application/json")
     public MvcResponse changeTicketStatus(@PathVariable("ticket_id") long ticket_id, @RequestBody TicketStatus status, HttpServletResponse response){
         try {
             ticketService.changeTicketStatus(ticket_id, status);
@@ -96,7 +96,7 @@ public class TicketController {
         return new MvcResponse(200);
     }
 
-    @PostMapping(value = ADM_PREF + "/deleteTicket/{ticket_id}", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/deleteTicket/{ticket_id}", consumes = "application/json", produces = "application/json")
     public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
         try {
             ticketService.deleteById(ticket_id);
