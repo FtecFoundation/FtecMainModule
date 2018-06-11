@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.PasswordUtils;
@@ -12,7 +13,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class LoginController {
 	private final Environment environment;
 
 	
-	static final String EMPTY_2FA_CODE_MESSAGE = "2Fa code is emply!";
+	static final String WRONG_2FA_CODE = "2Fa code is emply!";
 	
 	@Autowired
 	public LoginController(TokenService tokenService, UserDAO userDAO, Environment environment) {
@@ -37,9 +37,7 @@ public class LoginController {
 		}
 	
 	@PostMapping(value = "/login", consumes = "application/json")
-	public MvcResponse authorization(HttpServletResponse response,
-									 @RequestBody UserAuth userAuth) {
-		
+	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
 		try {
 			Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
@@ -50,20 +48,20 @@ public class LoginController {
 			
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
-			return MvcResponse.getMvcErrorResponse(403, e.getMessage());
+			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
 		}
 		
 		
 	}
 
 	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException{
-		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(EMPTY_2FA_CODE_MESSAGE);
+		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(WRONG_2FA_CODE);
 	
 		for(String profile: this.environment.getActiveProfiles()){
 			if(profile.equals("test")) return;
 		}
-		
-		throw new NotImplementedException();
+
+		throw new AuthorizationException(WRONG_2FA_CODE);
 
 	}
 

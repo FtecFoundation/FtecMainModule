@@ -4,6 +4,7 @@ import com.ftec.constratints.*;
 import com.ftec.entities.User;
 import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
+import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.Implementations.RegistrationServiceImpl;
 import com.ftec.services.interfaces.ReferralService;
@@ -40,7 +41,7 @@ public class RegistrationController {
 
             if (br.hasErrors()) {
                 response.setStatus(400);
-                return MvcResponse.getMvcErrorResponse(400, br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                return MvcResponse.getMvcErrorResponse(Statuses.ModelMalformed.getStatus(), br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
             }
 
             User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
@@ -62,20 +63,18 @@ public class RegistrationController {
     public MvcResponse checkUniqueLogin(@RequestParam("login") String login, HttpServletResponse response){
         if(!uniqueLoginValidator.isValid(login,null)){
             response.setStatus(400);
-            return new MvcResponse(400);
+            return new MvcResponse(Statuses.LoginTaken.getStatus(), "Login already taken");
         }
-        System.out.println("valid");
-        return new MvcResponse(200);
+        return new MvcResponse(Statuses.Ok.getStatus(),"available", true);
     }
 
     @GetMapping("/checkUniqueEmail")
     public MvcResponse checkUniqueEmail(@RequestParam("email") String email, HttpServletResponse response){
         if(!uniqueEmailValidator.isValid(email,null)){
             response.setStatus(400);
-            return new MvcResponse(400);
+            return new MvcResponse(Statuses.EmailTaken.getStatus(), "Email already taken");
         }
-
-        return new MvcResponse(200);
+        return new MvcResponse(Statuses.Ok.getStatus(), "available", true);
     }
 
 

@@ -112,7 +112,7 @@ public class LoginControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
-        assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), LoginController.EMPTY_2FA_CODE_MESSAGE);
+        assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), LoginController.WRONG_2FA_CODE);
     }
 
     @Test
