@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -32,22 +33,21 @@ public class CommentDAOTest {
 
         Ticket ticket = EntityGenerator.getNewTicket();
         ticketDAO.save(ticket);
-        commentDAO.saveCommentToTicket(ticket.getId(), new Date(), "Test comment from TEST", 2);
 
-        assertNotNull(commentDAO.findByTicketId(ticket.getId()));
+        String commentMessage = "Test comment from TEST";
+        commentDAO.saveCommentToTicket(ticket.getId(), new Date(), commentMessage, 2);
+
+        List<Comment> allCommentsByTicketId = commentDAO.findAllByTicketId(ticket.getId());
+        Comment findedComment = new Comment();
+        for (Comment comment : allCommentsByTicketId) {
+            if (comment.getMessage().equals(commentMessage)) {
+                findedComment = comment;
+            }
+        }
+        assertNotNull(findedComment);
         ticketDAO.deleteAll();
         commentDAO.deleteAll();
     }
 
-    @Test
-    public void findCommentByTicketIdTest() throws Exception {
-        Ticket ticket = EntityGenerator.getNewTicket();
-        ticketDAO.save(ticket);
-        commentDAO.saveCommentToTicket(ticket.getId(), new Date(), "Test comment from TEST", 2);
 
-        Comment finded = commentDAO.findByTicketId(ticket.getId());
-        assertNotNull(finded);
-        ticketDAO.deleteAll();
-        commentDAO.deleteAll();
-    }
 }
