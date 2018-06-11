@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -40,10 +41,19 @@ public class CommentServiceTest {
     public void addCommentToTicketTest() throws Exception {
         Ticket ticket = EntityGenerator.getNewTicket();
         ticketDAO.save(ticket);
-        String jsonMessage = "{\n\t\"comment\":\"comment from service TEST\"\n}";
-        commentService.addCommentToTicket(ticket.getId(), new Date(), jsonMessage, 2);
 
-        assertNotNull(commentDAO.findByTicketId(ticket.getId()));
+        String commentMessage = "Comment from service TEST";
+        commentService.addCommentToTicket(ticket.getId(), new Date(), commentMessage, 2);
+
+        List<Comment> allCommentsByTicketId = commentDAO.findAllByTicketId(ticket.getId());
+        Comment findedComment = new Comment();
+        for (Comment comment : allCommentsByTicketId) {
+            if (comment.getMessage().equals(commentMessage)) {
+                findedComment = comment;
+            }
+        }
+
+        assertNotNull(findedComment);
 
         ticketDAO.deleteAll();
         commentDAO.deleteAll();
