@@ -1,6 +1,5 @@
 package com.ftec.controllers;
 
-import com.ftec.entities.Comment;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.exceptions.TicketException;
@@ -54,44 +53,6 @@ public class TicketController {
             } else {
                 response.setStatus(400);
                 return MvcResponse.getMvcErrorResponse(400, "Ticket not found");
-            }
-        }
-        response.setStatus(400);
-        return MvcResponse.getMvcErrorResponse(400, "User not found");
-    }
-
-    @PostMapping("support/deleteComment/{commentId}")
-    public MvcResponse deleteComment(@PathVariable("commentId") long commentId, HttpServletRequest request, HttpServletResponse response) {
-        String token = request.getHeader(TokenService.TOKEN_NAME);
-        Optional<User> commentator = userService.getById(TokenService.getUserIdFromToken(token));
-        if (commentator.isPresent()) {
-            Optional<Comment> commentFromDB = commentService.getById(commentId);
-            if (commentFromDB.isPresent()) {
-                commentService.delete(commentId);
-                return new MvcResponse(200);
-            } else {
-                response.setStatus(400);
-                return MvcResponse.getMvcErrorResponse(400, "Comment not found");
-            }
-        }
-        response.setStatus(400);
-        return MvcResponse.getMvcErrorResponse(400, "User not found");
-    }
-
-    @PostMapping("support/updateComment/{commentId}")
-    public MvcResponse updateComment(@PathVariable("commentId") long commentId, @RequestBody String message, HttpServletRequest request, HttpServletResponse response) {
-        String token = request.getHeader(TokenService.TOKEN_NAME);
-        Optional<User> commentator = userService.getById(TokenService.getUserIdFromToken(token));
-        if (commentator.isPresent()) {
-            Optional<Comment> commentFromDB = commentService.getById(commentId);
-            if (commentFromDB.isPresent()) {
-                Comment comment = commentFromDB.get();
-                comment.setMessage(message);
-                commentService.update(comment);
-                return new MvcResponse(200);
-            } else {
-                response.setStatus(400);
-                return MvcResponse.getMvcErrorResponse(400, "Comment not found");
             }
         }
         response.setStatus(400);

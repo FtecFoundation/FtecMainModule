@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface CommentDAO extends CrudRepository<Comment, Long> {
@@ -18,7 +19,7 @@ public interface CommentDAO extends CrudRepository<Comment, Long> {
     void saveCommentToTicket(long ticketId, Date creationDate, String message, long userId);
 
     @Query(value = "SELECT * FROM comment WHERE ticket_id = ?1", nativeQuery = true)
-    Comment findByTicketId(long id);
+    List<Comment> findAllByTicketId(long id);
 
     @Modifying
     @Transactional
