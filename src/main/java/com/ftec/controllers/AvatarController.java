@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("image")
 public class AvatarController {
 
     private final UserDAO userDAO;
@@ -49,7 +50,7 @@ public class AvatarController {
         }
     }
 
-    @GetMapping(value = "image/{imgName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/{imgName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImageByURL(@PathVariable("imgName") String imageName) throws IOException {
         UPLOADED_FOLDER = Resources.uploadPathStatic;
         File file = new File(UPLOADED_FOLDER + imageName);
@@ -60,7 +61,7 @@ public class AvatarController {
         return null;
     }
 
-    @PostMapping(value = "/image/deleteImage", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/deleteImage", consumes = "application/json", produces = "application/json")
     public MvcResponse deleteImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> userByToken = userDAO.findById(TokenService.getUserIdFromToken(token));
@@ -90,7 +91,7 @@ public class AvatarController {
         }
     }
 
-    @PostMapping(value = "/image/uploadImage", produces = "application/json")
+    @PostMapping(value = "/uploadImage", produces = "application/json")
     public MvcResponse uploadFile(@RequestParam("file") MultipartFile uploadFile, HttpServletRequest request, HttpServletResponse response) {
 
         if (uploadFile.isEmpty()) {
