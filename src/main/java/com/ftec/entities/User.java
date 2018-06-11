@@ -45,7 +45,10 @@ public class User {
 
     private Locale locale;
 
-    public User(){}
+    private String imageName;
+
+    public User() {
+    }
 
     public User(@NotNull @Size(min = 3) String username, @NotNull @Size(min = 4) String password, @NotNull String email, TutorialSteps currentStep, @NotNull boolean subscribeForEmail, @NotNull Boolean twoStepVerification) {
         this.username = username;
@@ -65,10 +68,10 @@ public class User {
     }
 
     public void applyChangeSettings(UserUpdate userUpdate) {
-        if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
-        if(userUpdate.getPassword() != null) this.password = userUpdate.getPassword();
-        if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
-        if(userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
+        if (userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
+        if (userUpdate.getPassword() != null) this.password = userUpdate.getPassword();
+        if (userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
+        if (userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
 
     }
 
@@ -77,9 +80,9 @@ public class User {
         this.salt = PasswordUtils.getSalt(10);
         this.banned = false;
 
-        if(this.userRole == null) this.twoStepVerification = false;
-        if(this.userRole == null) this.userRole = UserRole.USER;
-        if(locale == null) locale = new Locale("en");
+        if (this.userRole == null) this.twoStepVerification = false;
+        if (this.userRole == null) this.userRole = UserRole.USER;
+        if (locale == null) locale = new Locale("en");
     }
 
 

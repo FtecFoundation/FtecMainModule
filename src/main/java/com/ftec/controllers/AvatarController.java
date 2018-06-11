@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -48,7 +49,7 @@ public class AvatarController {
         }
     }
 
-    @GetMapping(value = "images/{imgName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "image/{imgName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImageByURL(@PathVariable("imgName") String imageName) throws IOException {
         UPLOADED_FOLDER = Resources.uploadPathStatic;
         File file = new File(UPLOADED_FOLDER + imageName);
@@ -59,29 +60,38 @@ public class AvatarController {
         return null;
     }
 
-    @PostMapping("/image/deleteImage")
-    public MvcResponse deleteImage(HttpServletRequest request) throws IOException {
+    @PostMapping(value = "/image/deleteImage", consumes = "application/json", produces = "application/json")
+    public MvcResponse deleteImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> userByToken = userDAO.findById(TokenService.getUserIdFromToken(token));
 
         if (userByToken.isPresent()) {
-            long userFromDBId = userByToken.get().getId();
-            String fileName = userFromDBId + ".jpg";
-            UPLOADED_FOLDER = Resources.uploadPathStatic;
-            File file = new File(UPLOADED_FOLDER + fileName);
+            if (userByToken.get().getImageName() != null) {
+                long userFromDBId = userByToken.get().getId();
+                String fileName = userFromDBId + ".jpg";
+                UPLOADED_FOLDER = Resources.uploadPathStatic;
+                File file = new File(UPLOADED_FOLDER + fileName);
 
-            if (file.delete()) {
-                return MvcResponse.getMvcErrorResponse(200, "File deleted!");
+                if (file.delete()) {
+                    userByToken.get().setImageName(null);
+                    userDAO.save(userByToken.get());
+                    return new MvcResponse(200);
+                } else {
+                    response.setStatus(400);
+                    return MvcResponse.getMvcErrorResponse(400, "Something went wrong while deleting file");
+                }
             } else {
-                return MvcResponse.getMvcErrorResponse(404, "File not found");
+                response.setStatus(400);
+                return MvcResponse.getMvcErrorResponse(400, "This user doesn't have image");
             }
         } else {
-            return MvcResponse.getMvcErrorResponse(404, "Token doesn't exists");
+            response.setStatus(400);
+            return MvcResponse.getMvcErrorResponse(400, "User not found");
         }
     }
 
-    @PostMapping("/image/uploadImage")
-    public MvcResponse uploadFile(@RequestParam("file") MultipartFile uploadFile, HttpServletRequest request) {
+    @PostMapping(value = "/image/uploadImage", produces = "application/json")
+    public MvcResponse uploadFile(@RequestParam("file") MultipartFile uploadFile, HttpServletRequest request, HttpServletResponse response) {
 
         if (uploadFile.isEmpty()) {
             return MvcResponse.getMvcErrorResponse(404, "Please select a file");
@@ -93,19 +103,23 @@ public class AvatarController {
 
             if (user.isPresent()) {
                 long userFromDBId = user.get().getId();
-                saveUploadedFiles(uploadFile, userFromDBId);
+                String uploadFileNameForUser = userFromDBId + "." + FilenameUtils.getExtension(String.valueOf(uploadFile.getOriginalFilename()));
+                user.get().setImageName(uploadFileNameForUser);
+                userDAO.save(user.get());
+
+                saveUploadedFiles(uploadFile, uploadFileNameForUser);
             }
         } catch (IOException e) {
+            response.setStatus(400);
             return MvcResponse.getMvcErrorResponse(400, "Something wrong with file");
         }
         return new MvcResponse(200, "Successfully uploaded - " + uploadFile.getOriginalFilename());
     }
 
-    private void saveUploadedFiles(MultipartFile file, long userId) throws IOException {
-        String filename = String.valueOf(userId) + "." + FilenameUtils.getExtension(String.valueOf(file.getOriginalFilename()));
+    private void saveUploadedFiles(MultipartFile file, String fileName) throws IOException {
         byte[] bytes = file.getBytes();
         UPLOADED_FOLDER = Resources.uploadPathStatic;
-        Path path = Paths.get(UPLOADED_FOLDER + filename);
+        Path path = Paths.get(UPLOADED_FOLDER + fileName);
         Files.write(bytes, path.toFile());
     }
 
