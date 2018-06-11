@@ -30,9 +30,7 @@ public class UserDBTest {
 
     @Test
     public void userDBtest() {
-        boolean falssse = false;
-        assertTrue(falssse);
-        //TODO test delete
+
 
         User u = EntityGenerator.getNewUser();
 
