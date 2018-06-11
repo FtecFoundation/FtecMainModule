@@ -95,7 +95,7 @@ public class AuthorizationTest {
 
         JSONObject mvcResponseString = new JSONObject(invalidCredentialsAnswer);
 
-        assertEquals(mvcResponseString.getInt("status"),403);
+        assertEquals(mvcResponseString.getInt("status"),1);
 
 		payload.put("username",username);
 		payload.put("password",password);
