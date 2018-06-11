@@ -95,7 +95,7 @@ public class RestoreDataTest {
     @Test
     public void deleteOldHashTest() throws Exception {
         User user = EntityGenerator.getNewUser();
-        user.setEmail(Resources.sendToStatic);
+        user.setEmail(Resources.sendToStatic == null ? "wda**wda2D@gmail.com" : Resources.sendToStatic);
         registrationService.registerNewUserAccount(user);
 
         assertFalse(restoreDataDAO.findById(user.getId()).isPresent());

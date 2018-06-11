@@ -97,13 +97,13 @@ public class TicketController {
     }
 
     @PostMapping(value = "/deleteTicket/{ticket_id}", consumes = "application/json", produces = "application/json")
-    public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
+    public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletRequest request, HttpServletResponse response){
         try {
-            ticketService.deleteById(ticket_id);
+            ticketService.deleteById(ticket_id, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 
         } catch (TicketException e){
-            response.setStatus(400);
-            return new MvcResponse(400, e.getMessage());
+            response.setStatus(403);
+            return new MvcResponse(403, e.getMessage());
 
         } catch (Exception e){
             Logger.logException("//", e, true);

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.exceptions.TicketException;
 import com.ftec.resources.Resources;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
@@ -24,10 +26,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class TicketTest {
+public class TicketServiceTest {
+
     @Autowired
     TicketService ticketService;
 
@@ -68,6 +72,7 @@ public class TicketTest {
 
 
     }
+
     @Test
     public void getAllTickets() throws Exception {
         ticketService.deleteAll();
@@ -111,24 +116,72 @@ public class TicketTest {
     }
 
     @Test
-    public void createControllerTest() throws Exception {
-        Ticket ticket = EntityGenerator.getNewTicket();
+    public void deleteAll(){
+        ticketService.deleteAll();
+        assertEquals(0, ticketService.getAll().size());
+        ticketService.save(EntityGenerator.getNewTicket());
+        ticketService.save(EntityGenerator.getNewTicket());
+        ticketService.save(EntityGenerator.getNewTicket());
+        assertEquals(3, ticketService.getAll().size());
+        ticketService.deleteAll();
+        assertEquals(0, ticketService.getAll().size());
 
-        User user = EntityGenerator.getNewUser();
-        registrationService.registerNewUserAccount(user);
-        String token = tokenService.createSaveAndGetNewToken(user.getId());
+    }
 
-        mvc.perform(MockMvcRequestBuilders.post("/createTicket")
-                .content(mapper.writeValueAsString(ticket))
-                .header(TokenService.TOKEN_NAME,token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isOk());
+    @Test
+    public void deleteById() throws TicketException {
+        Ticket t = EntityGenerator.getNewTicket();
+        long userId = 155;
+        t.setUserId(userId);
+        ticketService.save(t);
+        assertTrue(ticketService.findById(t.getId()).isPresent());
 
-        assertEquals(ticket.getSubject(), ticketService.findAllByUserId(user.getId()).get(0).getSubject());
+        ticketService.deleteById(t.getId(),userId);
+        assertFalse(ticketService.findById(t.getId()).isPresent());
 
-        assertEquals(ticketService.findAllByUserId(user.getId()).get(0).getSupporter_id(), 0);
+    }
 
+    @Test(expected = TicketException.class)
+    public void deleteByIdWithoutAuthority() throws TicketException {
+        Ticket t = EntityGenerator.getNewTicket();
+        long userId = 155;
+        t.setUserId(userId);
+        ticketService.save(t);
+        assertTrue(ticketService.findById(t.getId()).isPresent());
 
+        User simple_user = EntityGenerator.getNewUser();
+        registrationService.registerNewUserAccount(simple_user);
+
+        ticketService.deleteById(t.getId(),simple_user.getId()); // we expect the exception
+
+    }
+
+    @Test
+    public void changeTicketStatus() throws TicketException {
+        Ticket t = EntityGenerator.getNewTicket();
+        ticketService.save(t);
+
+        @NotNull TicketStatus old_status = t.getStatus();
+
+        ticketService.changeTicketStatus(t.getId(), TicketStatus.CLOSED);
+
+        assertNotEquals(old_status, ticketService.findById(t.getId()).get().getStatus());
+    }
+
+    @Test
+    public void findAllByUserId(){
+        User u = EntityGenerator.getNewUser();
+        registrationService.registerNewUserAccount(u);
+
+        Ticket t1 = EntityGenerator.getNewTicket();
+        t1.setUserId(u.getId());
+
+        Ticket t2 = EntityGenerator.getNewTicket();
+        t2.setUserId(u.getId());
+
+        assertEquals(0,ticketService.findAllByUserId(u.getId()).size());
+        ticketService.save(t1);
+        ticketService.save(t2);
+        assertEquals(2,ticketService.findAllByUserId(u.getId()).size());
     }
 }

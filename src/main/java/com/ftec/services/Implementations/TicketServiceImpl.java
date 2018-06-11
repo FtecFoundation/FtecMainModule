@@ -5,6 +5,7 @@ import com.ftec.exceptions.TicketException;
 import com.ftec.repositories.TicketDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.TicketStatus;
+import com.ftec.resources.enums.UserRole;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,12 @@ import java.util.Optional;
 @Service
 public class TicketServiceImpl implements TicketService {
 
-    private TicketDAO ticketDAO;
-    private UserDAO userDAO;
+    private final TicketDAO ticketDAO;
+    private final UserDAO userDAO;
 
-    public TicketServiceImpl(TicketDAO ticketDAO) {
+    public TicketServiceImpl(TicketDAO ticketDAO, UserDAO userDAO) {
         this.ticketDAO = ticketDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -81,8 +83,13 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void deleteById(long ticket_id) throws TicketException {
+    public void deleteById(long ticket_id, Long senderId) throws TicketException {
         checkIfTicketExist(ticket_id);
+
+        if(ticketDAO.findById(ticket_id).get().getUserId() != senderId){
+            if(!userDAO.findById(senderId).get().getUserRole().equals(UserRole.SUPPORT)) throw new TicketException("Forbidden!");
+        }
+
         ticketDAO.deleteById(ticket_id);
     }
 

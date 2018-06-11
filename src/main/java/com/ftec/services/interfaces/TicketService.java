@@ -27,5 +27,5 @@ public interface TicketService {
 
     void changeTicketStatus(long ticket_id, TicketStatus status) throws TicketException;
 
-    void deleteById(long ticket_id) throws TicketException;
+    void deleteById(long ticket_id, Long senderId) throws TicketException;
 }

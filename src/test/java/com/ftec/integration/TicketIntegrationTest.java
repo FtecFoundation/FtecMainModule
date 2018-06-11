@@ -105,6 +105,24 @@ public class TicketIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200)).andDo(print());
 
+        deleteRoleTest();
+    }
+
+    private void deleteRoleTest() throws Exception {
+        Ticket t = EntityGenerator.getNewTicket();
+        t.setUserId(1); //user with id 1 should exist
+        ticketService.save(t);
+
+        User not_sup2 = EntityGenerator.getNewUser();
+        registrationService.registerNewUserAccount(not_sup2);
+        assertNotEquals(1, not_sup2.getId());
+
+        String not_sup_token2 = tokenService.createSaveAndGetNewToken(not_sup2.getId());
+
+        mvc.perform(post( "/deleteTicket/" + t.getId())
+                .header(TokenService.TOKEN_NAME, not_sup_token2)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(403)).andDo(print()).andReturn();
     }
 
     private void deleteTicket(String token, long ticket_id) throws Exception {
