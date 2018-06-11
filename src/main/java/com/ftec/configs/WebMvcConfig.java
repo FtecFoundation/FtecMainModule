@@ -30,13 +30,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/cabinet","/cabinet/**","/changeUserSetting","/logout")
+        registry.addInterceptor(new TokenSecurityMiddleware(tokenService)).addPathPatterns("/cabinet", "/cabinet/**", "/changeUserSetting", "/logout")
                 .order(0);
         registry.addInterceptor(new SupportMiddleware(userDAO)).addPathPatterns(TicketController.ADM_PREF + "/**")
                 .order(1);
 
 //        registry.addInterceptor(new BanMiddleware()).addPathPatterns("/","/*","/**").excludePathPatterns("/API/**","/API/*","/error/banned");
-        registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet","/cabinet/**").excludePathPatterns("/cabinet/tutorial","/cabinet/tutorial/*");
+        registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet", "/cabinet/**").excludePathPatterns("/cabinet/tutorial", "/cabinet/tutorial/*");
         registry.addInterceptor(new CORSMiddleware()).addPathPatterns("/**");
     }
 
@@ -45,6 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         String staticPath = resources.getUploadPath();
         if (staticPath != null) {
             registry.addResourceHandler("/images/**").addResourceLocations("file:///" + staticPath);
+            registry.addResourceHandler("/static/htmlstatic/**").addResourceLocations("file:///" + staticPath);
         }
     }
 }

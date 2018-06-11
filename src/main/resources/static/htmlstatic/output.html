@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism-okaidia.min.css" />
+    <style>
+      blockquote {
+        border-left: solid 4px #eee;
+        padding-left: 8px;
+        font-style: italic;
+        margin-left: 0;
+        padding: 8px;
+      }
+
+      .ui.micro.label {
+        font-size: .25rem;
+      }
+
+      .ui.transaction.accordion .title {
+        text-align: center;
+      }
+
+      .ui.transaction.accordion .content {
+        border-top: solid 1px #ddd !important;
+        border-bottom: solid 1px #ddd !important;
+        background-color: rgba(0,0,0,.03);
+        padding: 0.5em 1em !important;
+      }
+
+      .ui.transaction.accordion .content.active {
+        margin-top: 0.5em;
+      }
+
+      .ui.basic.label {
+        text-align: left;
+        overflow: auto;
+      }
+
+      .resource .ui.sub.header {
+        text-transform: none;
+      }
+
+      @media only screen and (min-width: 768px) {
+        .sidewrap {
+          margin-right: 2rem;
+        }
+
+        .sidenav {
+          left: 0;
+          top: 0;
+          width: inherit;
+          position: fixed !important;
+          height: 100% !important;
+          overflow-y: auto !important;
+          padding-left: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui padded grid">
+      <div class="sidewrap four wide computer five wide tablet sixteen wide mobile column">
+        <div class="sidenav">
+          
+<div class="ui horizontal divider">
+  <a href="#introduction">Introduction</a>
+</div>
+<div class="ui fluid secondary vertical menu">
+  <a class="item" href="#introduction"></a>
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#user-security">User security</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Login user</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#user-security-login-user-authorize-user">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Authorize user</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Register new user</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item blue" href="#user-security-register-new-user-register-new-user">
+          <i class="ui blue empty circular label"></i>
+          
+            <span>Register new user</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Check login</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#user-security-check-login-check-if-login-is-already-taken">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Check if login is already taken</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+    
+    <div class="title ">
+      <i class="dropdown icon"></i>
+      
+        <strong>Check email</strong>
+      
+    </div>
+    <div class="content ">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#user-security-check-email-check-if-email-is-already-taken">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Check if email is already taken</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+<div class="ui horizontal divider">
+  <a href="#images">Images</a>
+</div>
+
+<div class="ui accordion fluid">
+  
+    
+    <div class="title active">
+      <i class="dropdown icon"></i>
+      
+        <strong>Get user image</strong>
+      
+    </div>
+    <div class="content active">
+      <div class="ui fluid secondary vertical menu">
+      
+        <a class="item green" href="#images-get-user-image-retrieve-user-image-as-byte-array">
+          <i class="ui green empty circular label"></i>
+          
+            <span>Retrieve user image as byte array</span>
+          
+        </a>
+      
+      </div>
+    </div>
+    
+  
+</div>
+
+
+        </div>
+      </div>
+      <div class="eleven wide computer ten wide tablet sixteen wide mobile column">
+        
+<div class="ui hidden divider header"></div>
+<h1 class="ui huge header" id="introduction"></h1>
+<hr class="ui divider">
+<div class="description">
+  
+</div>
+
+        <div class="ui hidden divider"></div>
+        
+
+  <div class="ui horizontal divider" id="user-security">
+    User security
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Login user
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="user-security-login-user-authorize-user">
+              Authorize user
+            </h3>
+            <div class="description"><p>This url is suppose to authenticate user</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Authenticate user
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>/login</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;login&#34;: &#34;login&#34;,
+  &#34;password&#34;: &#34;password&#34;,
+  &#34;code&#34;: &#34;123456&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;login&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;login of user to authenticate&#34;
+    },
+    &#34;password&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;password of user to authenticate&#34;
+    },
+    &#34;code&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Optional. 2fa code of user to authenticate&#34;
+    }
+  },
+  &#34;required&#34;: [
+    &#34;login&#34;,
+    &#34;password&#34;
+  ]
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;: 0,
+    &#34;response&#34;: &#34;123_token&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Authenticate user
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>/login</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;login&#34;: &#34;login&#34;,
+  &#34;password&#34;: &#34;password&#34;,
+  &#34;code&#34;: &#34;123456&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;login&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;login of user to authenticate&#34;
+    },
+    &#34;password&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;password of user to authenticate&#34;
+    },
+    &#34;code&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Optional. 2fa code of user to authenticate&#34;
+    }
+  },
+  &#34;required&#34;: [
+    &#34;login&#34;,
+    &#34;password&#34;
+  ]
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked orange segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui orange circular label">
+                      403
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:1,
+    &#34;error&#34;:&#34;Invalid username or password!&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Authenticate user
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>/login</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;login&#34;: &#34;login&#34;,
+  &#34;password&#34;: &#34;password&#34;,
+  &#34;code&#34;: &#34;123456&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;login&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;login of user to authenticate&#34;
+    },
+    &#34;password&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;password of user to authenticate&#34;
+    },
+    &#34;code&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Optional. 2fa code of user to authenticate&#34;
+    }
+  },
+  &#34;required&#34;: [
+    &#34;login&#34;,
+    &#34;password&#34;
+  ]
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked orange segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui orange circular label">
+                      403
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:2,
+    &#34;error&#34;:&#34;Invalid 2FA code&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Register new user
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="user-security-register-new-user-register-new-user">
+              Register new user
+            </h3>
+            <div class="description"><p>This url is supposed create a new user <br>
+If user was created successfully returns response with status 200 and token <br>
+If username already exists returns 400 status with code 3 <br>
+If email already exists returns 400 status with code 4</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Create user
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>/registration</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;username&#34;: &#34;login&#34;,
+  &#34;password&#34;: &#34;Password123&#34;,
+  &#34;email&#34;: &#34;example@email.com&#34;,
+  &#34;subscribeForEmail&#34;: true,
+  &#34;referrerId&#34;: 1
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;username&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @Size(min = 4, max = 20), @UniqueLogin User&#39;s login&#34;
+    },
+    &#34;password&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @Size(max = 20), @Pattern(regexp = ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S&#43;$).{8,}$) User&#39;s password&#34;
+    },
+    &#34;email&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @UniqueEmail, @Size(max = 20) User&#39;s email&#34;
+    },
+    &#34;subscribeForEmail&#34;: {
+      &#34;type&#34;: &#34;boolean&#34;,
+      &#34;description&#34;: &#34;Is user want to be subscribed to our emails&#34;
+    },
+    &#34;referrerId&#34;: {
+      &#34;type&#34;: &#34;number&#34;,
+      &#34;description&#34;: &#34;Optional. If sent user will be counted as a referrer for `id` user&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;: 0,
+    &#34;response&#34;: &#34;123_token&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Create user
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui blue large button">
+                  <h3>POST</h3>
+                </div>
+                <a class="ui basic fluid blue label">
+                  <code>/registration</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;username&#34;: &#34;login&#34;,
+  &#34;password&#34;: &#34;Password123&#34;,
+  &#34;email&#34;: &#34;example@email.com&#34;,
+  &#34;subscribeForEmail&#34;: true,
+  &#34;referrerId&#34;: 1
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;username&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @Size(min = 4, max = 20), @UniqueLogin User&#39;s login&#34;
+    },
+    &#34;password&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @Size(max = 20), @Pattern(regexp = ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S&#43;$).{8,}$) User&#39;s password&#34;
+    },
+    &#34;email&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;@NotNull, @UniqueEmail, @Size(max = 20) User&#39;s email&#34;
+    },
+    &#34;subscribeForEmail&#34;: {
+      &#34;type&#34;: &#34;boolean&#34;,
+      &#34;description&#34;: &#34;Is user want to be subscribed to our emails&#34;
+    },
+    &#34;referrerId&#34;: {
+      &#34;type&#34;: &#34;number&#34;,
+      &#34;description&#34;: &#34;Optional. If sent user will be counted as a referrer for `id` user&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked  segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui  circular label">
+                      400
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:6,
+    &#34;error&#34;:&#34;List of violations to model specification&#34;
+}
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Check login
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="user-security-check-login-check-if-login-is-already-taken">
+              Check if login is already taken
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Check login
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>/checkUniqueLogin</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;login&#34;: &#34;login&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;login&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Login to check&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:0,
+    &#34;response&#34;:{&#34;available&#34;:true}
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Check login
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>/checkUniqueLogin</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;login&#34;: &#34;login&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;login&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Login to check&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked  segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui  circular label">
+                      400
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:3,
+    &#34;error&#34;:&#34;Login already taken&#34;
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Check email
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="user-security-check-email-check-if-email-is-already-taken">
+              Check if email is already taken
+            </h3>
+            <div class="description"></div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Check email
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>/checkUniqueEmail</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;email&#34;: &#34;example@email.com&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;email&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Email to check&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:0,
+    &#34;response&#34;:{&#34;available&#34;:true}
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Check email
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>/checkUniqueEmail</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+                <div class="ui stacked segment">
+                  <div class="ui fluid transaction accordion">
+                    <div class="title">
+                      <code>application/json</code>
+                    </div>
+                    <div class="content tabbed">
+                      <div class="ui top attached tabular menu">
+                        <a data-tab="body" class="active item">BODY</a>
+                        <a data-tab="schema" class="item">SCHEMA</a>
+                      </div>
+                      <div class="ui bottom attached active tab segment" data-tab="body">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;email&#34;: &#34;example@email.com&#34;
+}</code>
+                        </pre>
+                      </div>
+                      <div class="ui bottom attached tab segment" data-tab="schema">
+                        <pre style="white-space: inherit">
+                          <code class="language-json">{
+  &#34;$schema&#34;: &#34;http://json-schema.org/draft-04/schema#&#34;,
+  &#34;type&#34;: &#34;object&#34;,
+  &#34;properties&#34;: {
+    &#34;email&#34;: {
+      &#34;type&#34;: &#34;string&#34;,
+      &#34;description&#34;: &#34;Email to check&#34;
+    }
+  }
+}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked  segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui  circular label">
+                      400
+                    </a>
+                    <code>application/json</code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-json">{
+    &#34;status&#34;:4,
+    &#34;error&#34;:&#34;Email already taken&#34;
+}
+
+</code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+  <div class="ui horizontal divider" id="images">
+    Images
+  </div>
+  <div class="ui header center aligned">
+    <div class="ui header">
+      <div class="sub header">
+        
+      </div>
+    </div>
+  </div>
+  
+    
+      <div class="ui stacked segments">
+        <div class="ui basic segment resource">
+          <div class="ui purple huge ribbon label">
+            Get user image
+          </div>
+          <div class="ui header">
+            <div class="ui sub header">
+              
+            </div>
+          </div>
+        </div>
+
+        
+          
+<div class="ui grey horizontal small divider header">
+  <i class="ui grey micro circular label"></i>
+  <i class="ui pink micro circular label"></i>
+  <i class="ui grey micro circular label"></i>
+</div>
+
+          <div class="ui basic segment">
+            <h3 class="ui block center aligned header" id="images-get-user-image-retrieve-user-image-as-byte-array">
+              Retrieve user image as byte array
+            </h3>
+            <div class="description"><p>This url allows to retrieve a user image as byte array without knowing image url by auth token<br>
+    Reccomended to use url access to image because it&rsquo;s faster and more efficient</p>
+</div>
+
+            
+              <h4 class="ui horizontal divider">
+                REQUEST Retrieve user image
+              </h4>
+              <div class="description"></div>
+              <div class="fluid ui large labeled button">
+                <div class="ui green large button">
+                  <h3>GET</h3>
+                </div>
+                <a class="ui basic fluid green label">
+                  <code>/image/getImage</code>
+                </a>
+              </div>
+              
+              
+                
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>application/json</code></td>
+    </tr>
+  
+    <tr>
+      <td class="four wide">TOKEN-X-AUTH</td>
+      <td><code>user authentication token</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              
+              
+
+              <h4 class="ui horizontal divider">RESPONSE</h4>
+              <div class="description"></div>
+              
+<table class="ui celled definition table">
+  <thead>
+    <tr>
+      <th colspan="2">Headers</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+    <tr>
+      <td class="four wide">Content-Type</td>
+      <td><code>image/jpeg</code></td>
+    </tr>
+  
+  </tbody>
+</table>
+
+              <div class="ui stacked blue segment">
+                <div class="ui fluid transaction accordion">
+                  <div class="title center aligned">
+                    <a class="ui blue circular label">
+                      200
+                    </a>
+                    <code></code>
+                  </div>
+                  <div class="content tabbed">
+                    <div class="ui top attached tabular menu">
+                      <a data-tab="body" class="active item">BODY</a>
+                      <a data-tab="schema" class="item">SCHEMA</a>
+                    </div>
+                    <div class="ui bottom attached active tab segment" data-tab="body">
+                      <pre style="white-space: inherit">
+                        <code class="language-"></code>
+                      </pre>
+                    </div>
+                    <div class="ui bottom attached tab segment" data-tab="schema">
+                      <pre style="white-space: inherit">
+                        <code class="language-json"></code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        
+        </div>
+      <div class="ui hidden divider"></div>
+    
+  
+
+
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/accordion.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/tab.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/transition.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/components/popup.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/prism.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.13.0/components/prism-json.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $('.ui.accordion').accordion({ animateChildren: false, duration: 0 });
+        $('.content.tabbed').each(function(index) {
+          $('.ui.tabular .item', $(this)).tab({ context: $(this) });
+        });
+        $('.ui.vertical.menu').on('click', '.item', function() {
+          $('.ui.vertical.menu .item').removeClass('active');
+          $(this).addClass('active');
+        });
+        $('.ui.empty.circular.label').popup();
+      });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
