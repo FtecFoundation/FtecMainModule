@@ -6,10 +6,11 @@ import com.ftec.entities.User;
 import com.ftec.repositories.RestoreDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
-import com.ftec.services.Implementations.RestoreDataServiceImpl;
 import com.ftec.services.interfaces.RegistrationService;
+import com.ftec.services.interfaces.RestoreDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
+import com.ftec.utils.PasswordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,13 +34,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class RestoreDataTest {
+public class RestoreServiceTest {
 
     @Autowired
     RestoreDataDAO restoreDataDAO;
 
     @Autowired
-    RestoreDataServiceImpl restoreDataService;
+    RestoreDataService restoreDataService;
 
     @Autowired
     RegistrationService registrationService;
@@ -51,6 +53,18 @@ public class RestoreDataTest {
 
     @Autowired
     TokenService tokenService;
+
+    @Test
+    public void publicMethodsTest() throws Exception {
+      User u = EntityGenerator.getNewUser();
+      registrationService.registerNewUserAccount(u);
+      restoreDataService.sendRestorePassUrl(u.getEmail());
+
+      String hash = restoreDataDAO.findById(u.getId()).get().getHash();
+
+      restoreDataService.processChangingPass(hash, "new_strong_pasS123");
+      assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());
+    }
 
     @Test
     public void controllerRestorePassUrlByUsernameTest() throws Exception {
@@ -140,7 +154,6 @@ public class RestoreDataTest {
                 .param("hash", test_hash)
                 .param("new_pass", "newStrongPass123"))
                 .andExpect(status().is(200));
-
 
     }
 

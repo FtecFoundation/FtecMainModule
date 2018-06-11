@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface RestoreDataService {
      void sendRestorePassUrl(String identifier) throws Exception;
 
-     void checkAndChange(String hash, String new_pass) throws RestoreException;
+     void processChangingPass(String hash, String new_pass) throws RestoreException;
 
      Optional<RestoreData> findById(long id);
 }
