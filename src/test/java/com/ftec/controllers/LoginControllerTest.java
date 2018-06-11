@@ -5,6 +5,7 @@ import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.Implementations.UserServiceImpl;
+import com.ftec.services.interfaces.AuthorizationService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
@@ -87,9 +88,9 @@ public class LoginControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
-        assertEquals(new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("error"), LoginController.INVALID_USERNAME_OR_PASSWORD);
+        assertEquals(new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("error"), AuthorizationService.INVALID_USERNAME_OR_PASSWORD);
 
-        assertEquals(new JSONObject(mvcResult2.getResponse().getContentAsString()).getString("error"), LoginController.INVALID_USERNAME_OR_PASSWORD);
+        assertEquals(new JSONObject(mvcResult2.getResponse().getContentAsString()).getString("error"), AuthorizationService.INVALID_USERNAME_OR_PASSWORD);
     }
 
     @Test
@@ -112,7 +113,7 @@ public class LoginControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isForbidden()).andReturn();
 
-        assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), LoginController.WRONG_2FA_CODE);
+        assertEquals(new JSONObject(mvcResult.getResponse().getContentAsString()).getString("error"), AuthorizationService.WRONG_2FA_CODE);
     }
 
     @Test

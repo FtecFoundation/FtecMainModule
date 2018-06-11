@@ -6,10 +6,9 @@ import com.ftec.exceptions.AuthorizationException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
+import com.ftec.services.interfaces.AuthorizationService;
 import com.ftec.services.interfaces.TokenService;
-import com.ftec.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,28 +18,26 @@ import java.util.Optional;
 
 @RestController
 public class LoginController {
-	final static String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password!";
 
 	private final TokenService tokenService;
 	private final UserDAO userDAO;
-	private final Environment environment;
+    private final AuthorizationService authorizationService;
 
-	
-	static final String WRONG_2FA_CODE = "2Fa code is emply!";
-	
+
 	@Autowired
-	public LoginController(TokenService tokenService, UserDAO userDAO, Environment environment) {
+	public LoginController(TokenService tokenService, UserDAO userDAO, AuthorizationService authorizationService) {
 			super();
 			this.tokenService = tokenService;
 			this.userDAO = userDAO;
-			this.environment = environment;
-		}
+            this.authorizationService = authorizationService;
+    }
 	
 	@PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
-		Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
+
+	    Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 		try {
-			authorizate(userOpt,userAuth);
+            authorizationService.authorizate(userOpt,userAuth);
 			
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
@@ -52,26 +49,10 @@ public class LoginController {
 		return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 	}
 
-	public void authorizate(Optional<User> userOpt, UserAuth userAuth) throws AuthorizationException {
-		if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
-			check2FaCode(userAuth.code, userOpt.get());
-		} else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
-	}
 
-	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException {
-		if(!user.getTwoStepVerification()) return;
 
-		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(WRONG_2FA_CODE);
-	
-		for(String profile: this.environment.getActiveProfiles()){
-			if(profile.equals("test")) return;
-		}
 
-		throw new AuthorizationException(WRONG_2FA_CODE);
-
-	}
-
-	private static class UserAuth{
+	public static class UserAuth{
 		private String username;
 		private String password;
 		@JsonProperty(defaultValue = "")
