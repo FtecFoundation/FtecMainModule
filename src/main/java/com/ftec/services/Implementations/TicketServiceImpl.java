@@ -4,6 +4,7 @@ import com.ftec.entities.Ticket;
 import com.ftec.exceptions.TicketException;
 import com.ftec.repositories.TicketDAO;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
 import org.springframework.stereotype.Service;
@@ -69,5 +70,12 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Long findSupportedIdById(Long ticket_id) {
         return ticketDAO.findSupportedIdById(ticket_id);
+    }
+
+    @Override
+    public void changeTicketStatus(long ticket_id, TicketStatus status) throws TicketException{
+        if(!ticketDAO.findById(ticket_id).isPresent()) throw new TicketException("Ticket with this id not found!");
+
+        ticketDAO.changeTicketStatus(ticket_id, status);
     }
 }
