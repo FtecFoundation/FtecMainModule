@@ -7,6 +7,7 @@ import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.enums.UserRole;
+import com.ftec.services.interfaces.CommentService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
@@ -45,6 +46,9 @@ public class TicketIntegrationTest {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    CommentService commentService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -155,6 +159,8 @@ public class TicketIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(comment))
                 .andExpect(status().is(200)).andDo(print());
+        assertTrue( commentService.getAllByTicketId(ticket_id).stream().
+                anyMatch( p ->  p.getMessage().equals(comment))); //can not work if found 2+ comments for this ticket
     }
 
     private void addSupporterToTicket(String token, Long ticket_id) throws Exception {

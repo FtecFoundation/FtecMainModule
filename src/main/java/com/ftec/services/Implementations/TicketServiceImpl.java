@@ -71,7 +71,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Long findSupportedIdById(Long ticket_id) {
-        return ticketDAO.findSupportedIdById(ticket_id);
+        return ticketDAO.findSupportedIdByTicketId(ticket_id);
     }
 
     @Override

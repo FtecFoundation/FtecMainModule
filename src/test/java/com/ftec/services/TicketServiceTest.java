@@ -184,4 +184,24 @@ public class TicketServiceTest {
         ticketService.save(t2);
         assertEquals(2,ticketService.findAllByUserId(u.getId()).size());
     }
+
+    @Test
+    public void addTicket() throws TicketException {
+        Ticket t = EntityGenerator.getNewTicket();
+        String token = tokenService.createSaveAndGetNewToken(25l);
+        ticketService.addTicket(t, token);
+
+        assertTrue(ticketService.findById(t.getId()).isPresent());
+    }
+
+    @Test
+    public void setTicketSupportedId(){
+        Ticket t = EntityGenerator.getNewTicket();
+        ticketService.save(t);
+
+        assertEquals(0, t.getSupporter_id());
+
+        ticketService.setTicketSupport(t.getId(), 2);
+    }
+
 }

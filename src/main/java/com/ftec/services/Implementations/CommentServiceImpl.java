@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +43,11 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void update(Comment comment) {
         commentDAO.save(comment);
+    }
+
+    @Override
+    public List<Comment> getAllByTicketId(long ticket_id) {
+        return commentDAO.findAllByTicketId(ticket_id);
     }
 
 }

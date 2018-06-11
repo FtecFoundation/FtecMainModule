@@ -3,6 +3,7 @@ package com.ftec.services.interfaces;
 import com.ftec.entities.Comment;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface CommentService {
@@ -14,4 +15,6 @@ public interface CommentService {
     Optional<Comment> getById(long commentId);
 
     void update(Comment comment);
+
+    List<Comment> getAllByTicketId(long ticket_id);
 }

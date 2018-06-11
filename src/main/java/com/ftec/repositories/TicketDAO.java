@@ -20,7 +20,7 @@ public interface TicketDAO extends CrudRepository<Ticket, Long> {
     List<Ticket> findAllByUserId(long id);
 
     @Query(value = "select supporter_id from ticket where id = ?1", nativeQuery = true)
-    Long findSupportedIdById(Long ticket_id);
+    Long findSupportedIdByTicketId(Long ticket_id);
 
     @Modifying
     @Query(value = "update ticket set status = ?2 where id = ?1", nativeQuery = true)
