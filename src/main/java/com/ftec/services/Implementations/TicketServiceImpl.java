@@ -73,9 +73,20 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional
     public void changeTicketStatus(long ticket_id, TicketStatus status) throws TicketException{
-        if(!ticketDAO.findById(ticket_id).isPresent()) throw new TicketException("Ticket with this id not found!");
+        checkIfTicketExist(ticket_id);
 
-        ticketDAO.changeTicketStatus(ticket_id, status);
+        ticketDAO.changeTicketStatus(ticket_id, status.ordinal());
+    }
+
+    @Override
+    public void deleteById(long ticket_id) throws TicketException {
+        checkIfTicketExist(ticket_id);
+        ticketDAO.deleteById(ticket_id);
+    }
+
+    private void checkIfTicketExist(long ticket_id) throws TicketException {
+        if(!ticketDAO.findById(ticket_id).isPresent()) throw new TicketException("Ticket with this id not found!");
     }
 }

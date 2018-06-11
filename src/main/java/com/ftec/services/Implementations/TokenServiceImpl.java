@@ -37,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
     @Scheduled(cron = "0 0 12 * * ?")
     @Transactional
     public void deleteExpiredTokens() {
-        tokenDAO.deleteAllExpiredToken();
+        tokenDAO.deleteAllExpiredToken(new Date());
     }
 
     public String createSaveAndGetNewToken(Long id) {

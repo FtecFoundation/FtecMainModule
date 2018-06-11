@@ -26,4 +26,6 @@ public interface TicketService {
     Long findSupportedIdById(Long ticket_id);
 
     void changeTicketStatus(long ticket_id, TicketStatus status) throws TicketException;
+
+    void deleteById(long ticket_id) throws TicketException;
 }

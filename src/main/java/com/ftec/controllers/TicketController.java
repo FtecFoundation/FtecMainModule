@@ -27,6 +27,8 @@ public class TicketController {
     private final CommentService commentService;
     private final UserService userService;
 
+    public static final String ADM_PREF = "/manage";
+
     @Autowired
     public TicketController(TicketService ticketService, CommentService commentService, UserService userService) {
         this.ticketService = ticketService;
@@ -73,19 +75,40 @@ public class TicketController {
     }
 
 
-    @PostMapping("/setSupporterIdForTicket")
+    @PostMapping(value = ADM_PREF + "/setSupporterIdForTicket", consumes = "application/json", produces = "application/json")
     public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id){
         ticketService.setTicketSupport(ticket_id, supporter_id);
         return new MvcResponse(200);
     }
 
-    @PostMapping("/changeTicketStatus/{ticket_id}")
-    public MvcResponse changeTicketStatus(@RequestParam("new_status") TicketStatus status, @PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
+    @PostMapping(value = ADM_PREF + "/changeTicketStatus/{ticket_id}", consumes = "application/json", produces = "application/json")
+    public MvcResponse changeTicketStatus(@PathVariable("ticket_id") long ticket_id, @RequestBody TicketStatus status, HttpServletResponse response){
         try {
             ticketService.changeTicketStatus(ticket_id, status);
         } catch (TicketException e){
             response.setStatus(400);
             return new MvcResponse(400, e.getMessage());
+        } catch (Exception e){
+            Logger.logException("//", e, true);
+            response.setStatus(400);
+            return new MvcResponse(400, "Unexpected error");
+        }
+        return new MvcResponse(200);
+    }
+
+    @PostMapping(value = ADM_PREF + "/deleteTicket/{ticket_id}", consumes = "application/json", produces = "application/json")
+    public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
+        try {
+            ticketService.deleteById(ticket_id);
+
+        } catch (TicketException e){
+            response.setStatus(400);
+            return new MvcResponse(400, e.getMessage());
+
+        } catch (Exception e){
+            Logger.logException("//", e, true);
+            response.setStatus(400);
+            return new MvcResponse(400, "Unexpected error");
         }
         return new MvcResponse(200);
     }
