@@ -66,10 +66,16 @@ public class User {
 
     public void applyChangeSettings(UserUpdate userUpdate) {
         if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
-        if(userUpdate.getPassword() != null) this.password = userUpdate.getPassword();
+        if(userUpdate.getPassword() != null) changePassword(userUpdate);
+
         if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
         if(userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
 
+    }
+
+    private void changePassword(UserUpdate userUpdate) {
+
+        this.password = PasswordUtils.generateSecurePassword(userUpdate.getPassword(), this.salt);
     }
 
     public void fillEmptyFields() {

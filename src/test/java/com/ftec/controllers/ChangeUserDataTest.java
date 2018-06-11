@@ -11,6 +11,7 @@ import com.ftec.services.interfaces.ChangeSettingsService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
+import com.ftec.utils.PasswordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class ChangeUserDataTest {
 
 
 	@Test
-	public void changeUserDataIntegrationTest() throws Exception, UserNotExistsException {
+	public void changeUserDataTest() throws Exception, UserNotExistsException {
 		User u =  EntityGenerator.getNewUser();
 		registrationService.registerNewUserAccount(u);
 
@@ -69,7 +70,7 @@ public class ChangeUserDataTest {
 		if(!user.isPresent()) throw new NullPointerException();
 		User userAfterChange = user.get();
 
-		assert userAfterChange.getPassword().equals("neWStrong123");
+		assert userAfterChange.getPassword().equals(PasswordUtils.generateSecurePassword("neWStrong123", u.getSalt()));
 		assert userAfterChange.getEmail().equals("new_email@gmail.com");
 		assert !userAfterChange.getTwoStepVerification();
 	}

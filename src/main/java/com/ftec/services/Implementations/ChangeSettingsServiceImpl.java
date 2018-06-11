@@ -22,10 +22,8 @@ public class ChangeSettingsServiceImpl implements ChangeSettingsService {
     @Override
     public void updatePreferences(ChangeSettingController.UserUpdate userUpdate, long userId) throws UserNotExistsException {
         Optional<User> userFromDB = userDAO.findById(userId);
+        if(!userFromDB.isPresent()) throw new UserNotExistsException();
 
-        if(!userFromDB.isPresent()) {
-            throw new UserNotExistsException();
-        }
         User u = userFromDB.get();
         u.applyChangeSettings(userUpdate);
         userDAO.save(u);

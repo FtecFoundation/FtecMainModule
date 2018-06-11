@@ -132,8 +132,8 @@ public class RestoreDataTest {
         test_data.setHash(test_hash);
 
         restoreDataDAO.save(test_data);
-        System.out.println("look at old pass");
-        Thread.sleep(10000);
+
+        //uncomment this if test does not works Thread.sleep(1500);
 
                 mvc.perform(post("/changePass")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

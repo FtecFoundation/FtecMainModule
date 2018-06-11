@@ -36,25 +36,31 @@ public class LoginController {
 			this.environment = environment;
 		}
 	
-	@PostMapping(value = "/login", consumes = "application/json")
+	@PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
+		Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 		try {
-			Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
-			if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
-				if(userOpt.get().getTwoStepVerification()) check2FaCode(userAuth.code, userOpt.get());
-				return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
-			} 
-			else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
+			authorizate(userOpt,userAuth);
 			
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
 			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
+		} catch (Exception e){
+			response.setStatus(400);
+			return MvcResponse.getMvcErrorResponse(400, "Unexpected error");
 		}
-		
-		
+		return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 	}
 
-	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException{
+	public void authorizate(Optional<User> userOpt, UserAuth userAuth) throws AuthorizationException {
+		if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.password, userOpt.get().getPassword(),userOpt.get().getSalt())) {
+			check2FaCode(userAuth.code, userOpt.get());
+		} else throw new AuthorizationException(INVALID_USERNAME_OR_PASSWORD);
+	}
+
+	private void check2FaCode(String twoStepVerCode, User user) throws AuthorizationException {
+		if(!user.getTwoStepVerification()) return;
+
 		if(twoStepVerCode == null || twoStepVerCode.length() == 0 ) throw new AuthorizationException(WRONG_2FA_CODE);
 	
 		for(String profile: this.environment.getActiveProfiles()){
