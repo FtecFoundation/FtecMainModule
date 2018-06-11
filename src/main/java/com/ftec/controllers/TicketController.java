@@ -1,5 +1,6 @@
 package com.ftec.controllers;
 
+import com.ftec.entities.Comment;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.exceptions.TicketException;
@@ -41,21 +42,65 @@ public class TicketController {
     }
 
     @PostMapping("support/addComment/{ticketId}")
-    public MvcResponse addComment(@PathVariable("ticketId") long ticketId, @RequestBody String jsonComment, HttpServletRequest request) {
+    public MvcResponse addComment(@PathVariable("ticketId") long ticketId, @RequestBody String message, HttpServletRequest request, HttpServletResponse response) {
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> commentator = userService.getById(TokenService.getUserIdFromToken(token));
         if (commentator.isPresent()) {
-            long commentatorId = commentator.get().getId();
-            commentService.addCommentToTicket(ticketId, new Date(), jsonComment, commentatorId);
-            return new MvcResponse(200);
+            Optional<Ticket> ticketById = ticketService.findById(ticketId);
+            if (ticketById.isPresent()) {
+                long commentatorId = commentator.get().getId();
+                commentService.addCommentToTicket(ticketId, new Date(), message, commentatorId);
+                return new MvcResponse(200);
+            } else {
+                response.setStatus(400);
+                return MvcResponse.getMvcErrorResponse(400, "Ticket not found");
+            }
         }
+        response.setStatus(400);
+        return MvcResponse.getMvcErrorResponse(400, "User not found");
+    }
 
+    @PostMapping("support/deleteComment/{commentId}")
+    public MvcResponse deleteComment(@PathVariable("commentId") long commentId, HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader(TokenService.TOKEN_NAME);
+        Optional<User> commentator = userService.getById(TokenService.getUserIdFromToken(token));
+        if (commentator.isPresent()) {
+            Optional<Comment> commentFromDB = commentService.getById(commentId);
+            if (commentFromDB.isPresent()) {
+                commentService.delete(commentId);
+                return new MvcResponse(200);
+            } else {
+                response.setStatus(400);
+                return MvcResponse.getMvcErrorResponse(400, "Comment not found");
+            }
+        }
+        response.setStatus(400);
+        return MvcResponse.getMvcErrorResponse(400, "User not found");
+    }
+
+    @PostMapping("support/updateComment/{commentId}")
+    public MvcResponse updateComment(@PathVariable("commentId") long commentId, @RequestBody String message, HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader(TokenService.TOKEN_NAME);
+        Optional<User> commentator = userService.getById(TokenService.getUserIdFromToken(token));
+        if (commentator.isPresent()) {
+            Optional<Comment> commentFromDB = commentService.getById(commentId);
+            if (commentFromDB.isPresent()) {
+                Comment comment = commentFromDB.get();
+                comment.setMessage(message);
+                commentService.update(comment);
+                return new MvcResponse(200);
+            } else {
+                response.setStatus(400);
+                return MvcResponse.getMvcErrorResponse(400, "Comment not found");
+            }
+        }
+        response.setStatus(400);
         return MvcResponse.getMvcErrorResponse(400, "User not found");
     }
 
     @PostMapping("/createTicket")
     public MvcResponse addTicket(@RequestBody Ticket ticket, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
-        if(br.hasErrors()){
+        if (br.hasErrors()) {
             response.setStatus(400);
             return new MvcResponse(400, br.getAllErrors());
         }
@@ -74,16 +119,16 @@ public class TicketController {
 
 
     @PostMapping("/setSupporterIdForTicket")
-    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id){
+    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id) {
         ticketService.setTicketSupport(ticket_id, supporter_id);
         return new MvcResponse(200);
     }
 
     @PostMapping("/changeTicketStatus/{ticket_id}")
-    public MvcResponse changeTicketStatus(@RequestParam("new_status") TicketStatus status, @PathVariable("ticket_id") long ticket_id, HttpServletResponse response){
+    public MvcResponse changeTicketStatus(@RequestParam("new_status") TicketStatus status, @PathVariable("ticket_id") long ticket_id, HttpServletResponse response) {
         try {
             ticketService.changeTicketStatus(ticket_id, status);
-        } catch (TicketException e){
+        } catch (TicketException e) {
             response.setStatus(400);
             return new MvcResponse(400, e.getMessage());
         }

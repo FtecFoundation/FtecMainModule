@@ -19,4 +19,9 @@ public interface CommentDAO extends CrudRepository<Comment, Long> {
 
     @Query(value = "SELECT * FROM comment WHERE ticket_id = ?1", nativeQuery = true)
     Comment findByTicketId(long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM comment WHERE id = ?1", nativeQuery = true)
+    void deleteCommentById(long id);
 }
