@@ -107,12 +107,12 @@ public class RegistrationController {
         private String username;
 
         @NotNull
-        @Size(max = 20)
+        @Size(min = 4, max = 20)
         @Pattern(regexp = Patterns.PASSWORD_PATTERN)
         private String password;
 
-        @NotNull
-        @Size(max = 40)
+        @NotNull(message = "Email is required field")
+        @Size(max = 40, message = "Maximum email length is 40 symbols")
         @UniqueEmail(message = "This email already taken")
         @Email(message = "Email format is incorrect")
         private String email;
