@@ -36,7 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .order(1);
 
 //        registry.addInterceptor(new BanMiddleware()).addPathPatterns("/","/*","/**").excludePathPatterns("/API/**","/API/*","/error/banned");
-        registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet", "/cabinet/**").excludePathPatterns("/cabinet/tutorial", "/cabinet/tutorial/*");
+        registry.addInterceptor(new TutorialMiddleware()).addPathPatterns("/cabinet", "/cabinet/**").excludePathPatterns("/cabinet/tutorial", "/cabinet/tutorial/*", "/cabinet/image", "/cabinet/image/*");
         registry.addInterceptor(new CORSMiddleware()).addPathPatterns("/**");
     }
 
