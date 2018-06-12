@@ -2,7 +2,6 @@ package com.ftec.controllers;
 
 import com.ftec.constratints.*;
 import com.ftec.entities.User;
-import com.ftec.exceptions.UserExistException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
@@ -14,8 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
 public class RegistrationController {
@@ -36,12 +34,21 @@ public class RegistrationController {
     private final UniqueEmailValidator uniqueEmailValidator;
 
     @PostMapping(path = "/registration", consumes = "application/json", produces = "application/json")
-    public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
+    public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) {
         try {
 
             if (br.hasErrors()) {
-                response.setStatus(400);
-                return MvcResponse.getMvcErrorResponse(Statuses.ModelMalformed.getStatus(), br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+                List<FieldError> errors = br.getFieldErrors();
+                for (FieldError error : errors) {
+                    if (error.getField().equals("username")) {
+                        response.setStatus(400);
+                        return MvcResponse.getMvcErrorResponse(Statuses.LoginTaken.getStatus(), "This login already taken");
+                    }
+                    if (error.getField().equals("email")) {
+                        response.setStatus(400);
+                        return MvcResponse.getMvcErrorResponse(Statuses.EmailTaken.getStatus(), "This email already taken");
+                    }
+                }
             }
 
             User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
