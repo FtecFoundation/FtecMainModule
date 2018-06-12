@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("cabinet/image")
+@RequestMapping("/cabinet/image")
 public class AvatarController {
 
     private final UserDAO userDAO;

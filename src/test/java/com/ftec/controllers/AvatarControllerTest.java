@@ -59,7 +59,7 @@ public class AvatarControllerTest {
 
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
-        mvc.perform(MockMvcRequestBuilders.get("/image/getImage")
+        mvc.perform(MockMvcRequestBuilders.get("/cabinet/image/getImage")
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.IMAGE_JPEG_VALUE)
                 .accept(MediaType.ALL_VALUE))
