@@ -49,9 +49,11 @@ public class TicketController {
         if (commentator.isPresent()) {
             Optional<Ticket> ticketById = ticketService.findById(ticketId);
             if (ticketById.isPresent()) {
-                long commentatorId = commentator.get().getId();
-                commentService.addCommentToTicket(ticketId, new Date(), message, commentatorId);
-                return new MvcResponse(200);
+                if (ticketById.get().getStatus() != TicketStatus.CLOSED) {
+                    long commentatorId = commentator.get().getId();
+                    commentService.addCommentToTicket(ticketId, new Date(), message, commentatorId);
+                    return new MvcResponse(200);
+                }
             } else {
                 response.setStatus(400);
                 return MvcResponse.getMvcErrorResponse(400, "Ticket not found");
@@ -82,19 +84,19 @@ public class TicketController {
 
 
     @PostMapping(value = ADM_PREF + "/setSupporterIdForTicket", consumes = "application/json", produces = "application/json")
-    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id){
+    public MvcResponse setSupportedIdForToken(@RequestParam("ticket_id") long ticket_id, @RequestParam("supported_id") long supporter_id) {
         ticketService.setTicketSupport(ticket_id, supporter_id);
         return new MvcResponse(200);
     }
 
     @PostMapping(value = "/changeTicketStatus/{ticket_id}", consumes = "application/json", produces = "application/json")
-    public MvcResponse changeTicketStatus(@PathVariable("ticket_id") long ticket_id, @RequestBody TicketStatus status, HttpServletResponse response){
+    public MvcResponse changeTicketStatus(@PathVariable("ticket_id") long ticket_id, @RequestBody TicketStatus status, HttpServletResponse response) {
         try {
             ticketService.changeTicketStatus(ticket_id, status);
-        } catch (TicketException e){
+        } catch (TicketException e) {
             response.setStatus(400);
             return new MvcResponse(400, e.getMessage());
-        } catch (Exception e){
+        } catch (Exception e) {
             Logger.logException("//", e, true);
             response.setStatus(400);
             return new MvcResponse(400, "Unexpected error");
@@ -103,15 +105,15 @@ public class TicketController {
     }
 
     @PostMapping(value = "/deleteTicket/{ticket_id}", consumes = "application/json", produces = "application/json")
-    public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletRequest request, HttpServletResponse response){
+    public MvcResponse deleteTicket(@PathVariable("ticket_id") long ticket_id, HttpServletRequest request, HttpServletResponse response) {
         try {
             ticketService.deleteById(ticket_id, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 
-        } catch (TicketException e){
+        } catch (TicketException e) {
             response.setStatus(403);
             return new MvcResponse(403, e.getMessage());
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Logger.logException("//", e, true);
             response.setStatus(400);
             return new MvcResponse(400, "Unexpected error");
