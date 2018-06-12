@@ -1,6 +1,6 @@
 package com.ftec.services.Implementations;
 
-import com.ftec.controllers.LoginController;
+import com.ftec.controllers.AuthorizationController;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.services.interfaces.AuthorizationService;
@@ -20,7 +20,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         this.environment = environment;
     }
 
-    public void authorizate(Optional<User> userOpt, LoginController.UserAuth userAuth) throws AuthorizationException {
+    public void authorizate(Optional<User> userOpt, AuthorizationController.UserAuth userAuth) throws AuthorizationException {
         if(userOpt.isPresent() && PasswordUtils.isPasswordMatch(userAuth.getPassword(), userOpt.get().getPassword(),userOpt.get().getSalt())) {
             check2FaCode(userAuth.getCode(), userOpt.get());
         }

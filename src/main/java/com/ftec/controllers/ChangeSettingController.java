@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.ftec.constratints.Patterns;
 import com.ftec.constratints.UniqueEmail;
 import com.ftec.exceptions.UserNotExistsException;
+import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.ChangeSettingsService;
 import com.ftec.services.interfaces.TokenService;
@@ -30,7 +31,6 @@ public class ChangeSettingController {
 		this.changeSettingsService = changeSettingsService;
 	}
 
-
 	@PostMapping(value = "/changeUserSetting", produces = "application/json")
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 		if(br.hasErrors()) {
@@ -41,9 +41,9 @@ public class ChangeSettingController {
 			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 		} catch (UserNotExistsException ex){
 			response.setStatus(400);
-			return MvcResponse.getMvcErrorResponse(400, "NoUserExists");
+			return MvcResponse.getMvcErrorResponse(400, ex.getMessage());
 		}
-		return new MvcResponse(200);
+		return new MvcResponse(Statuses.Ok.getStatus());
 	}
 
 

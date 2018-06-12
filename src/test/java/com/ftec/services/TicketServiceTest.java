@@ -202,7 +202,7 @@ public class TicketServiceTest {
         assertEquals(0, t.getSupporter_id());
 
         ticketService.setTicketSupport(t.getId(), 2);
-        assertEquals(2, t.getSupporter_id());
+        assertEquals(2, ticketService.findById(t.getId()).get().getSupporter_id());
 
     }
 

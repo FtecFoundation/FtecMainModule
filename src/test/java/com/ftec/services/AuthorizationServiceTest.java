@@ -1,7 +1,7 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.LoginController;
+import com.ftec.controllers.AuthorizationController;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.services.interfaces.AuthorizationService;
@@ -36,9 +36,50 @@ public class AuthorizationServiceTest {
         registrationService.registerNewUserAccount(u);
 
         Optional<User> optional = Optional.of(u);
-        LoginController.UserAuth userAuth = new LoginController.UserAuth();
+        AuthorizationController.UserAuth userAuth = new AuthorizationController.UserAuth();
         userAuth.setUsername(u.getUsername());
         userAuth.setPassword(raw_pass);
+
+        authorizationService.authorizate(optional, userAuth);
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void authorizationFailedModuleTest() throws AuthorizationException {
+        User u = EntityGenerator.getNewUser();
+        String raw_pass = u.getPassword();
+        registrationService.registerNewUserAccount(u);
+
+        Optional<User> optional = Optional.of(u);
+        AuthorizationController.UserAuth userAuth = new AuthorizationController.UserAuth();
+        userAuth.setUsername(u.getUsername());
+        userAuth.setPassword("invalid_pass");
+
+        authorizationService.authorizate(optional, userAuth);
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void authorizationFailedLogin() throws AuthorizationException {
+        User u = EntityGenerator.getNewUser();
+        String raw_pass = u.getPassword();
+        registrationService.registerNewUserAccount(u);
+
+        Optional<User> optional = Optional.of(u);
+        AuthorizationController.UserAuth userAuth = new AuthorizationController.UserAuth();
+        userAuth.setUsername("invalid_username");
+        userAuth.setPassword(u.getPassword());
+
+        authorizationService.authorizate(optional, userAuth);
+    }
+
+    @Test(expected = AuthorizationException.class)
+    public void authorizationFailedUser() throws AuthorizationException {
+        User u = EntityGenerator.getNewUser();
+        String raw_pass = u.getPassword();
+
+        Optional<User> optional = Optional.of(u);
+        AuthorizationController.UserAuth userAuth = new AuthorizationController.UserAuth();
+        userAuth.setUsername(u.getUsername());
+        userAuth.setPassword("invalid_pass");
 
         authorizationService.authorizate(optional, userAuth);
     }
