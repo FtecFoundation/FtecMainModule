@@ -42,9 +42,9 @@ public class AuthorizationController {
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
 			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
-		} catch (Exception e){
-			response.setStatus(403);
-			return MvcResponse.getMvcErrorResponse(Statuses.AuthenticationFailed.getStatus(), "Unexpected error");
+		} catch (Exception e) {
+			response.setStatus(500);
+			return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
 		}
 		return new MvcResponse(Statuses.Ok.getStatus(), "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 	}

@@ -74,7 +74,8 @@ public class TicketController {
             Long ticket_id = ticketService.addTicket(ticket, request.getHeader(TokenService.TOKEN_NAME));
             return new MvcResponse(200, "ticket_id", ticket_id);
         } catch (TicketException e) {
-            return new MvcResponse(200, e.getMessage());
+            response.setStatus(400);
+            return new MvcResponse(400, e.getMessage());
         } catch (Exception e) {
             Logger.logException("Unexpected exception: ", e, true);
             response.setStatus(400);
