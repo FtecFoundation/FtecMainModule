@@ -56,4 +56,26 @@ public class RegistrationControllerTest {
         assertFalse(userDAO.findByEmail(userRegistration.getEmail()).isPresent());
     }
 
+    @Test
+    public void trySaveShortUsername() throws Exception {
+        RegistrationController.UserRegistration userRegistration = new RegistrationController.UserRegistration();
+        userRegistration.setUsername("Lol");
+        userRegistration.setPassword("ShortUser_Pass_228");
+        userRegistration.setEmail("ShortUsername_@gmail.com");
+
+        //should be status 400
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
+                content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().is(400));
+
+        assertFalse(userDAO.findByUsername(userRegistration.getUsername()).isPresent());
+    }
+
+    @Test
+    public void trySaveUsersWithSameUserName() throws Exception {
+
+    }
+
 }
