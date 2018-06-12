@@ -3,8 +3,9 @@ package com.ftec.services.Implementations;
 import com.ftec.constratints.Patterns;
 import com.ftec.entities.RestoreData;
 import com.ftec.entities.User;
-import com.ftec.exceptions.RestoreException;
-import com.ftec.exceptions.UserNotExistsException;
+import com.ftec.exceptions.InvalidHashException;
+import com.ftec.exceptions.InvalidUserDataException;
+import com.ftec.exceptions.WeakPasswordException;
 import com.ftec.repositories.RestoreDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
@@ -42,7 +43,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
 
     @Transactional
     @Override
-    public void sendRestorePassUrl(String data) throws UserNotExistsException {
+    public void sendRestorePassUrl(String data) throws InvalidUserDataException {
         if(userDAO.findByEmail(data).isPresent()){
             sendRestoreUrl(getNewHashForUser(userDAO.findUsernameByEmail(data)), data);
             return;
@@ -50,7 +51,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         if(userDAO.findByUsername(data).isPresent()){
             sendRestoreUrl(getNewHashForUser(data), userDAO.findEmailByUsername(data));
         }
-        else throw new UserNotExistsException("User with this email or login does not exist!");
+        else throw new InvalidUserDataException("User with this email or login does not exist!");
     }
 
     private void sendRestoreUrl(String hash, String email) {
@@ -79,7 +80,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
 
     @Transactional
     @Override
-    public void processChangingPass(String hash, String new_pass) throws RestoreException {
+    public void processChangingPass(String hash, String new_pass) throws InvalidHashException, WeakPasswordException {
         verifyHash(hash);
         changePass(restoreDataDAO.findIdByHash(hash),new_pass);
         tokenService.deleteByUserId(restoreDataDAO.findIdByHash(hash));
@@ -91,7 +92,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         return restoreDataDAO.findById(id);
     }
 
-    private void changePass(long userId, String new_pass)  throws RestoreException {
+    private void changePass(long userId, String new_pass)  throws WeakPasswordException {
         Patterns.validatePass(new_pass);
         User user = userDAO.findById(userId).get();
 
@@ -99,9 +100,9 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         userDAO.save(user);
     }
 
-    private void verifyHash(String hash) throws RestoreException {
+    private void verifyHash(String hash) throws InvalidHashException {
         if(!restoreDataDAO.findByHash(hash).isPresent() || !restoreDataDAO.findByHash(hash).get().getUrlExpiredDate().after(new Date())){
-            throw new RestoreException("Invalid hash!");
+            throw new InvalidHashException("Invalid hash!");
         }
     }
 

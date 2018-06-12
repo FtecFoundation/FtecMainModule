@@ -1,7 +1,7 @@
 package com.ftec.controllers;
 
-import com.ftec.exceptions.RestoreException;
-import com.ftec.exceptions.UserNotExistsException;
+import com.ftec.exceptions.InvalidHashException;
+import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.exceptions.WeakPasswordException;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
@@ -31,14 +31,14 @@ public class RestoreController {
         try {
             restoreDataService.sendRestorePassUrl(data);
         }
-        catch (UserNotExistsException e){
+        catch (InvalidUserDataException e){
             response.setStatus(400);
-            return MvcResponse.getMvcErrorResponse(Statuses.AuthenticationFailed.getStatus(), e.getMessage());
+            return MvcResponse.getMvcErrorResponse(Statuses.InvalidUserData.getStatus(), e.getMessage());
         }
         catch (Exception e) {
             Logger.logException("While executing sending restore url", e, true);
             response.setStatus(500);
-            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error")
+            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
         }
 
         return new MvcResponse(200);
@@ -50,12 +50,12 @@ public class RestoreController {
         try {
             restoreDataService.processChangingPass(hash, new_pass);
         }
-        catch (RestoreException e){
+        catch (InvalidHashException e){
             response.setStatus(400);
-            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(),"Unexpected error");
+            return MvcResponse.getMvcErrorResponse(Statuses.InvalidHash.getStatus(),"Invalid hash!");
         } catch (WeakPasswordException e){
             response.setStatus(400);
-            return MvcResponse.getMvcErrorResponse(Statuses.WeakPassword.getStatus(),"Unexpected error");
+            return MvcResponse.getMvcErrorResponse(Statuses.WeakPassword.getStatus(),"Weak password!");
         }
         catch (Exception e){
             Logger.logException("While executing changing pass", e, true);
@@ -63,6 +63,6 @@ public class RestoreController {
             return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(),"Unexpected error");
         }
 
-        return new MvcResponse(200);
+        return new MvcResponse(Statuses.Ok.getStatus());
     }
 }
