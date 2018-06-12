@@ -35,13 +35,13 @@ public class ChangeSettingController {
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 		if(br.hasErrors()) {
 		    response.setStatus(400);
-		    return MvcResponse.getMvcErrorResponse(400,br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
+		    return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
 		}
 		try {
 			changeSettingsService.updatePreferences(userUpdate, TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 		} catch (UserNotExistsException ex){
 			response.setStatus(400);
-			return MvcResponse.getMvcErrorResponse(400, ex.getMessage());
+			return MvcResponse.getMvcErrorResponse(Statuses.UserNotExist.getStatus(), ex.getMessage());
 		}
 		return new MvcResponse(Statuses.Ok.getStatus());
 	}
