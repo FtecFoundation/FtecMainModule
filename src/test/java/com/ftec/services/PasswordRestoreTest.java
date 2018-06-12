@@ -10,7 +10,6 @@ import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.enums.ConfirmScope;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.ManageDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.ftec.utils.PasswordUtils;
@@ -41,7 +40,7 @@ public class PasswordRestoreTest {
     ConfirmDataDAO confirmDataDAO;
 
     @Autowired
-    ManageDataService manageDataService;
+    PasswordRestoreService passwordRestoreService;
 
     @Autowired
     RegistrationService registrationService;
@@ -59,11 +58,11 @@ public class PasswordRestoreTest {
     public void publicMethodsTest() throws Exception, InvalidUserDataException {
       User u = EntityGenerator.getNewUser();
       registrationService.registerNewUserAccount(u);
-      manageDataService.sendRestorePassUrl(u.getEmail());
+      passwordRestoreService.sendRestorePassUrl(u.getEmail());
 
       String hash = confirmDataDAO.findByUserId(u.getId()).get().getHash();
 
-      manageDataService.processChangingPass(hash, "new_strong_pasS123");
+      passwordRestoreService.processChangingPass(hash, "new_strong_pasS123");
       assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());
     }
 

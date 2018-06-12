@@ -5,7 +5,8 @@ import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.exceptions.WeakPasswordException;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
-import com.ftec.services.interfaces.ManageDataService;
+import com.ftec.services.ConfirmEmailService;
+import com.ftec.services.PasswordRestoreService;
 import com.ftec.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,20 +18,22 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class ManageDataController {
 
-    private final
-    ManageDataService manageDataService;
+    private final ConfirmEmailService confirmEmailService;
+    private final PasswordRestoreService passwordRestoreService;
 
     public static final String SEND_RESTORE_URL = "/sendRestoreUrl";
 
     @Autowired
-    public ManageDataController(ManageDataService manageDataService) {
-        this.manageDataService = manageDataService;
+    public ManageDataController(ConfirmEmailService confirmEmailService, PasswordRestoreService passwordRestoreService) {
+
+        this.confirmEmailService = confirmEmailService;
+        this.passwordRestoreService = passwordRestoreService;
     }
 
     @PostMapping(value = SEND_RESTORE_URL, consumes = "application/json", produces = "application/json")
     public MvcResponse getRestoreUrlToEmail(@RequestParam(name = "data") String data, HttpServletResponse response) {
         try {
-            manageDataService.sendRestorePassUrl(data);
+            passwordRestoreService.sendRestorePassUrl(data);
         }
         catch (InvalidUserDataException e){
             response.setStatus(400);
@@ -49,7 +52,7 @@ public class ManageDataController {
     @PostMapping(value = "/changePass", consumes = "application/json")
     public MvcResponse changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass, HttpServletResponse response) {
         try {
-            manageDataService.processChangingPass(hash, new_pass);
+            passwordRestoreService.processChangingPass(hash, new_pass);
         }
         catch (InvalidHashException e){
             response.setStatus(400);
@@ -69,7 +72,7 @@ public class ManageDataController {
 
     @PostMapping(value = "/confirmEmail")
     public MvcResponse confirmEmail(@RequestParam("hash") String hash, HttpServletResponse response){
-        manageDataService.confirmEmail(hash);
+        confirmEmailService.confirmEmail(hash);
 
         return new MvcResponse(Statuses.Ok.getStatus());
     }

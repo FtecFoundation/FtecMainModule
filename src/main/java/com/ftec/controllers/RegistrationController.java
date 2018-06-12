@@ -5,8 +5,8 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
+import com.ftec.services.ConfirmEmailService;
 import com.ftec.services.Implementations.RegistrationServiceImpl;
-import com.ftec.services.interfaces.ManageDataService;
 import com.ftec.services.interfaces.ReferralService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
@@ -37,7 +37,7 @@ public class RegistrationController {
     private final ReferralService referralService;
     private final UniqueLoginValidator uniqueLoginValidator;
     private final UniqueEmailValidator uniqueEmailValidator;
-    private final ManageDataService manageDataService;
+    private final ConfirmEmailService confirmEmailService;
 
     @PostMapping(path = "/registration", consumes = "application/json", produces = "application/json")
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) {
@@ -59,7 +59,7 @@ public class RegistrationController {
 
             User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
             registrationService.registerNewUserAccount(userToSave);
-            manageDataService.sendConfirmEmail(userToSave.getEmail(), userToSave.getId()); // send email confirm
+            confirmEmailService.sendConfirmEmailUrl(userToSave.getEmail(), userToSave.getId()); // send email confirm
 
             long referrerId = userRegistration.getReferrerId();
             if (referrerId != 0) {
@@ -126,12 +126,12 @@ public class RegistrationController {
     }
 
     @Autowired
-    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService, UniqueLoginValidator uniqueLoginValidator, UniqueEmailValidator uniqueEmailValidator, ManageDataService manageDataService) {
+    public RegistrationController(TokenService tokenService, RegistrationService registrationService, ReferralService referralService, UniqueLoginValidator uniqueLoginValidator, UniqueEmailValidator uniqueEmailValidator, ConfirmEmailService confirmEmailService) {
         this.referralService = referralService;
         this.tokenService = tokenService;
         this.registrationService = registrationService;
         this.uniqueLoginValidator = uniqueLoginValidator;
         this.uniqueEmailValidator = uniqueEmailValidator;
-        this.manageDataService = manageDataService;
+        this.confirmEmailService = confirmEmailService;
     }
 }
