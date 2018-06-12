@@ -54,26 +54,6 @@ public class ControllerTest {
     }
 
     @Test
-    public void trySaveDuplicateUsername() throws Exception {
-        RegistrationController.UserRegistration userRegistration = EntityGenerator.getNewRegisrtUser();
-        String userName = userRegistration.getUsername();
-
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
-                content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
-                accept(MediaType.APPLICATION_JSON))
-                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
-
-        //should be status BadRequest
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
-                content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
-                accept(MediaType.APPLICATION_JSON))
-                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
-
-        assertTrue(userService.isDuplicateUserName(userName));
-    }
-
-
-    @Test
     public void registerTwoValidUsers() throws Exception {
 
         RegistrationController.UserRegistration userRegistration1 = EntityGenerator.getNewRegisrtUser();

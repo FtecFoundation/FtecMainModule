@@ -5,6 +5,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.Implementations.UserServiceImpl;
+import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +75,22 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void trySaveUsersWithSameUserName() throws Exception {
+    public void trySaveDuplicateUsername() throws Exception {
+        RegistrationController.UserRegistration userRegistration = EntityGenerator.getNewRegisrtUser();
+        String userName = userRegistration.getUsername();
 
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
+                content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().is(200));
+
+        //should be status BadRequest
+        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/registration").
+                content(objectMapper.writeValueAsString(userRegistration)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {}).andExpect(status().isBadRequest());
+
+        assertTrue(userService.isDuplicateUserName(userName));
     }
 
 }
