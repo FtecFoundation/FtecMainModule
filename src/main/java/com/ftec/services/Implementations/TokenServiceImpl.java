@@ -26,7 +26,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Transactional
-    public void processToken(String token)  throws TokenException{
+    public void processToken(String token)  throws TokenException {
         verifyToken(token);
         long userId = TokenService.getUserIdFromToken(token);
         deleteExcessiveToken(userId);
@@ -65,7 +65,7 @@ public class TokenServiceImpl implements TokenService {
     private Token getTokenFromDB(String token) throws TokenException{
         Optional<Token> userToken = tokenDAO.findByToken(token);
 
-        if(!userToken.isPresent())	throw new TokenException("Can't find token in the DB!");
+        if(!userToken.isPresent())	throw new TokenException ("Can't find token in the DB!");
         return userToken.get();
     }
 

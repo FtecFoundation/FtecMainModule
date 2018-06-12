@@ -81,7 +81,7 @@ public class ConfirmEmailService {
         confirmDataDAO.deleteByHash(hash);
     }
 
-    public Optional<ConfirmData> findByUserIdAndScope(long id, ConfirmScope scope) {
+     Optional<ConfirmData> findByUserIdAndScope(long id, ConfirmScope scope) {
         return confirmDataDAO.findByUserIdAndScope(id, scope);
     }
 }

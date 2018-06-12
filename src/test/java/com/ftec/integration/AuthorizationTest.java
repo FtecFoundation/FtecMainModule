@@ -7,6 +7,7 @@ import com.ftec.controllers.ChangeSettingController;
 import com.ftec.controllers.LogOutController;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
@@ -22,10 +23,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles(value = "jenkins-tests,test", inheritProfiles = false)
@@ -76,16 +79,16 @@ public class AuthorizationTest {
 		//with removed token
         mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME,token)
-        ).andExpect(status().is(403));
+        ).andExpect(status().is(403)).andDo(Resources.doPrintStatic ? print() : (ResultHandler) r -> {});
 
         //with invalid token
         mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME,"23_DWWDAAWDDWA")
-        ).andExpect(status().is(403));
+        ).andExpect(status().is(403)).andDo(Resources.doPrintStatic ? print() : (ResultHandler) r -> {});
 
         //without token
         mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
-        ).andExpect(status().is(403));
+        ).andExpect(status().is(403)).andDo(Resources.doPrintStatic ? print() : (ResultHandler) r -> {});
 
         JSONObject jsonLogoutRes = new JSONObject(logoutResult);
 		assertEquals("0", jsonLogoutRes.getString("status"));

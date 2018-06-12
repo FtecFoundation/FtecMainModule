@@ -27,5 +27,4 @@ public interface ConfirmDataDAO extends JpaRepository<ConfirmData, Long> {
 
     Optional<ConfirmData> findByHashAndScope(String hash, ConfirmScope confirmEmail);
 
-    Optional<ConfirmData> findByUserId(long id);
 }
