@@ -45,6 +45,7 @@ public class User {
 
     private Locale locale;
 
+    @Column(columnDefinition = "varchar(30) null default null")
     private String imageName;
 
     public User() {
@@ -68,11 +69,11 @@ public class User {
     }
 
     public void applyChangeSettings(UserUpdate userUpdate) {
-        if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
-        if(userUpdate.getPassword() != null) changePassword(userUpdate);
+        if (userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
+        if (userUpdate.getPassword() != null) changePassword(userUpdate);
 
-        if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
-        if(userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
+        if (userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
+        if (userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
     }
 
     private void changePassword(UserUpdate userUpdate) {
