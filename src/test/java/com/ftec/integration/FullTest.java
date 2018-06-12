@@ -3,15 +3,15 @@ package com.ftec.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ChangeSettingController;
+import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.repositories.ReferralDAO;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.Resources;
 import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.enums.TutorialSteps;
-import com.ftec.services.interfaces.CommentService;
-import com.ftec.services.interfaces.RestoreDataService;
-import com.ftec.services.interfaces.TicketService;
-import com.ftec.services.interfaces.TokenService;
+import com.ftec.services.interfaces.*;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +24,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,6 +57,12 @@ public class FullTest {
     @Autowired
     CommentService commentService;
 
+    @Autowired
+    ReferralService referralService;
+
+    @Autowired
+    ReferralDAO referralDAO;
+
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -73,7 +80,7 @@ public class FullTest {
 
         //secured access with valid token
         TutorialSteps step = TutorialSteps.valueOf(mvc.perform(get("/cabinet/tutorial/getCurrentStep")
-                .header(TokenService.TOKEN_NAME,token)
+                .header(TokenService.TOKEN_NAME, token)
         ).andExpect(status().is(200)).andReturn().getResponse().getContentAsString().replaceAll("^\"|\"$", ""));
 
         assertEquals(TutorialSteps.FIRST, step);
@@ -82,7 +89,7 @@ public class FullTest {
         logout(token);
         //is logouted?
         mvc.perform(get("/cabinet/tutorial/getCurrentStep")
-                .header(TokenService.TOKEN_NAME,token)
+                .header(TokenService.TOKEN_NAME, token)
         ).andExpect(status().is(403));
 
         //log in
@@ -97,7 +104,7 @@ public class FullTest {
         String token2 = new JSONObject(result2.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
         mvc.perform(get("/cabinet/tutorial/getCurrentStep")
-                .header(TokenService.TOKEN_NAME,token2)
+                .header(TokenService.TOKEN_NAME, token2)
         ).andExpect(status().is(200));
 
         //change user settings
@@ -125,8 +132,11 @@ public class FullTest {
 
         String token3 = new JSONObject(result3.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
-        //TODO add refferal test
-        //TODO add avatar test
+        //referral test
+        referralTest();
+
+        //avatar test
+        getAvatarTest();
 
         //restore pass
         restorePass(user);
@@ -140,7 +150,7 @@ public class FullTest {
                 .content(mapper.writeValueAsString(ticket)))
                 .andExpect(status().is(200)).andDo(print());
 
-        assertEquals(1,ticketService.findAllByUserId(user.getId()).size());
+        assertEquals(1, ticketService.findAllByUserId(user.getId()).size());
         ticket.setId(ticketService.findAllByUserId(user.getId()).get(0).getId());
         //add comment
         String comment = "my comment!";
@@ -150,15 +160,15 @@ public class FullTest {
                 .content(comment))
                 .andExpect(status().is(200)).andDo(print());
 
-        assertTrue( commentService.getAllByTicketId(ticket.getId()).stream().
-                anyMatch( p ->  p.getMessage().equals(comment)));
+        assertTrue(commentService.getAllByTicketId(ticket.getId()).stream().
+                anyMatch(p -> p.getMessage().equals(comment)));
 
         //change ticket status to close
         TicketStatus status = TicketStatus.CLOSED;
 
-        mvc.perform(post( "/changeTicketStatus/" + ticket.getId())
+        mvc.perform(post("/changeTicketStatus/" + ticket.getId())
                 .header(TokenService.TOKEN_NAME, token)
-                .content( mapper.writeValueAsString(status))
+                .content(mapper.writeValueAsString(status))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().is(200));
 
@@ -193,7 +203,78 @@ public class FullTest {
     }
 
     private void logout(String token) throws Exception {
-        mvc.perform(post("/logout").header(TokenService.TOKEN_NAME,token))
+        mvc.perform(post("/logout").header(TokenService.TOKEN_NAME, token))
                 .andExpect(status().is(200));
+    }
+
+    private void getAvatarTest() throws Exception {
+        //user without image
+        User user = EntityGenerator.getNewUser();
+        userDAO.save(user);
+
+        String token = tokenService.createSaveAndGetNewToken(user.getId());
+
+        //should return default image and OK status
+        mvc.perform(MockMvcRequestBuilders.get("/image/getImage")
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.IMAGE_JPEG_VALUE)
+                .accept(MediaType.ALL_VALUE))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().isOk());
+    }
+
+    private void referralTest() throws Exception {
+        //Saving User without referrer Id (Main users)
+        RegistrationController.UserRegistration userRegWithoutRef = EntityGenerator.getNewRegisrtUser();
+
+        mvc.perform(MockMvcRequestBuilders.post("/registration").
+                content(mapper.writeValueAsString(userRegWithoutRef)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().is(200));
+
+        User userWithoutRef = userDAO.findByUsername(userRegWithoutRef.getUsername()).get();
+
+
+        //Saving User with referrer Id (Level one testing)
+        RegistrationController.UserRegistration userRegWithRef = EntityGenerator.getNewRegisrtUser();
+        userRegWithRef.setReferrerId(userWithoutRef.getId());
+
+        mvc.perform(MockMvcRequestBuilders.post("/registration").
+                content(mapper.writeValueAsString(userRegWithRef)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().is(200));
+
+        User userWithRef1 = userDAO.findByUsername(userRegWithRef.getUsername()).get();
+        assertNotNull(referralDAO.findReferralLevelOneForUser(userWithRef1.getId()));
+
+
+        //Saving User with referrer Id, who have referrer(Level two testing)
+        RegistrationController.UserRegistration userRegWithRef2 = EntityGenerator.getNewRegisrtUser();
+        userRegWithRef2.setReferrerId(userWithRef1.getId());
+
+        mvc.perform(MockMvcRequestBuilders.post("/registration").
+                content(mapper.writeValueAsString(userRegWithRef2)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().is(200));
+
+        User userWithRef2 = userDAO.findByUsername(userRegWithRef2.getUsername()).get();
+        assertNotNull(referralDAO.findReferralLevelTwoForUser(userWithRef2.getId()));
+
+
+        //Saving User with referrer Id, who have referrer, who have referrer (Level three testing)
+        RegistrationController.UserRegistration userRegWithRef3 = EntityGenerator.getNewRegisrtUser();
+        userRegWithRef3.setReferrerId(userWithRef2.getId());
+
+        mvc.perform(MockMvcRequestBuilders.post("/registration").
+                content(mapper.writeValueAsString(userRegWithRef3)).contentType(MediaType.APPLICATION_JSON).
+                accept(MediaType.APPLICATION_JSON))
+                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
+                }).andExpect(status().is(200));
+
+        User userWithRef3 = userDAO.findByUsername(userRegWithRef3.getUsername()).get();
+        assertNotNull(referralDAO.findReferralLevelThreeForUser(userWithRef3.getId()));
     }
 }
