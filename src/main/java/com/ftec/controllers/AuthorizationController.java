@@ -3,6 +3,7 @@ package com.ftec.controllers;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
+import com.ftec.exceptions.TwoStepVerificationException;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
@@ -33,7 +34,6 @@ public class AuthorizationController {
 	
 	@PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
-
 	    Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 	    long userId;
 
@@ -43,7 +43,12 @@ public class AuthorizationController {
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
 			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
-		} catch (Exception e) {
+
+		} catch (TwoStepVerificationException e){
+            response.setStatus(403);
+            return MvcResponse.getMvcErrorResponse(Statuses.Invalid2FA.getStatus(), e.getMessage());
+
+        } catch (Exception e) {
 			response.setStatus(500);
 			return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
 		}
