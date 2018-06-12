@@ -8,19 +8,19 @@ import com.ftec.repositories.UserDAO;
 import com.ftec.services.ConfirmEmailService;
 import com.ftec.services.MailService;
 import com.ftec.services.PasswordRestoreService;
-import com.ftec.services.interfaces.ConfirmDataService;
+import com.ftec.services.interfaces.ManageDataService;
 import com.ftec.services.interfaces.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConfirmDataServiceImpl implements ConfirmDataService {
+public class ManageDataServiceImpl implements ManageDataService {
 
     final private ConfirmEmailService confirmEmailService;
     final private PasswordRestoreService passwordRestoreService;
 
     @Autowired
-    public ConfirmDataServiceImpl(ConfirmDataDAO confirmDataDAO, UserDAO userDAO, MailService mailService, TokenService tokenService, ConfirmEmailService confirmEmailService, PasswordRestoreService passwordRestoreService) {
+    public ManageDataServiceImpl(ConfirmDataDAO confirmDataDAO, UserDAO userDAO, MailService mailService, TokenService tokenService, ConfirmEmailService confirmEmailService, PasswordRestoreService passwordRestoreService) {
         this.confirmEmailService = confirmEmailService;
         this.passwordRestoreService = passwordRestoreService;
     }

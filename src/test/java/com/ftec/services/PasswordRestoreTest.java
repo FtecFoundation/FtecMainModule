@@ -1,7 +1,7 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.DataController;
+import com.ftec.controllers.ManageDataController;
 import com.ftec.entities.ConfirmData;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUserDataException;
@@ -9,7 +9,7 @@ import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.ConfirmDataService;
+import com.ftec.services.interfaces.ManageDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.ftec.utils.PasswordUtils;
@@ -34,13 +34,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class RestoreServiceTest {
+public class PasswordRestoreTest {
 
     @Autowired
     ConfirmDataDAO confirmDataDAO;
 
     @Autowired
-    ConfirmDataService confirmDataService;
+    ManageDataService manageDataService;
 
     @Autowired
     RegistrationService registrationService;
@@ -58,11 +58,11 @@ public class RestoreServiceTest {
     public void publicMethodsTest() throws Exception, InvalidUserDataException {
       User u = EntityGenerator.getNewUser();
       registrationService.registerNewUserAccount(u);
-      confirmDataService.sendRestorePassUrl(u.getEmail());
+      manageDataService.sendRestorePassUrl(u.getEmail());
 
       String hash = confirmDataDAO.findById(u.getId()).get().getHash();
 
-      confirmDataService.processChangingPass(hash, "new_strong_pasS123");
+      manageDataService.processChangingPass(hash, "new_strong_pasS123");
       assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());
     }
 
@@ -72,12 +72,12 @@ public class RestoreServiceTest {
 
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getUsername()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_username"))
                 .andExpect(status().isBadRequest());
@@ -85,7 +85,7 @@ public class RestoreServiceTest {
 
     @Test
     public void nullDataTest() throws Exception {
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
@@ -95,12 +95,12 @@ public class RestoreServiceTest {
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_email"))
                 .andExpect(status().isBadRequest());
@@ -116,7 +116,7 @@ public class RestoreServiceTest {
 
         assertFalse(confirmDataDAO.findById(user.getId()).isPresent());
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
@@ -124,7 +124,7 @@ public class RestoreServiceTest {
         assertTrue(confirmDataDAO.findById(user.getId()).isPresent());
         ConfirmData data1 = confirmDataDAO.findById(user.getId()).get();
 
-        mvc.perform(post(DataController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));

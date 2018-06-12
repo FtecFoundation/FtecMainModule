@@ -4,7 +4,7 @@ import com.ftec.exceptions.InvalidHashException;
 import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.exceptions.WeakPasswordException;
 
-public interface DataService {
+public interface ManageDataService {
      void sendRestorePassUrl(String identifier) throws InvalidUserDataException;
 
      void processChangingPass(String hash, String new_pass) throws InvalidHashException, WeakPasswordException;

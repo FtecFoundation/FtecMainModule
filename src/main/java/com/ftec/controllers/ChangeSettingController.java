@@ -53,13 +53,13 @@ public class ChangeSettingController {
 	@NoArgsConstructor
 	public static class UserUpdate {
 
-		@Pattern(regexp = Patterns.PASSWORD_PATTERN)
-        @Size(max = 40)
+        @Pattern(regexp = Patterns.PASSWORD_PATTERN, message = "Password must have symbols in uppercase, symbols in lowercase and number")
+        @Size(min = 4, max = 20, message = "The length of the password must be more than 4 and less than 20")
 		private String password;
 
-		@Email
-		@UniqueEmail
-        @Size(max = 40)
+        @Email(message = "Email format is incorrect")
+        @UniqueEmail(message = "This email already taken")
+        @Size(max = 40, message = "Maximum email length is 40 symbols")
 		private String email;
 
 		private Boolean twoFactorEnabled;

@@ -1,13 +1,13 @@
 package com.ftec.integration;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.RestoreController;
+import com.ftec.controllers.ManageDataController;
 import com.ftec.entities.User;
+import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.enums.ConfirmScope;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.ConfirmDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.ftec.utils.PasswordUtils;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RestorePassTest {
 
     @Autowired
-    ConfirmDataService confirmDataService;
+    ConfirmDataDAO confirmDataDAO;
 
     @Autowired
     RegistrationService registrationService;
@@ -48,21 +48,23 @@ public class RestorePassTest {
 
     @Test
     public void fullTest() throws Exception {
+        userDAO.deleteByEmail(Resources.sendToStatic != null ? Resources.sendToStatic : "ndmawjkdnawjk@gmail.com");
+
         User u = EntityGenerator.getNewUser();
         u.setEmail(Resources.sendToStatic != null ? Resources.sendToStatic : "ndmawjkdnawjk@gmail.com");
         registrationService.registerNewUserAccount(u);
 
-        assertFalse(confirmDataService.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).isPresent());
+        assertFalse(confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).isPresent());
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", u.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(confirmDataService.findById(u.getId()).isPresent());
+        assertTrue(confirmDataDAO.findById(u.getId()).isPresent());
 
         String old_pass = u.getPassword();
-        String hash = confirmDataService.findById(u.getId()).get().getHash();
+        String hash = confirmDataDAO.findById(u.getId()).get().getHash();
 
         String new_clean_pass = "newStrongPass123";
         mvc.perform(post("/changePass")
@@ -71,11 +73,13 @@ public class RestorePassTest {
                 .param("new_pass", new_clean_pass))
                 .andExpect(status().is(200));
 
-        assertFalse(confirmDataService.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).isPresent()); // after changed pass hash should be deleted
+        assertFalse(confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).isPresent()); // after changed pass hash should be deleted
 
         String new_pass = userDAO.findById(u.getId()).get().getPassword();
 
         assertNotEquals(old_pass,new_pass);
         assertEquals(new_pass,PasswordUtils.encodeUserPassword(new_clean_pass, userDAO.findById(u.getId()).get().getSalt()));
+
+        userDAO.deleteById(u.getId());
     }
 }

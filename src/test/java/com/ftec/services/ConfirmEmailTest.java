@@ -1,9 +1,11 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.entities.ConfirmData;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
+import com.ftec.resources.enums.ConfirmScope;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -43,11 +45,25 @@ public class ConfirmEmailTest {
 
         registrationService.registerNewUserAccount(user);
 
+
         assertTrue(userDAO.findByUsername(user.getUsername()).isPresent());
         assertFalse(userDAO.findByUsername(user.getUsername()).get().isConfirmedEmail());
 
+        assertFalse(confirmEmailService.findByUserIdAndScope(user.getId(), ConfirmScope.ConfirmEmail).isPresent());
+
         confirmEmailService.sendConfirmEmailUrl(user.getEmail(), user.getId());
 
+        assertTrue(confirmEmailService.findByUserIdAndScope(user.getId(), ConfirmScope.ConfirmEmail).isPresent());
+
+        ConfirmData confirmData = confirmEmailService.findByUserIdAndScope(user.getId(), ConfirmScope.ConfirmEmail).get();
+
+        String hash = confirmData.getHash();
+
+
+        //confirm email
+        assertFalse(userDAO.findByUsername(user.getUsername()).get().isConfirmedEmail());
+        confirmEmailService.confirmEmail(hash);
+        assertTrue(userDAO.findByUsername(user.getUsername()).get().isConfirmedEmail());
 
     }
 }

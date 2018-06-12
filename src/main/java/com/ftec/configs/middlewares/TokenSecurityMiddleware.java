@@ -31,7 +31,7 @@ public class TokenSecurityMiddleware implements HandlerInterceptor{
 			if(isExpiredException(ex)) tokenService.deleteByToken(token);
 			return false;
 		} catch (Exception e){
-			response.setStatus(403);
+			response.setStatus(500);
 			Logger.logException("Unexpected exception in token security middleware!", e, true);
 			return false;
 		}

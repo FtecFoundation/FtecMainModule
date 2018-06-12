@@ -5,6 +5,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.*;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
+import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.ReferralDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
@@ -48,7 +49,7 @@ public class FullTest {
     TokenService tokenService;
 
     @Autowired
-    ConfirmDataService confirmDataService;
+    ConfirmDataDAO confirmDataDAO;
 
     @Autowired
     TicketService ticketService;
@@ -176,14 +177,14 @@ public class FullTest {
     }
 
     private void restorePass(User user) throws Exception {
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
         String new_raw_pass = "NewRawPss123";
 
-        String hash = confirmDataService.findById(user.getId()).get().getHash();
+        String hash = confirmDataDAO.findById(user.getId()).get().getHash();
 
         mvc.perform(post("/changePass")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
