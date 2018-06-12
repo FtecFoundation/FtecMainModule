@@ -71,15 +71,6 @@ public class AvatarControllerTest {
 //        assertEquals(contentInBytesEncoded, encoded);
     }
 
-    @Test
-    public void getImageByURLTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/image/0.jpg")
-                .contentType(MediaType.IMAGE_JPEG_VALUE)
-                .accept(MediaType.ALL_VALUE))
-                .andDo(Resources.doPrintStatic ? print() : (ResultHandler) result -> {
-                }).andExpect(status().isOk());
-    }
-
     /*@Test
     public void uploadFileTest() throws Exception {
 
