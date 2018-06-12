@@ -35,7 +35,7 @@ public class RegistrationController {
     private final UniqueLoginValidator uniqueLoginValidator;
     private final UniqueEmailValidator uniqueEmailValidator;
 
-    @RequestMapping(path = "/registration", method = RequestMethod.POST)
+    @PostMapping(path = "/registration", consumes = "application/json", produces = "application/json")
     public MvcResponse createUser(@RequestBody @Valid UserRegistration userRegistration, BindingResult br, HttpServletResponse response) throws UserExistException, IOException, IOException {
         try {
 
@@ -46,13 +46,15 @@ public class RegistrationController {
 
             User userToSave = RegistrationServiceImpl.registerUser(userRegistration);
             registrationService.registerNewUserAccount(userToSave);
+
             long referrerId = userRegistration.getReferrerId();
             if (referrerId != 0) {
                 referralService.assignReferral(userToSave.getId(), referrerId);
             }
 
             String token = tokenService.createSaveAndGetNewToken(userToSave.getId());
-            return new MvcResponse(200, "token", token);
+            response.setStatus(200);
+            return new MvcResponse(Statuses.Ok.getStatus(), "token", token);
         } catch (TokenException e) {
             response.setStatus(403);
             return MvcResponse.getMvcErrorResponse(403, "TokenNotCreated");
@@ -60,17 +62,17 @@ public class RegistrationController {
     }
 
     @GetMapping(value = "/checkUniqueLogin", consumes = "application/json", produces = "application/json")
-    public MvcResponse checkUniqueLogin(@RequestParam("login") String login, HttpServletResponse response){
-        if(!uniqueLoginValidator.isValid(login,null)){
+    public MvcResponse checkUniqueLogin(@RequestParam("login") String login, HttpServletResponse response) {
+        if (!uniqueLoginValidator.isValid(login, null)) {
             response.setStatus(400);
             return new MvcResponse(Statuses.LoginTaken.getStatus(), "Login already taken");
         }
-        return new MvcResponse(Statuses.Ok.getStatus(),"available", true);
+        return new MvcResponse(Statuses.Ok.getStatus(), "available", true);
     }
 
     @GetMapping(value = "/checkUniqueEmail", consumes = "application/json", produces = "application/json")
-    public MvcResponse checkUniqueEmail(@RequestParam("email") String email, HttpServletResponse response){
-        if(!uniqueEmailValidator.isValid(email,null)){
+    public MvcResponse checkUniqueEmail(@RequestParam("email") String email, HttpServletResponse response) {
+        if (!uniqueEmailValidator.isValid(email, null)) {
             response.setStatus(400);
             return new MvcResponse(Statuses.EmailTaken.getStatus(), "Email already taken");
         }
