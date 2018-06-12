@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @RestController
-public class LoginController {
+public class AuthorizationController {
 
 	private final TokenService tokenService;
 	private final UserDAO userDAO;
@@ -25,7 +25,7 @@ public class LoginController {
 
 
 	@Autowired
-	public LoginController(TokenService tokenService, UserDAO userDAO, AuthorizationService authorizationService) {
+	public AuthorizationController(TokenService tokenService, UserDAO userDAO, AuthorizationService authorizationService) {
 			super();
 			this.tokenService = tokenService;
 			this.userDAO = userDAO;
@@ -43,10 +43,10 @@ public class LoginController {
 			response.setStatus(403);
 			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
 		} catch (Exception e){
-			response.setStatus(400);
-			return MvcResponse.getMvcErrorResponse(400, "Unexpected error");
+			response.setStatus(403);
+			return MvcResponse.getMvcErrorResponse(Statuses.AuthenticationFailed.getStatus(), "Unexpected error");
 		}
-		return new MvcResponse(200, "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
+		return new MvcResponse(Statuses.Ok.getStatus(), "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
 	}
 
 

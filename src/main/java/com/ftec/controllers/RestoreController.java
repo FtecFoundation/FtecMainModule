@@ -49,7 +49,7 @@ public class RestoreController {
     @PostMapping(value = "/changePass", consumes = "application/json")
     public MvcResponse changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass, HttpServletResponse response) {
         try {
-            restoreDataService.checkAndChange(hash, new_pass);
+            restoreDataService.processChangingPass(hash, new_pass);
         }
         catch (RestoreException e){
             set400Status(response);

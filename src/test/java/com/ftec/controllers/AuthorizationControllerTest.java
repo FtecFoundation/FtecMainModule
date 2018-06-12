@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,classes = ApplicationConfig.class)
 @AutoConfigureMockMvc
-public class LoginControllerTest {
+public class AuthorizationControllerTest {
 
     @Autowired
     UserDAO userDAO;

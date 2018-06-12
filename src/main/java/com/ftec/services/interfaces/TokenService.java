@@ -13,14 +13,35 @@ import java.util.Optional;
 public interface TokenService {
     String TOKEN_NAME = "TOKEN-X-AUTH";
 
-     void processToken(String token)  throws TokenException;
+    void processToken(String token)  throws TokenException;
 
-     static Long getUserIdFromToken(String token) throws InvalidTokenException{
-         checkTokenFormat(token);
-         return Long.valueOf(extractUserID(token));
+    String createSaveAndGetNewToken(Long id);
 
-     }
-     static void checkTokenFormat(String token) {
+    void deleteByToken(String token);
+
+    Optional<Token> findByToken(String token);
+
+    void deleteExcessiveToken(long id);
+
+    void updateExpirationDate(String token);
+
+    void deleteByUserId(long idByHash);
+
+    void deleteAll();
+
+    void save(Token token);
+
+    List<Token> findAllByUserId(long userId);
+
+    List<Token> getAll();
+
+    static Long getUserIdFromToken(String token) throws InvalidTokenException {
+        checkTokenFormat(token);
+        return Long.valueOf(extractUserID(token));
+
+    }
+
+    static void checkTokenFormat(String token) {
         if(!token.contains("_")) throw new InvalidTokenException("Invalid token format! {UserID}_{Hash} expected.");
 
         String userId = extractUserID(token);
@@ -44,24 +65,4 @@ public interface TokenService {
     static void checkIfTokenExpired(Date expirationTime) throws TokenExpiredException {
         if(!expirationTime.after(new Date())) throw new TokenExpiredException("Token has been expired!");
     }
-
-    String createSaveAndGetNewToken(Long id);
-
-    void deleteByToken(String token);
-
-    Optional<Token> findByToken(String token);
-
-    void deleteExcessiveToken(long id);
-
-    void updateExpirationDate(String token);
-
-    void deleteByUserId(long idByHash);
-
-    void deleteAll();
-
-    void save(Token token);
-
-    List<Token> findAllByUserId(long userId);
-
-    List<Token> getAll();
 }

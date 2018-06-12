@@ -79,7 +79,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
 
     @Transactional
     @Override
-    public void checkAndChange(String hash, String new_pass) throws RestoreException {
+    public void processChangingPass(String hash, String new_pass) throws RestoreException {
         verifyHash(hash);
         changePass(restoreDataDAO.findIdByHash(hash), hash,new_pass);
         tokenService.deleteByUserId(restoreDataDAO.findIdByHash(hash));

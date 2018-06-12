@@ -3,9 +3,14 @@ package com.ftec.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.ChangeSettingController;
+import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
+import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.enums.TutorialSteps;
+import com.ftec.services.interfaces.CommentService;
+import com.ftec.services.interfaces.RestoreDataService;
+import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import org.junit.Test;
@@ -21,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,6 +47,15 @@ public class FullTest {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    RestoreDataService restoreDataService;
+
+    @Autowired
+    TicketService ticketService;
+
+    @Autowired
+    CommentService commentService;
+
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -53,6 +68,8 @@ public class FullTest {
                 .content(mapper.writeValueAsString(user)))
                 .andExpect(status().is(200)).andReturn();
         String token = new JSONObject(result.getResponse().getContentAsString()).getJSONObject("response").getString("token");
+
+        user.setId(userDAO.findIdByUsername(user.getUsername()));
 
         //secured access with valid token
         TutorialSteps step = TutorialSteps.valueOf(mvc.perform(get("/cabinet/tutorial/getCurrentStep")
@@ -108,6 +125,71 @@ public class FullTest {
 
         String token3 = new JSONObject(result3.getResponse().getContentAsString()).getJSONObject("response").getString("token");
 
+        //TODO add refferal test
+        //TODO add avatar test
+
+        //restore pass
+        restorePass(user);
+
+        //create ticket
+        Ticket ticket = EntityGenerator.getNewTicket();
+
+        mvc.perform(post("/createTicket")
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(mapper.writeValueAsString(ticket)))
+                .andExpect(status().is(200)).andDo(print());
+
+        assertEquals(1,ticketService.findAllByUserId(user.getId()).size());
+        ticket.setId(ticketService.findAllByUserId(user.getId()).get(0).getId());
+        //add comment
+        String comment = "my comment!";
+        mvc.perform(post("/support/addComment/" + ticket.getId())
+                .header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(comment))
+                .andExpect(status().is(200)).andDo(print());
+
+        assertTrue( commentService.getAllByTicketId(ticket.getId()).stream().
+                anyMatch( p ->  p.getMessage().equals(comment)));
+
+        //change ticket status to close
+        TicketStatus status = TicketStatus.CLOSED;
+
+        mvc.perform(post( "/changeTicketStatus/" + ticket.getId())
+                .header(TokenService.TOKEN_NAME, token)
+                .content( mapper.writeValueAsString(status))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is(200));
+
+        assertEquals(TicketStatus.CLOSED.ordinal(), ticketService.findById(ticket.getId()).get().getStatus().ordinal());
+
+    }
+
+    private void restorePass(User user) throws Exception {
+        mvc.perform(post("/sendRestoreUrl")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("data", user.getEmail()))
+                .andExpect(status().is(200));
+
+        String new_raw_pass = "NewRawPss123";
+
+        String hash = restoreDataService.findById(user.getId()).get().getHash();
+
+        mvc.perform(post("/changePass")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("hash", hash)
+                .param("new_pass", new_raw_pass))
+                .andExpect(status().is(200));
+        user.setPassword(new_raw_pass);
+
+        JSONObject userAuth3 = new JSONObject();
+        userAuth3.put("password", new_raw_pass);
+        userAuth3.put("username", user.getUsername());
+        mvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(userAuth3.toString())
+        ).andExpect(status().is(200));
     }
 
     private void logout(String token) throws Exception {

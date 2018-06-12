@@ -31,7 +31,6 @@ public class UserDBTest {
     @Test
     public void userDBtest() {
 
-
         User u = EntityGenerator.getNewUser();
 
         String username = u.getUsername();
