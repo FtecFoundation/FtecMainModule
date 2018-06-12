@@ -101,14 +101,14 @@ public class RegistrationController {
     @NoArgsConstructor
     public static class UserRegistration {
 
-        @NotNull
-        @Size(min = 4, max = 40)
+        @NotNull(message = "Username is required field")
+        @Size(min = 4, max = 40, message = "The length of the username must be more than 4 and less than 40")
         @UniqueLogin(message = "This username already taken")
         private String username;
 
-        @NotNull
-        @Size(min = 4, max = 20)
-        @Pattern(regexp = Patterns.PASSWORD_PATTERN)
+        @NotNull(message = "Password is required field")
+        @Size(min = 4, max = 20, message = "The length of the password must be more than 4 and less than 20")
+        @Pattern(regexp = Patterns.PASSWORD_PATTERN, message = "Password must have symbols in uppercase, symbols in lowercase and number")
         private String password;
 
         @NotNull(message = "Email is required field")
