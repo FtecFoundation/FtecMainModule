@@ -216,7 +216,7 @@ public class FullTest {
         String token = tokenService.createSaveAndGetNewToken(user.getId());
 
         //should return default image and OK status
-        mvc.perform(MockMvcRequestBuilders.get("/image/getImage")
+        mvc.perform(MockMvcRequestBuilders.get("/cabinet/image/getImage")
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.IMAGE_JPEG_VALUE)
                 .accept(MediaType.ALL_VALUE))
