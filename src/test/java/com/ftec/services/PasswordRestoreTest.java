@@ -60,7 +60,7 @@ public class PasswordRestoreTest {
       registrationService.registerNewUserAccount(u);
       passwordRestoreService.sendRestorePassUrl(u.getEmail());
 
-      String hash = confirmDataDAO.findByUserId(u.getId()).get().getHash();
+      String hash = confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).get().getHash();
 
       passwordRestoreService.processChangingPass(hash, "new_strong_pasS123");
       assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());

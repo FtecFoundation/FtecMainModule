@@ -61,7 +61,7 @@ public class RestorePassTest {
                 .param("data", u.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(confirmDataDAO.findByUserId(u.getId()).isPresent());
+        assertTrue(confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).isPresent());
 
         String old_pass = u.getPassword();
         String hash = confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).get().getHash();

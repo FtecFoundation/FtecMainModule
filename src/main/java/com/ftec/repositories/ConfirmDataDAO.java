@@ -20,9 +20,6 @@ public interface ConfirmDataDAO extends JpaRepository<ConfirmData, Long> {
     @Modifying
     void deleteByHash(String hash);
 
-    @Modifying
-    void deleteByHashAndScope(String hash, ConfirmScope restorePass);
-
     Optional<ConfirmData> findByUserIdAndScope(long id, ConfirmScope scope);
 
     @Modifying
