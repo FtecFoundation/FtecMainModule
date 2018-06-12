@@ -81,7 +81,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
     @Override
     public void processChangingPass(String hash, String new_pass) throws RestoreException {
         verifyHash(hash);
-        changePass(restoreDataDAO.findIdByHash(hash), hash,new_pass);
+        changePass(restoreDataDAO.findIdByHash(hash),new_pass);
         tokenService.deleteByUserId(restoreDataDAO.findIdByHash(hash));
         deleteByHash(hash);
     }
@@ -91,7 +91,7 @@ public class RestoreDataServiceImpl implements RestoreDataService {
         return restoreDataDAO.findById(id);
     }
 
-    private void changePass(long userId, String hash, String new_pass)  throws RestoreException {
+    private void changePass(long userId, String new_pass)  throws RestoreException {
         Patterns.validatePass(new_pass);
         User user = userDAO.findById(userId).get();
 

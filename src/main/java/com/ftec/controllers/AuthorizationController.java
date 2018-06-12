@@ -23,7 +23,6 @@ public class AuthorizationController {
 	private final UserDAO userDAO;
     private final AuthorizationService authorizationService;
 
-
 	@Autowired
 	public AuthorizationController(TokenService tokenService, UserDAO userDAO, AuthorizationService authorizationService) {
 			super();
@@ -36,9 +35,11 @@ public class AuthorizationController {
 	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
 
 	    Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
+	    long userId;
+
 		try {
             authorizationService.authorizate(userOpt,userAuth);
-			
+			userId = userOpt.get().getId();
 		} catch(AuthorizationException e) {
 			response.setStatus(403);
 			return MvcResponse.getMvcErrorResponse(Statuses.InvalidCredentials.getStatus(), e.getMessage());
@@ -46,7 +47,7 @@ public class AuthorizationController {
 			response.setStatus(500);
 			return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
 		}
-		return new MvcResponse(Statuses.Ok.getStatus(), "token", tokenService.createSaveAndGetNewToken(userOpt.get().getId()));
+		return new MvcResponse(Statuses.Ok.getStatus(), "token", tokenService.createSaveAndGetNewToken(userId));
 	}
 
 

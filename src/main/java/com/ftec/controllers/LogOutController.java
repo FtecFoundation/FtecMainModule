@@ -1,5 +1,7 @@
 package com.ftec.controllers;
 
+import com.ftec.resources.enums.Statuses;
+import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,14 +21,15 @@ public class LogOutController {
 		this.tokenService = tokenService;
 	}
 
+	//should be secured access
 	@PostMapping("/logout")
-	public String logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public MvcResponse logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			tokenService.deleteByToken(request.getHeader(TokenService.TOKEN_NAME));
-			return "ok";
+			return new MvcResponse(Statuses.Ok.getStatus());
 		} catch(Exception e) {
-		    response.sendError(400);
-		    return null;
+		    response.sendError(500);
+			return new MvcResponse(Statuses.UnexpectedError.getStatus());
 		}
 	}
 }
