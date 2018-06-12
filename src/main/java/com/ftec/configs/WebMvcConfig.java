@@ -45,7 +45,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         String staticPath = resources.getUploadPath();
         if (staticPath != null) {
             registry.addResourceHandler("/images/**").addResourceLocations("file:///" + staticPath);
-            registry.addResourceHandler("/static/htmlstatic/**").addResourceLocations("file:///" + staticPath);
         }
+        registry.addResourceHandler("/static/html/**").addResourceLocations("classpath:/static/html/");
     }
 }
