@@ -29,6 +29,7 @@ public class ConfirmEmailService {
         this.userDAO = userDAO;
     }
 
+    @Transactional
     public void sendConfirmEmailUrl(String email, long userId){
         ConfirmData emailConfirm = ConfirmEmailService.createConfirmData(userId);
         deleteOldEmailHash(userId);

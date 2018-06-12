@@ -66,7 +66,7 @@ public class PasswordRestoreService {
     }
 
     private void updateHash(long userId, String new_hash) {
-        if(confirmDataDAO.findById(userId).isPresent()) confirmDataDAO.deleteById(userId);
+        if(confirmDataDAO.findByUserIdAndScope(userId, ConfirmScope.RestorePass).isPresent()) confirmDataDAO.deleteByUserIdAndScope(userId, ConfirmScope.RestorePass);
         confirmDataDAO.save(new ConfirmData(userId,new_hash, getExpiredTime(), ConfirmScope.RestorePass));
     }
 

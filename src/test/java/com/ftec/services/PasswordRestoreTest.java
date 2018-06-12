@@ -8,6 +8,7 @@ import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
+import com.ftec.resources.enums.ConfirmScope;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.ManageDataService;
 import com.ftec.services.interfaces.TokenService;
@@ -60,7 +61,7 @@ public class PasswordRestoreTest {
       registrationService.registerNewUserAccount(u);
       manageDataService.sendRestorePassUrl(u.getEmail());
 
-      String hash = confirmDataDAO.findById(u.getId()).get().getHash();
+      String hash = confirmDataDAO.findByUserId(u.getId()).get().getHash();
 
       manageDataService.processChangingPass(hash, "new_strong_pasS123");
       assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());
@@ -114,21 +115,21 @@ public class PasswordRestoreTest {
         user.setEmail(Resources.sendToStatic == null ? "wda**wda2D@gmail.com" : Resources.sendToStatic);
         registrationService.registerNewUserAccount(user);
 
-        assertFalse(confirmDataDAO.findById(user.getId()).isPresent());
+        assertFalse(confirmDataDAO.findByUserIdAndScope(user.getId(), ConfirmScope.RestorePass).isPresent());
 
         mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(confirmDataDAO.findById(user.getId()).isPresent());
-        ConfirmData data1 = confirmDataDAO.findById(user.getId()).get();
+        assertTrue(confirmDataDAO.findByUserIdAndScope(user.getId(), ConfirmScope.RestorePass).isPresent());
+        ConfirmData data1 = confirmDataDAO.findByUserIdAndScope(user.getId(), ConfirmScope.RestorePass).get();
 
         mvc.perform(post(ManageDataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
-        ConfirmData data2 = confirmDataDAO.findById(user.getId()).get();
+        ConfirmData data2 = confirmDataDAO.findByUserIdAndScope(user.getId(), ConfirmScope.RestorePass).get();
 
         assertNotEquals(data1.getHash(),data2.getHash());
 

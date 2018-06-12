@@ -17,9 +17,10 @@ import java.util.Date;
 @Table(name = "confirm_data")
 @NoArgsConstructor
 public class ConfirmData {
-    @Id
+
     private long userId;
-    @Column(unique = true)
+    @Id
+    @Column(length = 30)
     private String hash;
     private Date urlExpiredDate;
     private ConfirmScope scope;

@@ -61,10 +61,10 @@ public class RestorePassTest {
                 .param("data", u.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(confirmDataDAO.findById(u.getId()).isPresent());
+        assertTrue(confirmDataDAO.findByUserId(u.getId()).isPresent());
 
         String old_pass = u.getPassword();
-        String hash = confirmDataDAO.findById(u.getId()).get().getHash();
+        String hash = confirmDataDAO.findByUserIdAndScope(u.getId(), ConfirmScope.RestorePass).get().getHash();
 
         String new_clean_pass = "newStrongPass123";
         mvc.perform(post("/changePass")

@@ -29,4 +29,6 @@ public interface ConfirmDataDAO extends JpaRepository<ConfirmData, Long> {
     void deleteByUserIdAndScope(long userId, ConfirmScope confirmEmail);
 
     Optional<ConfirmData> findByHashAndScope(String hash, ConfirmScope confirmEmail);
+
+    Optional<ConfirmData> findByUserId(long id);
 }

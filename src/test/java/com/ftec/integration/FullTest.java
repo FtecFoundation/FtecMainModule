@@ -9,6 +9,7 @@ import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.ReferralDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
+import com.ftec.resources.enums.ConfirmScope;
 import com.ftec.resources.enums.TicketStatus;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.services.interfaces.*;
@@ -184,7 +185,7 @@ public class FullTest {
 
         String new_raw_pass = "NewRawPss123";
 
-        String hash = confirmDataDAO.findById(user.getId()).get().getHash();
+        String hash = confirmDataDAO.findByUserIdAndScope(user.getId(), ConfirmScope.RestorePass).get().getHash();
 
         mvc.perform(post("/changePass")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
