@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -45,10 +46,10 @@ public class RegistrationController {
                 List<FieldError> errors = br.getFieldErrors();
                 for (FieldError error : errors) {
                     if (error.getField().equals("username")) {
-                        return MvcResponse.getMvcErrorResponse(Statuses.LoginTaken.getStatus(), "This login already taken");
+                        return MvcResponse.getMvcErrorResponse(Statuses.LoginTaken.getStatus(), error.getDefaultMessage());
                     }
                     if (error.getField().equals("email")) {
-                        return MvcResponse.getMvcErrorResponse(Statuses.EmailTaken.getStatus(), "This email already taken");
+                        return MvcResponse.getMvcErrorResponse(Statuses.EmailTaken.getStatus(), error.getDefaultMessage());
                     }
                 }
                 return MvcResponse.getMvcErrorResponse(Statuses.ModelMalformed.getStatus(), br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
@@ -102,7 +103,7 @@ public class RegistrationController {
 
         @NotNull
         @Size(min = 4, max = 40)
-        @UniqueLogin
+        @UniqueLogin(message = "This username already taken")
         private String username;
 
         @NotNull
@@ -111,8 +112,9 @@ public class RegistrationController {
         private String password;
 
         @NotNull
-        @UniqueEmail
         @Size(max = 40)
+        @UniqueEmail(message = "This email already taken")
+        @Email(message = "Email format is incorrect")
         private String email;
 
         private boolean subscribeForEmail;

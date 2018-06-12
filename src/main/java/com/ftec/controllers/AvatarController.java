@@ -28,7 +28,7 @@ public class AvatarController {
     private final UserDAO userDAO;
     private static String UPLOADED_FOLDER;
 
-    @GetMapping(value = "/image/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/getImage", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getImage(HttpServletRequest request) throws IOException {
         String token = request.getHeader(TokenService.TOKEN_NAME);
         Optional<User> userByToken = userDAO.findById(TokenService.getUserIdFromToken(token));
@@ -50,16 +50,6 @@ public class AvatarController {
         }
     }
 
-    @GetMapping(value = "/{imgName}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getImageByURL(@PathVariable("imgName") String imageName) throws IOException {
-        UPLOADED_FOLDER = Resources.uploadPathStatic;
-        File file = new File(UPLOADED_FOLDER + imageName);
-
-        if (file.exists()) {
-            return com.google.common.io.Files.toByteArray(file);
-        }
-        return null;
-    }
 
     @PostMapping(value = "/deleteImage", consumes = "application/json", produces = "application/json")
     public MvcResponse deleteImage(HttpServletRequest request, HttpServletResponse response) throws IOException {
