@@ -8,6 +8,7 @@ import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,7 +23,8 @@ import java.util.Locale;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO, generator="native")
+    @GenericGenerator(name = "native", strategy = "native")
     protected long id;
 
     private String username;
@@ -70,11 +72,11 @@ public class User {
     }
 
     public void applyChangeSettings(UserUpdate userUpdate) {
-        if(userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
-        if(userUpdate.getPassword() != null) changePassword(userUpdate);
+        if (userUpdate.getTwoFactorEnabled() != null) this.twoStepVerification = userUpdate.getTwoFactorEnabled();
+        if (userUpdate.getPassword() != null) changePassword(userUpdate);
 
-        if(userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
-        if(userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
+        if (userUpdate.getEmail() != null) this.email = userUpdate.getEmail();
+        if (userUpdate.getSubscribeForEmail() != null) this.subscribeForEmail = userUpdate.getSubscribeForEmail();
     }
 
     private void changePassword(UserUpdate userUpdate) {

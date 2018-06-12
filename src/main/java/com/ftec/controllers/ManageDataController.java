@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-public class RestoreController {
+public class DataController {
 
     private final
     ConfirmDataService confirmDataService;
@@ -23,7 +23,7 @@ public class RestoreController {
     public static final String SEND_RESTORE_URL = "/sendRestoreUrl";
 
     @Autowired
-    public RestoreController(ConfirmDataService confirmDataService) {
+    public DataController(ConfirmDataService confirmDataService) {
         this.confirmDataService = confirmDataService;
     }
 
@@ -63,6 +63,13 @@ public class RestoreController {
             response.setStatus(500);
             return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(),"Unexpected error");
         }
+
+        return new MvcResponse(Statuses.Ok.getStatus());
+    }
+
+    @PostMapping(value = "/confirmEmail")
+    public MvcResponse confirmEmail(@RequestParam("hash") String hash, HttpServletResponse response){
+        confirmDataService.confirmEmail(hash);
 
         return new MvcResponse(Statuses.Ok.getStatus());
     }

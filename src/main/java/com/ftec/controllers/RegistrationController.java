@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -45,10 +46,10 @@ public class RegistrationController {
                 List<FieldError> errors = br.getFieldErrors();
                 for (FieldError error : errors) {
                     if (error.getField().equals("username")) {
-                        return MvcResponse.getMvcErrorResponse(Statuses.LoginTaken.getStatus(), "This login already taken");
+                        return MvcResponse.getMvcErrorResponse(Statuses.LoginTaken.getStatus(), error.getDefaultMessage());
                     }
                     if (error.getField().equals("email")) {
-                        return MvcResponse.getMvcErrorResponse(Statuses.EmailTaken.getStatus(), "This email already taken");
+                        return MvcResponse.getMvcErrorResponse(Statuses.EmailTaken.getStatus(), error.getDefaultMessage());
                     }
                 }
                 return MvcResponse.getMvcErrorResponse(Statuses.ModelMalformed.getStatus(), br.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining("")));
@@ -72,7 +73,7 @@ public class RegistrationController {
         } catch (Exception e) {
             Logger.logException("Registration Controller while register user", e, true);
             response.setStatus(500);
-            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
+            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), e.getMessage());
         }
     }
 
@@ -100,19 +101,20 @@ public class RegistrationController {
     @NoArgsConstructor
     public static class UserRegistration {
 
-        @NotNull
-        @Size(min = 4, max = 40)
-        @UniqueLogin
+        @NotNull(message = "Username is required field")
+        @Size(min = 4, max = 40, message = "The length of the username must be more than 4 and less than 40")
+        @UniqueLogin(message = "This username already taken")
         private String username;
 
-        @NotNull
-        @Size(max = 40)
-        @Pattern(regexp = Patterns.PASSWORD_PATTERN)
+        @NotNull(message = "Password is required field")
+        @Size(min = 4, max = 20, message = "The length of the password must be more than 4 and less than 20")
+        @Pattern(regexp = Patterns.PASSWORD_PATTERN, message = "Password must have symbols in uppercase, symbols in lowercase and number")
         private String password;
 
-        @NotNull
-        @UniqueEmail
-        @Size(max = 40)
+        @NotNull(message = "Email is required field")
+        @Size(max = 40, message = "Maximum email length is 40 symbols")
+        @UniqueEmail(message = "This email already taken")
+        @Email(message = "Email format is incorrect")
         private String email;
 
         private boolean subscribeForEmail;

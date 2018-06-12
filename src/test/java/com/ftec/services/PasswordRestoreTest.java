@@ -1,7 +1,7 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.RestoreController;
+import com.ftec.controllers.DataController;
 import com.ftec.entities.ConfirmData;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUserDataException;
@@ -72,12 +72,12 @@ public class RestoreServiceTest {
 
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getUsername()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_username"))
                 .andExpect(status().isBadRequest());
@@ -85,7 +85,7 @@ public class RestoreServiceTest {
 
     @Test
     public void nullDataTest() throws Exception {
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
@@ -95,12 +95,12 @@ public class RestoreServiceTest {
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_email"))
                 .andExpect(status().isBadRequest());
@@ -108,13 +108,15 @@ public class RestoreServiceTest {
 
     @Test
     public void deleteOldHashTest() throws Exception {
+        userDAO.deleteByEmail(Resources.sendToStatic == null ? "wda**wda2D@gmail.com" : Resources.sendToStatic);
+
         User user = EntityGenerator.getNewUser();
         user.setEmail(Resources.sendToStatic == null ? "wda**wda2D@gmail.com" : Resources.sendToStatic);
         registrationService.registerNewUserAccount(user);
 
         assertFalse(confirmDataDAO.findById(user.getId()).isPresent());
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
@@ -122,7 +124,7 @@ public class RestoreServiceTest {
         assertTrue(confirmDataDAO.findById(user.getId()).isPresent());
         ConfirmData data1 = confirmDataDAO.findById(user.getId()).get();
 
-        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
+        mvc.perform(post(DataController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
