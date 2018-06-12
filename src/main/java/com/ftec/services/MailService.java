@@ -255,6 +255,7 @@ public class MailService  {
             return params;
         }
     }
+
     public static class Email_Link extends MailService.EmailUser {
         String link;
         String linkName;
@@ -414,4 +415,5 @@ public class MailService  {
             return "static/emails/" +filePrefix+"/main";
         }
     }
+
 }

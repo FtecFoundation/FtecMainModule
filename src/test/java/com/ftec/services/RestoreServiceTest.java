@@ -2,14 +2,14 @@ package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.RestoreController;
-import com.ftec.entities.RestoreData;
+import com.ftec.entities.ConfirmData;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUserDataException;
-import com.ftec.repositories.RestoreDataDAO;
+import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.services.interfaces.RestoreDataService;
+import com.ftec.services.interfaces.ConfirmDataService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
 import com.ftec.utils.PasswordUtils;
@@ -37,10 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RestoreServiceTest {
 
     @Autowired
-    RestoreDataDAO restoreDataDAO;
+    ConfirmDataDAO confirmDataDAO;
 
     @Autowired
-    RestoreDataService restoreDataService;
+    ConfirmDataService confirmDataService;
 
     @Autowired
     RegistrationService registrationService;
@@ -58,11 +58,11 @@ public class RestoreServiceTest {
     public void publicMethodsTest() throws Exception, InvalidUserDataException {
       User u = EntityGenerator.getNewUser();
       registrationService.registerNewUserAccount(u);
-      restoreDataService.sendRestorePassUrl(u.getEmail());
+      confirmDataService.sendRestorePassUrl(u.getEmail());
 
-      String hash = restoreDataDAO.findById(u.getId()).get().getHash();
+      String hash = confirmDataDAO.findById(u.getId()).get().getHash();
 
-      restoreDataService.processChangingPass(hash, "new_strong_pasS123");
+      confirmDataService.processChangingPass(hash, "new_strong_pasS123");
       assertEquals(PasswordUtils.generateSecurePassword("new_strong_pasS123", u.getSalt()),userDAO.findById(u.getId()).get().getPassword());
     }
 
@@ -112,21 +112,21 @@ public class RestoreServiceTest {
         user.setEmail(Resources.sendToStatic == null ? "wda**wda2D@gmail.com" : Resources.sendToStatic);
         registrationService.registerNewUserAccount(user);
 
-        assertFalse(restoreDataDAO.findById(user.getId()).isPresent());
+        assertFalse(confirmDataDAO.findById(user.getId()).isPresent());
 
         mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
-        assertTrue(restoreDataDAO.findById(user.getId()).isPresent());
-        RestoreData data1 = restoreDataDAO.findById(user.getId()).get();
+        assertTrue(confirmDataDAO.findById(user.getId()).isPresent());
+        ConfirmData data1 = confirmDataDAO.findById(user.getId()).get();
 
         mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
-        RestoreData data2 = restoreDataDAO.findById(user.getId()).get();
+        ConfirmData data2 = confirmDataDAO.findById(user.getId()).get();
 
         assertNotEquals(data1.getHash(),data2.getHash());
 
@@ -139,13 +139,13 @@ public class RestoreServiceTest {
         User u = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(u);
 
-        RestoreData test_data = new RestoreData();
+        ConfirmData test_data = new ConfirmData();
         String test_hash = "awdmlawnfjakwd";
         test_data.setUserId(u.getId());
         test_data.setUrlExpiredDate(new Date(new Date().getTime() + 7200000));
         test_data.setHash(test_hash);
 
-        restoreDataDAO.save(test_data);
+        confirmDataDAO.save(test_data);
 
         //uncomment this if test does not works Thread.sleep(1500);
 

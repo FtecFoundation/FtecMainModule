@@ -106,7 +106,7 @@ public class RegistrationController {
         private String username;
 
         @NotNull
-        @Size(max = 20)
+        @Size(max = 40)
         @Pattern(regexp = Patterns.PASSWORD_PATTERN)
         private String password;
 

@@ -52,6 +52,6 @@ public interface UserDAO extends JpaRepository<User, Long> {
     @Query(value = "select locale from user where email = ?1",nativeQuery = true)
     Locale findLocaleByEmail(String email);
 
-
-
+    @Query(value = "select email from user where id = ?1",nativeQuery = true)
+    String findEmailById(long userId);
 }

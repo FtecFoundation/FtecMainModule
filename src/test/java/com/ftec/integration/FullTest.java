@@ -48,7 +48,7 @@ public class FullTest {
     TokenService tokenService;
 
     @Autowired
-    RestoreDataService restoreDataService;
+    ConfirmDataService confirmDataService;
 
     @Autowired
     TicketService ticketService;
@@ -183,7 +183,7 @@ public class FullTest {
 
         String new_raw_pass = "NewRawPss123";
 
-        String hash = restoreDataService.findById(user.getId()).get().getHash();
+        String hash = confirmDataService.findById(user.getId()).get().getHash();
 
         mvc.perform(post("/changePass")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

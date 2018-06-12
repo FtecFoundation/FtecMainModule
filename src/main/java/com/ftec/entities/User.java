@@ -47,6 +47,8 @@ public class User {
 
     private String imageName;
 
+    private boolean confirmedEmail;
+
     public User() {
     }
 

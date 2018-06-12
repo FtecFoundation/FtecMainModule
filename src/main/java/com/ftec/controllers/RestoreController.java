@@ -5,7 +5,7 @@ import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.exceptions.WeakPasswordException;
 import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
-import com.ftec.services.interfaces.RestoreDataService;
+import com.ftec.services.interfaces.ConfirmDataService;
 import com.ftec.utils.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,19 +18,19 @@ import javax.servlet.http.HttpServletResponse;
 public class RestoreController {
 
     private final
-    RestoreDataService restoreDataService;
+    ConfirmDataService confirmDataService;
 
     public static final String SEND_RESTORE_URL = "/sendRestoreUrl";
 
     @Autowired
-    public RestoreController(RestoreDataService restoreDataService) {
-        this.restoreDataService = restoreDataService;
+    public RestoreController(ConfirmDataService confirmDataService) {
+        this.confirmDataService = confirmDataService;
     }
 
     @PostMapping(value = SEND_RESTORE_URL, consumes = "application/json", produces = "application/json")
     public MvcResponse getRestoreUrlToEmail(@RequestParam(name = "data") String data, HttpServletResponse response) {
         try {
-            restoreDataService.sendRestorePassUrl(data);
+            confirmDataService.sendRestorePassUrl(data);
         }
         catch (InvalidUserDataException e){
             response.setStatus(400);
@@ -49,7 +49,7 @@ public class RestoreController {
     @PostMapping(value = "/changePass", consumes = "application/json")
     public MvcResponse changePass(@RequestParam(name = "hash") String hash, @RequestParam("new_pass") String new_pass, HttpServletResponse response) {
         try {
-            restoreDataService.processChangingPass(hash, new_pass);
+            confirmDataService.processChangingPass(hash, new_pass);
         }
         catch (InvalidHashException e){
             response.setStatus(400);
