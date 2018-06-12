@@ -8,6 +8,7 @@ import com.ftec.utils.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,7 +23,8 @@ import java.util.Locale;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy= GenerationType.AUTO, generator="native")
+    @GenericGenerator(name = "native", strategy = "native")
     protected long id;
 
     private String username;
@@ -45,7 +47,6 @@ public class User {
 
     private Locale locale;
 
-    @Column(columnDefinition = "varchar(30) null default null")
     private String imageName;
 
     public User() {
