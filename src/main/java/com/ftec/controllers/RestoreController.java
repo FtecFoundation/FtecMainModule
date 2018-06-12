@@ -20,13 +20,14 @@ public class RestoreController {
     private final
     RestoreDataService restoreDataService;
 
+    public static final String SEND_RESTORE_URL = "/sendRestoreUrl";
 
     @Autowired
     public RestoreController(RestoreDataService restoreDataService) {
         this.restoreDataService = restoreDataService;
     }
 
-    @PostMapping(value = "/sendRestoreUrl", consumes = "application/json")
+    @PostMapping(value = SEND_RESTORE_URL, consumes = "application/json", produces = "application/json")
     public MvcResponse getRestoreUrlToEmail(@RequestParam(name = "data") String data, HttpServletResponse response) {
         try {
             restoreDataService.sendRestorePassUrl(data);

@@ -16,13 +16,15 @@ public class LogOutController {
 
 	private final TokenService tokenService;
 
+	public static final String LOGOUT_URL = "/logout";
+
 	@Autowired
 	public LogOutController(TokenService tokenService) {
 		this.tokenService = tokenService;
 	}
 
 	//should be secured access
-	@PostMapping("/logout")
+	@PostMapping(value = LOGOUT_URL, produces = "application/json", consumes = "application/json")
 	public MvcResponse logOut(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			tokenService.deleteByToken(request.getHeader(TokenService.TOKEN_NAME));

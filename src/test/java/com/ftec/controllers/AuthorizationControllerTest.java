@@ -67,7 +67,7 @@ public class AuthorizationControllerTest {
         payload.put("username", username);
         payload.put("password", pass);
 
-        mvc.perform(post("/login")
+        mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString())).andExpect(status().is(200));
 

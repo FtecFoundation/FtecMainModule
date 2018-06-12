@@ -65,7 +65,7 @@ public class TicketIntegrationTest {
 
         Ticket ticket = EntityGenerator.getNewTicket();
 
-        MvcResult mvcResult1 = mvc.perform(post("/createTicket")
+        MvcResult mvcResult1 = mvc.perform(post(TicketController.CREATE_TICKET_URL)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(ticket)))
@@ -188,13 +188,13 @@ public class TicketIntegrationTest {
     private void addTwoTickets(Long id, String token) throws Exception {
         assertEquals(1,ticketService.findAllByUserId(id).size());
 
-        mvc.perform(post("/createTicket")
+        mvc.perform(post(TicketController.CREATE_TICKET_URL)
               .header(TokenService.TOKEN_NAME, token)
               .contentType(MediaType.APPLICATION_JSON_VALUE)
               .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
               .andExpect(status().is(200)).andDo(print()).andReturn();
 
-        mvc.perform(post("/createTicket")
+        mvc.perform(post(TicketController.CREATE_TICKET_URL)
               .header(TokenService.TOKEN_NAME, token)
               .contentType(MediaType.APPLICATION_JSON_VALUE)
               .content(mapper.writeValueAsString(EntityGenerator.getNewTicket())))
@@ -208,7 +208,7 @@ public class TicketIntegrationTest {
         Ticket t = EntityGenerator.getNewTicket();
         t.setMessage(null);
 
-        mvc.perform(post("/createTicket")
+        mvc.perform(post(TicketController.CREATE_TICKET_URL)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(t)))

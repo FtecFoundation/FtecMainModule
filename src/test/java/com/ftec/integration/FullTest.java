@@ -2,8 +2,7 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
-import com.ftec.controllers.ChangeSettingController;
-import com.ftec.controllers.RegistrationController;
+import com.ftec.controllers.*;
 import com.ftec.entities.Ticket;
 import com.ftec.entities.User;
 import com.ftec.repositories.ReferralDAO;
@@ -97,7 +96,7 @@ public class FullTest {
         userAuth.put("password", user.getPassword());
         userAuth.put("username", user.getUsername());
 
-        MvcResult result2 = mvc.perform(post("/login")
+        MvcResult result2 = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(userAuth.toString())
         ).andExpect(status().is(200)).andReturn();
@@ -111,7 +110,7 @@ public class FullTest {
         ChangeSettingController.UserUpdate updateSetting = new ChangeSettingController.UserUpdate();
         updateSetting.setPassword("new_STRONG_pass123");
 
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME, token2)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(updateSetting))
@@ -125,7 +124,7 @@ public class FullTest {
         userAuth2.put("password", user.getPassword());
         userAuth2.put("username", user.getUsername());
 
-        MvcResult result3 = mvc.perform(post("/login")
+        MvcResult result3 = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(userAuth2.toString())
         ).andExpect(status().is(200)).andDo(print()).andReturn();
@@ -144,7 +143,7 @@ public class FullTest {
         //create ticket
         Ticket ticket = EntityGenerator.getNewTicket();
 
-        mvc.perform(post("/createTicket")
+        mvc.perform(post(TicketController.CREATE_TICKET_URL)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(ticket)))
@@ -177,7 +176,7 @@ public class FullTest {
     }
 
     private void restorePass(User user) throws Exception {
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
@@ -196,14 +195,16 @@ public class FullTest {
         JSONObject userAuth3 = new JSONObject();
         userAuth3.put("password", new_raw_pass);
         userAuth3.put("username", user.getUsername());
-        mvc.perform(post("/login")
+        mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(userAuth3.toString())
         ).andExpect(status().is(200));
     }
 
     private void logout(String token) throws Exception {
-        mvc.perform(post("/logout").header(TokenService.TOKEN_NAME, token))
+        mvc.perform(post(LogOutController.LOGOUT_URL).header(TokenService.TOKEN_NAME, token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200));
     }
 

@@ -2,6 +2,8 @@
 package com.ftec.middlewares;
 
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.LogOutController;
+import com.ftec.controllers.TutorialController;
 import com.ftec.entities.Token;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
@@ -48,7 +50,7 @@ public class TokenSecurityTest {
         String token = tokenService.createSaveAndGetNewToken(EntityGenerator.getNextNum());
         assertTrue(tokenService.findByToken(token).isPresent());
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
+        mvc.perform(MockMvcRequestBuilders.post(LogOutController.LOGOUT_URL)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -60,7 +62,7 @@ public class TokenSecurityTest {
 
     @Test
     public void tryAccessWithoutValidToken() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/cabinet/tutorial/nextStep")
+        mvc.perform(MockMvcRequestBuilders.post(TutorialController.TUTORIAL_NEXT_STEP_URL)
                 .header(TokenService.TOKEN_NAME, "123_UNVALIDTOKEN")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -81,7 +83,7 @@ public class TokenSecurityTest {
         token.setExpirationTime(normalTime);
         tokenService.save(token);
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
+        mvc.perform(MockMvcRequestBuilders.post(LogOutController.LOGOUT_URL)
                 .header(TokenService.TOKEN_NAME, id+"_"+"wdawdawdafa")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -94,7 +96,7 @@ public class TokenSecurityTest {
         expiredToken.setExpirationTime(expiredDate);
         tokenService.save(expiredToken);
 
-        mvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/logout")
+        mvc.perform(MockMvcRequestBuilders.post(LogOutController.LOGOUT_URL)
                 .header(TokenService.TOKEN_NAME, id+"_"+"dwankdwakj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

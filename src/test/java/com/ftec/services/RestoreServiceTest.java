@@ -1,6 +1,7 @@
 package com.ftec.services;
 
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.RestoreController;
 import com.ftec.entities.RestoreData;
 import com.ftec.entities.User;
 import com.ftec.exceptions.InvalidUserDataException;
@@ -25,9 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,12 +72,12 @@ public class RestoreServiceTest {
 
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getUsername()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_username"))
                 .andExpect(status().isBadRequest());
@@ -86,7 +85,7 @@ public class RestoreServiceTest {
 
     @Test
     public void nullDataTest() throws Exception {
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
@@ -96,12 +95,12 @@ public class RestoreServiceTest {
         User user = EntityGenerator.getNewUser();
         registrationService.registerNewUserAccount(user);
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", "invalid_email"))
                 .andExpect(status().isBadRequest());
@@ -115,7 +114,7 @@ public class RestoreServiceTest {
 
         assertFalse(restoreDataDAO.findById(user.getId()).isPresent());
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));
@@ -123,7 +122,7 @@ public class RestoreServiceTest {
         assertTrue(restoreDataDAO.findById(user.getId()).isPresent());
         RestoreData data1 = restoreDataDAO.findById(user.getId()).get();
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", user.getEmail()))
                 .andExpect(status().is(200));

@@ -14,16 +14,19 @@ import javax.servlet.http.HttpServletRequest;
 public class TutorialController {
 	private final TutorialService tutorialService;
 
+	public static final String TUTORIAL_NEXT_STEP_URL = "/cabinet/tutorial/nextStep";
+	public static final String TUTORIAL_GET_CUR_STEP_URL = "/cabinet/tutorial/getCurrentStep";
+
 	public TutorialController(TutorialService tutorialService) {
 		this.tutorialService = tutorialService;
 	}
 
-	@PostMapping("/cabinet/tutorial/nextStep")
+	@PostMapping(TUTORIAL_NEXT_STEP_URL)
 	public TutorialSteps nextStep(HttpServletRequest request) throws NullPointerException, TutorialCompletedException {
 		return tutorialService.proceedToNextStep(TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 	}
 
-	@GetMapping("/cabinet/tutorial/getCurrentStep")
+	@GetMapping(TUTORIAL_GET_CUR_STEP_URL)
 	public TutorialSteps getCurrentStep(HttpServletRequest request) throws NullPointerException {
 		return tutorialService.getCurrentStep(TokenService.getUserIdFromToken(request.getHeader(TokenService.TOKEN_NAME)));
 	}

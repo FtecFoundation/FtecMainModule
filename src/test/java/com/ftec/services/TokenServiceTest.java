@@ -167,7 +167,7 @@ public class TokenServiceTest {
 
         ChangeSettingController.UserUpdate nullChanges = new ChangeSettingController.UserUpdate();
 
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME, token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(nullChanges))

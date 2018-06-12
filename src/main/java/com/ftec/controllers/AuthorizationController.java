@@ -24,6 +24,8 @@ public class AuthorizationController {
 	private final UserDAO userDAO;
     private final AuthorizationService authorizationService;
 
+    public static final String AUTHORIZATION_URL = "/login";
+
 	@Autowired
 	public AuthorizationController(TokenService tokenService, UserDAO userDAO, AuthorizationService authorizationService) {
 			super();
@@ -32,7 +34,7 @@ public class AuthorizationController {
             this.authorizationService = authorizationService;
     }
 	
-	@PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
+	@PostMapping(value = AUTHORIZATION_URL, produces = "application/json", consumes = "application/json")
 	public MvcResponse authorization(HttpServletResponse response, @RequestBody UserAuth userAuth) {
 	    Optional<User> userOpt = userDAO.findByUsername(userAuth.username);
 	    long userId;

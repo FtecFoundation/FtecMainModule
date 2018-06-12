@@ -96,7 +96,7 @@ public class RegistrationController {
     public static class UserRegistration {
 
         @NotNull
-        @Size(min = 4, max = 20)
+        @Size(min = 4, max = 40)
         @UniqueLogin
         private String username;
 
@@ -107,7 +107,7 @@ public class RegistrationController {
 
         @NotNull
         @UniqueEmail
-        @Size(max = 20)
+        @Size(max = 40)
         private String email;
 
         private boolean subscribeForEmail;

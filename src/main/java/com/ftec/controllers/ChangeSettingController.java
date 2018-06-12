@@ -27,11 +27,13 @@ import java.util.stream.Collectors;
 public class ChangeSettingController {
 	private final ChangeSettingsService changeSettingsService;
 
+	public static final String CHANGE_USER_SETTING_URL = "/changeUserSetting";
+
 	public ChangeSettingController(ChangeSettingsService changeSettingsService) {
 		this.changeSettingsService = changeSettingsService;
 	}
 
-	@PostMapping(value = "/changeUserSetting", produces = "application/json")
+	@PostMapping(value = CHANGE_USER_SETTING_URL, produces = "application/json")
 	public MvcResponse changeUserSetting(@RequestBody @Valid UserUpdate userUpdate, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
 		if(br.hasErrors()) {
 		    response.setStatus(400);
@@ -50,14 +52,14 @@ public class ChangeSettingController {
 	@Data
 	@NoArgsConstructor
 	public static class UserUpdate {
-		//each field could be null
+
 		@Pattern(regexp = Patterns.PASSWORD_PATTERN)
-        @Size(max = 20)
+        @Size(max = 40)
 		private String password;
 
 		@Email
 		@UniqueEmail
-        @Size(max = 20)
+        @Size(max = 40)
 		private String email;
 
 		private Boolean twoFactorEnabled;

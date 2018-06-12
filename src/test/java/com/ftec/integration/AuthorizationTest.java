@@ -2,7 +2,9 @@ package com.ftec.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.AuthorizationController;
 import com.ftec.controllers.ChangeSettingController;
+import com.ftec.controllers.LogOutController;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.enums.TutorialSteps;
@@ -66,21 +68,23 @@ public class AuthorizationTest {
 
 		assertEquals(TutorialSteps.FIRST, step);
 
-		String logoutResult = mvc.perform(post("/logout").header(TokenService.TOKEN_NAME,token))
+		String logoutResult = mvc.perform(post(LogOutController.LOGOUT_URL).header(TokenService.TOKEN_NAME,token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
 		//with removed token
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME,token)
         ).andExpect(status().is(403));
 
         //with invalid token
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME,"23_DWWDAAWDDWA")
         ).andExpect(status().is(403));
 
         //without token
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
         ).andExpect(status().is(403));
 
         JSONObject jsonLogoutRes = new JSONObject(logoutResult);
@@ -90,7 +94,7 @@ public class AuthorizationTest {
 		payload.put("username",invalidLogin);
 		payload.put("password",invalidPassword);
 
-		String invalidCredentialsAnswer = mvc.perform(post("/login")
+		String invalidCredentialsAnswer = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(payload.toString())).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
@@ -100,7 +104,7 @@ public class AuthorizationTest {
 
 		payload.put("username",username);
 		payload.put("password",password);
-        MvcResult resultLogin = mvc.perform(post("/login")
+        MvcResult resultLogin = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString())).andExpect(status().is(200)).andReturn();
 
@@ -111,7 +115,7 @@ public class AuthorizationTest {
 
         assertFalse(userDAO.findByUsername(username).get().getTwoStepVerification());
 
-        mvc.perform(post("/changeUserSetting")
+        mvc.perform(post(ChangeSettingController.CHANGE_USER_SETTING_URL)
                 .header(TokenService.TOKEN_NAME,tokenAfterLogin)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateSetting))
@@ -119,12 +123,14 @@ public class AuthorizationTest {
 
         assertTrue(userDAO.findByUsername(username).get().getTwoStepVerification());
 
-        mvc.perform(post("/logout").header(TokenService.TOKEN_NAME, tokenAfterLogin))
+        mvc.perform(post(LogOutController.LOGOUT_URL).header(TokenService.TOKEN_NAME, tokenAfterLogin)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is(200));
         assertFalse(tokenService.findByToken(tokenAfterLogin).isPresent());
 
         //null 2fa
-        String contentOfNull2fa = mvc.perform(post("/login")
+        String contentOfNull2fa = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString())).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
@@ -132,7 +138,7 @@ public class AuthorizationTest {
 
         payload.put("code","");
         //empty 2fa
-        String contentOfEmpty2fa = mvc.perform(post("/login")
+        String contentOfEmpty2fa = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString()))
                 .andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
@@ -142,7 +148,7 @@ public class AuthorizationTest {
         payload.put("code","123sad");
 
         //any 2fa (should works with profile test)
-        String contentOfAny2Fa = mvc.perform(post("/login")
+        String contentOfAny2Fa = mvc.perform(post(AuthorizationController.AUTHORIZATION_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString()))
                 .andExpect(status().is(200)).andReturn().getResponse().getContentAsString();

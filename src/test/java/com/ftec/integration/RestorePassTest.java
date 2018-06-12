@@ -1,6 +1,7 @@
 package com.ftec.integration;
 
 import com.ftec.configs.ApplicationConfig;
+import com.ftec.controllers.RestoreController;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
@@ -52,7 +53,7 @@ public class RestorePassTest {
 
         assertFalse(restoreDataService.findById(u.getId()).isPresent());
 
-        mvc.perform(post("/sendRestoreUrl")
+        mvc.perform(post(RestoreController.SEND_RESTORE_URL)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("data", u.getEmail()))
                 .andExpect(status().is(200));

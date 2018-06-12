@@ -28,6 +28,7 @@ public class TicketController {
     private final UserService userService;
 
     public static final String ADM_PREF = "/manage";
+    public static final String CREATE_TICKET_URL = "/createTicket";
 
     @Autowired
     public TicketController(TicketService ticketService, CommentService commentService, UserService userService) {
@@ -63,7 +64,7 @@ public class TicketController {
         return MvcResponse.getMvcErrorResponse(400, "User not found");
     }
 
-    @PostMapping("/createTicket")
+    @PostMapping(CREATE_TICKET_URL)
     public MvcResponse addTicket(@RequestBody Ticket ticket, BindingResult br, HttpServletRequest request, HttpServletResponse response) {
         if (br.hasErrors()) {
             response.setStatus(400);
