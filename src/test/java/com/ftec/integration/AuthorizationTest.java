@@ -83,7 +83,8 @@ public class AuthorizationTest {
         mvc.perform(post("/changeUserSetting")
         ).andExpect(status().is(403));
 
-		assertEquals("ok", logoutResult);
+        JSONObject jsonLogoutRes = new JSONObject(logoutResult);
+		assertEquals("0", jsonLogoutRes.getString("status"));
 
 		JSONObject payload = new JSONObject();
 		payload.put("username",invalidLogin);
@@ -123,25 +124,31 @@ public class AuthorizationTest {
         assertFalse(tokenService.findByToken(tokenAfterLogin).isPresent());
 
         //null 2fa
-        mvc.perform(post("/login")
+        String contentOfNull2fa = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(payload.toString())).andExpect(status().is(403));
+                .content(payload.toString())).andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
+
+        assertEquals("2", new JSONObject(contentOfNull2fa).getString("status"));
 
         payload.put("code","");
         //empty 2fa
-        mvc.perform(post("/login")
+        String contentOfEmpty2fa = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString()))
-                .andExpect(status().is(403));
+                .andExpect(status().is(403)).andReturn().getResponse().getContentAsString();
 
-		payload.put("code","123sad");
+        assertEquals("2", new JSONObject(contentOfEmpty2fa).getString("status"));
 
-        //any 2fa (should works with profile test
-        mvc.perform(post("/login")
+        payload.put("code","123sad");
+
+        //any 2fa (should works with profile test)
+        String contentOfAny2Fa = mvc.perform(post("/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload.toString()))
-                .andExpect(status().is(200));
+                .andExpect(status().is(200)).andReturn().getResponse().getContentAsString();
 
-	}
+        assertEquals("0", new JSONObject(contentOfAny2Fa).getString("status"));
+
+    }
 
 }

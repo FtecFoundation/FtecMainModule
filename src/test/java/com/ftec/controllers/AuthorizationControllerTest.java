@@ -91,6 +91,10 @@ public class AuthorizationControllerTest {
         assertEquals(new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("error"), AuthorizationService.INVALID_USERNAME_OR_PASSWORD);
 
         assertEquals(new JSONObject(mvcResult2.getResponse().getContentAsString()).getString("error"), AuthorizationService.INVALID_USERNAME_OR_PASSWORD);
+
+        assertEquals("1", new JSONObject(mvcResult1.getResponse().getContentAsString()).getString("status"));
+        assertEquals("1", new JSONObject(mvcResult2.getResponse().getContentAsString()).getString("status"));
+
     }
 
     @Test

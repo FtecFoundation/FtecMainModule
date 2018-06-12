@@ -4,6 +4,7 @@ import com.ftec.configs.ApplicationConfig;
 import com.ftec.controllers.AuthorizationController;
 import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
+import com.ftec.exceptions.TwoStepVerificationException;
 import com.ftec.services.interfaces.AuthorizationService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.utils.EntityGenerator;
@@ -30,7 +31,7 @@ public class AuthorizationServiceTest {
     RegistrationService registrationService;
 
     @Test
-    public void authorizationModuleTest() throws AuthorizationException {
+    public void authorizationModuleTest() throws AuthorizationException, TwoStepVerificationException {
         User u = EntityGenerator.getNewUser();
         String raw_pass = u.getPassword();
         registrationService.registerNewUserAccount(u);
@@ -44,7 +45,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test(expected = AuthorizationException.class)
-    public void authorizationFailedModuleTest() throws AuthorizationException {
+    public void authorizationFailedModuleTest() throws AuthorizationException, TwoStepVerificationException {
         User u = EntityGenerator.getNewUser();
         String raw_pass = u.getPassword();
         registrationService.registerNewUserAccount(u);
@@ -58,7 +59,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test(expected = AuthorizationException.class)
-    public void authorizationFailedLogin() throws AuthorizationException {
+    public void authorizationFailedLogin() throws AuthorizationException, TwoStepVerificationException {
         User u = EntityGenerator.getNewUser();
         String raw_pass = u.getPassword();
         registrationService.registerNewUserAccount(u);
@@ -72,7 +73,7 @@ public class AuthorizationServiceTest {
     }
 
     @Test(expected = AuthorizationException.class)
-    public void authorizationFailedUser() throws AuthorizationException {
+    public void authorizationFailedUser() throws AuthorizationException, TwoStepVerificationException {
         User u = EntityGenerator.getNewUser();
         String raw_pass = u.getPassword();
 

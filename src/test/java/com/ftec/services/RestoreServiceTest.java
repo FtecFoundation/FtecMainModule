@@ -3,6 +3,7 @@ package com.ftec.services;
 import com.ftec.configs.ApplicationConfig;
 import com.ftec.entities.RestoreData;
 import com.ftec.entities.User;
+import com.ftec.exceptions.InvalidUserDataException;
 import com.ftec.repositories.RestoreDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
@@ -55,7 +56,7 @@ public class RestoreServiceTest {
     TokenService tokenService;
 
     @Test
-    public void publicMethodsTest() throws Exception {
+    public void publicMethodsTest() throws Exception, InvalidUserDataException {
       User u = EntityGenerator.getNewUser();
       registrationService.registerNewUserAccount(u);
       restoreDataService.sendRestorePassUrl(u.getEmail());
