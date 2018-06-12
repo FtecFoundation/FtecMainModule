@@ -73,7 +73,7 @@ public class RegistrationController {
         } catch (Exception e) {
             Logger.logException("Registration Controller while register user", e, true);
             response.setStatus(500);
-            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
+            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), e.getMessage());
         }
     }
 
