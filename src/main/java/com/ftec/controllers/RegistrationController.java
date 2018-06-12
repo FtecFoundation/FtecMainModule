@@ -58,6 +58,9 @@ public class RegistrationController {
         } catch (TokenException e) {
             response.setStatus(403);
             return MvcResponse.getMvcErrorResponse(403, "TokenNotCreated");
+        } catch (Exception e) {
+            response.setStatus(500);
+            return MvcResponse.getMvcErrorResponse(Statuses.UnexpectedError.getStatus(), "Unexpected error");
         }
     }
 
