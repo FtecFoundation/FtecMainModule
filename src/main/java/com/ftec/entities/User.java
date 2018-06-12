@@ -22,7 +22,7 @@ import java.util.Locale;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected long id;
 
     private String username;
