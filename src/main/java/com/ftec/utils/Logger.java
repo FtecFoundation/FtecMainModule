@@ -6,12 +6,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 
+import static com.ftec.resources.Resources.loggerEnabledStatic;
+
 public class Logger {
 
     public static void log(String message){
         String callerName = Thread.currentThread().getStackTrace()[1].getClassName();
         String messageCompleted = new Date()+"["+callerName+"]"+message;
-        if(!Resources.loggerEnabledStatic){
+        if(!loggerEnabledStatic){
             System.out.println(messageCompleted);
             return;
         }
@@ -21,22 +23,41 @@ public class Logger {
             e.printStackTrace();
         }
     }
-    public static void logException(String location, Exception e, boolean printStackTrace){
-        if(!Resources.loggerEnabledStatic){
-            e.printStackTrace();
-            return;
-        }
+    public static void logException(String location, Throwable e, boolean printStackTrace){
         StringBuilder message = new StringBuilder("\n\n").append(location);
-        if(printStackTrace) message.append("\nSOE-------------------------------------------------");
-        message.append("\n").append(e.getClass()).append(", message: ").append(e.getMessage());
+        if(printStackTrace) message.append("\nSOE-----------").append(new Date().toString()).append("------------------------------------");
+        message.append("\n").append(e.getClass()).append(", message: ").append(e.getMessage()).append("\n");
+
         if(printStackTrace)
             for(StackTraceElement ste: e.getStackTrace()){
                 message.append(ste.toString()).append("\n");
             }
+        Throwable cause = e.getCause();
+        while(cause != null){
+            message.append("\n**Caused by**\n").append(e.getClass()).append(", message: ").append(cause.getMessage()).append("\n");
+
+            if(printStackTrace)
+                for(StackTraceElement ste: cause.getStackTrace()){
+                    message.append(ste.toString()).append("\n");
+                }
+            cause = cause.getCause();
+        }
         if(printStackTrace) message.append("EOE-------------------------------------------------");
+
+        if(!loggerEnabledStatic){
+            System.out.println(message);
+            return;
+        }
+
         try {
-            String callerName = Thread.currentThread().getStackTrace()[1].getClassName();
-            logToFile("/exceptions/"+callerName+".txt", message.toString());
+            String callerName = null;
+            for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
+                if(!stackTraceElement.getClassName().contains("Logger")) {
+                    callerName = stackTraceElement.getClassName();
+                    break;
+                }
+            }
+            logToFile("/exceptions/"+(callerName!=null?callerName.substring(callerName.lastIndexOf(".")+1)+".txt":"Unknown"), message.toString());
         } catch (Exception e2) {
             e2.printStackTrace();
         }
@@ -51,4 +72,6 @@ public class Logger {
                 e.printStackTrace();
             }
     }
+
+
 }
