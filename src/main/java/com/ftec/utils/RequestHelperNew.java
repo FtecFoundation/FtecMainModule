@@ -4,6 +4,7 @@ import javax.net.ssl.SSLParameters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -40,33 +41,70 @@ public class RequestHelperNew {
         return "";
     }
 
-    public static String proxyRequest(String url, int tryingCount){
+
+    private static String proxyRequest(String url, String method, String body, int tryingCount, String ... headers){
+        if (headers.length % 2 != 0) throw new RuntimeException("Bad headers");
+        Authenticator authenticator = new Authenticator() {
+
+            public PasswordAuthentication getPasswordAuthentication() {
+                return (new PasswordAuthentication("Hrecm6",
+                        "JQ1fVr".toCharArray()));
+            }
+        };
+        Authenticator.setDefault(authenticator);
 
         while (tryingCount != 0) {
             //  JSONObject jo = new JSONObject(simpleGet("https://api.getproxylist.com/proxy"));
 
         /*    Proxy proxy = new Proxy(jo.getString("protocol").equals("http") ? Proxy.Type.HTTP : Proxy.Type.SOCKS,
                     new InetSocketAddress(jo.getString("ip"), jo.getInt("port")));*/
-            Proxy proxy = new Proxy(Proxy.Type.HTTP ,
-                    new InetSocketAddress("110.137.26.249", 8080));
+            Proxy proxy = new Proxy(Proxy.Type.SOCKS,
+                    new InetSocketAddress("91.188.241.183", 9726));
+
             try {
 
                 HttpURLConnection.setFollowRedirects(true); // defaults to true
 
                 URL request_url = new URL(url);
+
                 HttpURLConnection http_conn = (HttpURLConnection) request_url.openConnection(proxy);
+                if (method.equals("POST")) http_conn.setRequestMethod("POST");
+                if (method.equals("PUT")) http_conn.setRequestMethod("PUT");
+
+                for (int i = 0; i < headers.length; i+=2) {
+                    http_conn.setRequestProperty(headers[i], headers[i+1]);
+                }
+
+
+                if (body != null && !body.isEmpty()){
+                    http_conn.setDoOutput(true);
+                    OutputStream os = http_conn.getOutputStream();
+
+                    os.write( body.getBytes() );
+                    os.close();
+                }
+
+
+
                 http_conn.setConnectTimeout(10000);
                 http_conn.setReadTimeout(10000);
                 http_conn.setInstanceFollowRedirects(true);
-                if (String.valueOf(http_conn.getResponseCode()).startsWith("2")) {
-                    return readFullyAsString(http_conn.getInputStream(), "UTF-8");
-                }else tryingCount--;
+                System.out.println(http_conn.getResponseCode());
+                return readFullyAsString(http_conn.getInputStream(), "UTF-8");
+              /*  if (String.valueOf(http_conn.getResponseCode()).startsWith("2")) {
+
+                }else tryingCount--;*/
             } catch (IOException e) {
                 e.printStackTrace();
+                tryingCount--;
             }
         }
         return "";
 
+    }
+
+    public static String GET_ProxyRequest(String url, String ... headers){
+        return proxyRequest(url, "GET", "", 2, headers);
     }
 
     public static String readFullyAsString(InputStream inputStream, String encoding) throws IOException {
