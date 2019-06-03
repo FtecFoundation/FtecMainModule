@@ -36,4 +36,21 @@ public class DateUtils {
 
     }
 
+    public static long getCurrentSeconds(long currentTime){
+        return currentTime/1000%60;
+    }
+
+
+    public static long getCurrentHour(long currentTime){
+        return currentTime/MINUTES_30*2%24;
+    }
+
+
+    public static long getCurrentMinute(long currentTime){
+        long currentMinutes = currentTime/60*1000;
+
+        return currentMinutes-(long)(currentMinutes/60.0)*60;
+    }
+
+
 }
