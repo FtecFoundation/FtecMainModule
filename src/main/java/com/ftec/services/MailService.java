@@ -2,7 +2,7 @@ package com.ftec.services;
 
 import com.ftec.resources.Resources;
 import com.ftec.resources.Stocks;
-import com.ftec.utils.Logger;
+import com.ftec.utils.files.Logger;
 import com.ftec.utils.local_sendpulse.restapi.Sendpulse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

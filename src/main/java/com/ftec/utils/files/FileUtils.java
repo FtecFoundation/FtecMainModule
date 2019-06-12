@@ -1,4 +1,4 @@
-package com.ftec.utils;
+package com.ftec.utils.files;
 
 import java.io.File;
 import java.io.IOException;

@@ -5,7 +5,7 @@ import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.interfaces.TokenService;
-import com.ftec.utils.Logger;
+import com.ftec.utils.files.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -10,7 +10,7 @@ import com.ftec.services.Implementations.RegistrationServiceImpl;
 import com.ftec.services.interfaces.ReferralService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
-import com.ftec.utils.Logger;
+import com.ftec.utils.files.Logger;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

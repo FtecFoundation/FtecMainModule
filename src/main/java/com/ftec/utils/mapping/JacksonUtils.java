@@ -1,4 +1,4 @@
-package com.ftec.utils;
+package com.ftec.utils.mapping;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -7,7 +7,7 @@ import com.ftec.resources.enums.Statuses;
 import com.ftec.resources.models.MvcResponse;
 import com.ftec.services.ConfirmEmailService;
 import com.ftec.services.PasswordRestoreService;
-import com.ftec.utils.Logger;
+import com.ftec.utils.files.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

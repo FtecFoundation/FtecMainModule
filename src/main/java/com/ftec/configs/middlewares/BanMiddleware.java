@@ -1,7 +1,6 @@
 package com.ftec.configs.middlewares;
 
-import com.ftec.utils.FileUtils;
-import com.ftec.utils.RequestsMapper;
+import com.ftec.utils.files.FileUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 

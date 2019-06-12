@@ -9,7 +9,7 @@ import com.ftec.services.interfaces.CommentService;
 import com.ftec.services.interfaces.TicketService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.services.interfaces.UserService;
-import com.ftec.utils.Logger;
+import com.ftec.utils.files.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
