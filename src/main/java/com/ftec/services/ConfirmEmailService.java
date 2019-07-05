@@ -6,7 +6,7 @@ import com.ftec.repositories.ConfirmDataDAO;
 import com.ftec.repositories.UserDAO;
 import com.ftec.resources.Resources;
 import com.ftec.resources.enums.ConfirmScope;
-import com.ftec.utils.RandomHashGenerator;
+import com.ftec.utils.encoding.RandomHashGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

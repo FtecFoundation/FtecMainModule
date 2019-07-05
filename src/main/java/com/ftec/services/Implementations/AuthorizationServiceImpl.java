@@ -5,7 +5,7 @@ import com.ftec.entities.User;
 import com.ftec.exceptions.AuthorizationException;
 import com.ftec.exceptions.TwoStepVerificationException;
 import com.ftec.services.interfaces.AuthorizationService;
-import com.ftec.utils.PasswordUtils;
+import com.ftec.utils.encoding.PasswordUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 

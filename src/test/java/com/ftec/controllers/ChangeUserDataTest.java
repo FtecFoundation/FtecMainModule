@@ -11,7 +11,7 @@ import com.ftec.services.interfaces.ChangeSettingsService;
 import com.ftec.services.interfaces.RegistrationService;
 import com.ftec.services.interfaces.TokenService;
 import com.ftec.utils.EntityGenerator;
-import com.ftec.utils.PasswordUtils;
+import com.ftec.utils.encoding.PasswordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

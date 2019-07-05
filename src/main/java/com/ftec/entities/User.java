@@ -4,7 +4,7 @@ import com.ftec.controllers.ChangeSettingController.UserUpdate;
 import com.ftec.controllers.RegistrationController;
 import com.ftec.resources.enums.TutorialSteps;
 import com.ftec.resources.enums.UserRole;
-import com.ftec.utils.PasswordUtils;
+import com.ftec.utils.encoding.PasswordUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;

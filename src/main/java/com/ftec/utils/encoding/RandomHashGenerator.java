@@ -1,4 +1,4 @@
-package com.ftec.utils;
+package com.ftec.utils.encoding;
 
 import java.util.Random;
 

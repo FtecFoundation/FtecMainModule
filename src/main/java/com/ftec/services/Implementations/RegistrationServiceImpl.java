@@ -4,7 +4,7 @@ import com.ftec.controllers.RegistrationController;
 import com.ftec.entities.User;
 import com.ftec.repositories.UserDAO;
 import com.ftec.services.interfaces.RegistrationService;
-import com.ftec.utils.PasswordUtils;
+import com.ftec.utils.encoding.PasswordUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

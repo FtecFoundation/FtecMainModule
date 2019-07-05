@@ -4,7 +4,7 @@ import com.ftec.entities.Token;
 import com.ftec.exceptions.token.InvalidTokenException;
 import com.ftec.exceptions.token.TokenException;
 import com.ftec.exceptions.token.TokenExpiredException;
-import com.ftec.utils.RandomHashGenerator;
+import com.ftec.utils.encoding.RandomHashGenerator;
 
 import java.util.Date;
 import java.util.List;

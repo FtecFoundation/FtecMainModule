@@ -1,4 +1,4 @@
-package com.ftec.utils;
+package com.ftec.utils.encoding;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
